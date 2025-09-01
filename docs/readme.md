@@ -119,24 +119,25 @@ and thought it would be simple.
 
 Last Notes (HI levels first if value changes based on MPU).
 Grumble, I hooked the MAX3232 MPU_OUT1 to 5V to see if that would
-get it to work.  Now I believe I have burned out that MAX3232 as
+get it to work.  I believe I  burned out that MAX3232 as
 the charge pump appears to not be working, and the chip gets pretty
-hot, pretty quickly.
+hot, pretty quickly. So I replaced it with the old one.
+I have no more spares.
 
 						Mine				Module
-	1-C1+			3.064				4.77 to 4.82
-	2-V+				2.3V?!?!			5.97 to 6.05
-	3-C1-								1.86 to 1.87
+	1-C1+			4.99 to 4.98		4.77 to 4.82
+	2-V+			6.25 to 6.28		5.97 to 6.05
+	3-C1-			2.50 to 2.65		1.86 to 1.87
 	4-C2+								2.69
 	5-C2-							    -3.05 to -2.85
-	6-V-									5.44 to 5.75
-	7-RS232_OUT2							-5.26 to -5.60 (note note in use)
+	6-V-			-6.05 to -6.1		-5.44 to -5.75
+	7-RS232_OUT2	-6.04 to -6.10		-5.26 to -5.60 (note note in use)
 	8-RS232_IN2							0.07 nom (not not in use)
 
 
 	16-VCC			3.24v
 	15-GND
-	14-RS232_OUT1						5.16 to -5.24
+	14-RS232_OUT1	-6.04 to -6.10		5.16 to -5.24
 	13-RS232_IN1
 	12-MPU-OUT1
 	11-MPU_IN1							1.68 nom; w/loop back:
