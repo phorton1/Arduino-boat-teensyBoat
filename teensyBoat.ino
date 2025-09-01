@@ -1,92 +1,37 @@
 //-------------------------------------------
 // teensyBoat.ino
 //-------------------------------------------
-// My board does not work, despite trying everything I could think of.
-// As far as I can tell, my "pass through" configuration is now an exact
-// match for the serial board, except that I am using another channel.
-//
-// I have some jumpers to provide a "passive" scheme to send the
-// VHF AIS to the E80 while still monitoring it, which I tested on
-// a single serial board. The E80 apparently requires a full differential
-// pair from the VHF for the AIS to be received (the AIS lines don't have
-// enough *oomph* for the E80 as single ended using the green common VHF-)
-// in the basic "pass through" configuration.  However, the testing fails
-// in the "pass through" configuration/
-//
-// Note that the Serial boards capacitor number do not match the
-// reference MAX3232 documentation!
-//
-// Their#	Ref #    from       to
-// C1		C1       pin1(C1+)	pin3(C1-)
-// C2		C3		 pin2(V+)   3.3v ***
-// C3		C4		 pin6(V-)	gnd
-// C4		C2		 pin5(C2-)	pin4(C2+)
-//
-// (0) I get no output on the RS232 side and nothing is
-//     received.  The RS232 outputs are pegged at -6V no
-//     matter what happens on the MPU input side.
-//
-// (1) I am using four 100nf (0.1uf) ceramic capacitors.
-//	   The doc says that ceramic are ok, and I doubt the module
-//	   is using polarized caps.
-//
-// (2) I verified the charge pump is basically working as I see
-//     around +6V at the V+ pin and -6V or so at the V- pin.
-
-// (3) I have excruciatingly verified that the MPU is sending data
-//     to the MAX3232 and would show data if it was received.
-//     I can even connect the MPU output to the MAX3232 directly
-//     to 3.3V and the output still does not go high.
-//
-// (4) I encoded a 6 second square wave as outputs from the MPU.
-//     Using the serial modules, I see the RS232 outputs swing
-//     from -5.9 to +6V with a simple volt meter.  On my board
-//	   it never changes.
-//
-// (5) *** I originally had the cap on Pin2(V+) to ground, and noticed
-//     that the serial module has it going to 3.3V.  So I modified my
-//     board to have it goto 3.3v as per the module
-//
-// No effing joy.  I am out of ideas.  I've worked three days on this
-// and thought it would be simple.
-//
-// Last Notes (HI levels first if value changes based on MPU).
-// Grumble, I hooked the MAX3232 MPU_OUT1 to 5V to see if that would
-// get it to work.  Now I believe I have burned out that MAX3232 as
-// the charge pump appears to not be working, and the chip gets pretty
-// hot, pretty quickly.
-//
-// 					Mine				Module
-// 1-C1+			3.064				4.77 to 4.82
-// 2-V+				2.3V?!?!			5.97 to 6.05
-// 3-C1-								1.86 to 1.87
-// 4-C2+								2.69
-// 5-C2-							    -3.05 to -2.85
-// 6-V-									5.44 to 5.75
-// 7-RS232_OUT2							-5.26 to -5.60 (note note in use)
-// 8-RS232_IN2							0.07 nom (not not in use)
-
-
-// 16-VCC			3.24v
-// 15-GND
-// 14-RS232_OUT1						5.16 to -5.24
-// 13-RS232_IN1
-// 12-MPU-OUT1
-// 11-MPU_IN1							1.68 nom; w/loop back:
-// 10-MPU_IN2							1.54 nom (note not in use)
-// 9-MPU_OUT2							3.24 nom (note not in use)
-
 
 #include <myDebug.h>
 #include <instSimulator.h>
 #include <NMEA2000_Teensyx.h>
 #include <N2kMessages.h>
 
-#define TEST_IT   0
+// Teensy Pins Used
+//
+// 23 - CRX from CANBUS module
+// 22 - CTX to CANBUS module
+// 7  - RX2
+// 8  - TX2
+// 15 - RX3 from seatalk opto isolator circuit
+// 14 - TX3 to seatalk opto isolator circuit
+// 16 - RX4
+// 17 - TX4
+// 12 - pulse out for testing ST50 instruments
+//      better as 9 to leave MISO available for
+//      display and/or CD
+//
+// in instSimulator.h:
+// 		#define SERIAL_VHF_0183 Serial2
+// 		#define SERIAL_SEATALK	Serial3
+// 		#define SERIAL_E80_0183	Serial4
 
 
 #define dbg_in_msgs		0
 
+#define TEST_IT   0
+	// Output a slow square waves, and monitor the inputs, on the two
+	// NMEA Serial ports. Used to test the MAX3232 board.
 
 #define ALIVE_LED		13
 #define ALIVE_OFF_TIME	980
