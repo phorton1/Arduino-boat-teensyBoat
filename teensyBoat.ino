@@ -1,11 +1,88 @@
 //-------------------------------------------
 // teensyBoat.ino
 //-------------------------------------------
+// My board does not work, despite trying everything I could think of.
+// As far as I can tell, my "pass through" configuration is now an exact
+// match for the serial board, except that I am using another channel.
+//
+// I have some jumpers to provide a "passive" scheme to send the
+// VHF AIS to the E80 while still monitoring it, which I tested on
+// a single serial board. The E80 apparently requires a full differential
+// pair from the VHF for the AIS to be received (the AIS lines don't have
+// enough *oomph* for the E80 as single ended using the green common VHF-)
+// in the basic "pass through" configuration.  However, the testing fails
+// in the "pass through" configuration/
+//
+// Note that the Serial boards capacitor number do not match the
+// reference MAX3232 documentation!
+//
+// Their#	Ref #    from       to
+// C1		C1       pin1(C1+)	pin3(C1-)
+// C2		C3		 pin2(V+)   3.3v ***
+// C3		C4		 pin6(V-)	gnd
+// C4		C2		 pin5(C2-)	pin4(C2+)
+//
+// (0) I get no output on the RS232 side and nothing is
+//     received.  The RS232 outputs are pegged at -6V no
+//     matter what happens on the MPU input side.
+//
+// (1) I am using four 100nf (0.1uf) ceramic capacitors.
+//	   The doc says that ceramic are ok, and I doubt the module
+//	   is using polarized caps.
+//
+// (2) I verified the charge pump is basically working as I see
+//     around +6V at the V+ pin and -6V or so at the V- pin.
+
+// (3) I have excruciatingly verified that the MPU is sending data
+//     to the MAX3232 and would show data if it was received.
+//     I can even connect the MPU output to the MAX3232 directly
+//     to 3.3V and the output still does not go high.
+//
+// (4) I encoded a 6 second square wave as outputs from the MPU.
+//     Using the serial modules, I see the RS232 outputs swing
+//     from -5.9 to +6V with a simple volt meter.  On my board
+//	   it never changes.
+//
+// (5) *** I originally had the cap on Pin2(V+) to ground, and noticed
+//     that the serial module has it going to 3.3V.  So I modified my
+//     board to have it goto 3.3v as per the module
+//
+// No effing joy.  I am out of ideas.  I've worked three days on this
+// and thought it would be simple.
+//
+// Last Notes (HI levels first if value changes based on MPU).
+// Grumble, I hooked the MAX3232 MPU_OUT1 to 5V to see if that would
+// get it to work.  Now I believe I have burned out that MAX3232 as
+// the charge pump appears to not be working, and the chip gets pretty
+// hot, pretty quickly.
+//
+// 					Mine				Module
+// 1-C1+			3.064				4.77 to 4.82
+// 2-V+				2.3V?!?!			5.97 to 6.05
+// 3-C1-								1.86 to 1.87
+// 4-C2+								2.69
+// 5-C2-							    -3.05 to -2.85
+// 6-V-									5.44 to 5.75
+// 7-RS232_OUT2							-5.26 to -5.60 (note note in use)
+// 8-RS232_IN2							0.07 nom (not not in use)
+
+
+// 16-VCC			3.24v
+// 15-GND
+// 14-RS232_OUT1						5.16 to -5.24
+// 13-RS232_IN1
+// 12-MPU-OUT1
+// 11-MPU_IN1							1.68 nom; w/loop back:
+// 10-MPU_IN2							1.54 nom (note not in use)
+// 9-MPU_OUT2							3.24 nom (note not in use)
+
 
 #include <myDebug.h>
 #include <instSimulator.h>
 #include <NMEA2000_Teensyx.h>
 #include <N2kMessages.h>
+
+#define TEST_IT   0
 
 
 #define dbg_in_msgs		0
@@ -21,7 +98,7 @@
 tNMEA2000_Teensyx nmea2000;
 	// (tCANDevice _bus=NMEA2000_TEENSYX_CAN_BUS, tPins _txPin=NMEA2000_TEENSYX_TX_PIN, tPins _rxPin=NMEA2000_TEENSYX_RX_PIN);
 static bool show_bus;
-static bool show_input;
+bool show_input;
 static bool show_output;
 
 
@@ -145,6 +222,21 @@ void setup()
 	display(0,"teensyBoat.ino setup() started",0);
 	proc_entry();
 
+	//----------------------------------
+	// NMEA0183 initialization
+	//----------------------------------
+
+	#if TEST_IT
+		pinMode(8,OUTPUT);
+		pinMode(7,INPUT_PULLUP);
+		pinMode(17,OUTPUT);
+		pinMode(16,INPUT_PULLUP);
+		digitalWrite(17,1);
+	#else
+		SERIAL_E80_0183.begin(38400);
+		SERIAL_VHF_0183.begin(38400);
+	#endif
+
 	//---------------------------------
 	// NMEA2000 initialization
 	//---------------------------------
@@ -251,14 +343,16 @@ void setup()
 	delay(500);
 	digitalWrite(ALIVE_LED,0);
 
-	// hardwire the boat simulator to start running for initial testing
 
-	boat.jumpToWaypoint(1);
-	boat.setWaypointNum(2);
-	boat.setSOG(90);
-	boat.setRouting(true);
-	boat.start();
-
+	#if 0
+		// hardwire the boat simulator to start running for initial testing
+		boat.jumpToWaypoint(1);
+		boat.setWaypointNum(2);
+		boat.setSOG(90);
+		boat.setRouting(true);
+		boat.start();
+	#endif
+	
 	proc_leave();
 	display(0,"teensyBoat.ino  setup() finished",0);
 	usage();
@@ -460,13 +554,15 @@ static void handleSerial()
 
 void loop()
 {
-	uint32_t now = millis();
-	static uint32_t last_update = 0;
-	if (now - last_update >= UPDATE_MILLIS)
-	{
-		last_update = now;
-		instruments.run();
-	}
+	#if !TEST_IT
+		uint32_t now = millis();
+		static uint32_t last_update = 0;
+		if (now - last_update >= UPDATE_MILLIS)
+		{
+			last_update = now;
+			instruments.run();
+		}
+	#endif
 
 	//----------------------------
 	// general loop handling
@@ -489,6 +585,62 @@ void loop()
 		}
 	#endif
 	
+
+	#if TEST_IT
+
+		static bool out_high = 1;
+		static bool in_high1 = 0;
+		static bool in_high2 = 0;
+		static uint32_t last_toggle = 0;
+		uint32_t toggle_now = millis();
+		if (toggle_now - last_toggle >= 6000)
+		{
+			last_toggle = toggle_now;
+			out_high = !out_high;
+			display(0,"OUT(%d)",out_high);
+			digitalWrite(8,out_high);
+			digitalWrite(17,out_high);
+		}
+		bool high = digitalRead(7);
+		if (in_high1 != high)
+		{
+			in_high1 = high;
+			display(0," IN1(%d)",in_high1);
+		}
+		high = digitalRead(16);
+		if (in_high2 != high)
+		{
+			in_high2 = high;
+			display(0," IN2(%d)",in_high2);
+		}
+
+	#else	// listen for input data
+
+		while (SERIAL_E80_0183.available())
+		{
+			#define MAX_MSG 180
+			int c = SERIAL_E80_0183.read();
+			static char buf[MAX_MSG+1];
+			static int buf_ptr = 0;
+
+			// display(0,"got Serial2 0x%02x %c",c,c>32 && c<127 ? c : ' ');
+
+			if (buf_ptr >= MAX_MSG || c == 0x0a)
+			{
+				extern void handleNMEAInput(const char *);
+				
+				buf[buf_ptr] = 0;
+				handleNMEAInput(buf);
+				buf_ptr = 0;
+			}
+			else if (c != 0x0d)
+			{
+				buf[buf_ptr++] = c;
+			}
+		}
+
+	#endif
+
 }	// loop()
 
 
