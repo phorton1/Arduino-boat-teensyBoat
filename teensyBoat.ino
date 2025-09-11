@@ -5,6 +5,10 @@
 #include <myDebug.h>
 #include <instSimulator.h>
 #include <boatSimulator.h>
+#include <instST.h>
+#include <inst0183.h>
+#include <inst2000.h>
+
 
 // Teensy Pins Used
 //
@@ -20,14 +24,16 @@
 // 4  - SPEED_PULSE out for testing ST50 lOG instrument
 // 5  - WIND_PULSE out for testing ST50 WIND instrument
 //
+// When I thought it would have a Touchscreen:
+//
 // 3  - T_CS (I think this was supposed to be 5)
 // 9  - LCD_DC
 // 10 - LCD_CS
 // 11 - MISO
 // 12 - MOSI
-// 13 - SCLK
+// 13 - SCLK	(breadboard ALIVE_LED)
 //
-// 2 - ALIVE_LED
+// 2 - ALIVE_LED (initial_board)
 
 #if BREADBOARD
 	#define ALIVE_LED		13
@@ -49,32 +55,90 @@
 
 
 
-static void usage()
+static void showHelp(bool detailed)
 {
-	// display(0,"STATE: wp(%d) cog(%0.1f) sog(%0.1f) input(%d) output(%d) route(%s) going_to(%d) routing(%d)",
-	// 	waypoint_num,cog,sog,show_input,show_output,route_name,going_to,routing);
-	display(0,"teensyBoat USAGE",0);
+	int d = detailed ? 0 : 1;
+
+	display(0,"teensyBoat Help",0);
 	proc_entry();
-	display(0,"? = show this help",0);
-	display(0,"y = re-initialize simulator",0);
+	display(0,"?              show condensed help",0);
+	display(0,"help           show detailed help",0);
 
-	display(0,"i = show received datagrams",0);
-	display(0,"o = show sent datagrams",0);
+	display(0,"",0);
+	display(d,"Virtual Boat",0);
+	display(d,"",0);
+	display(0,"I              Monadic command to re-initialize the simulator",0);
+	display(0,"RUN        	  Turns the boat simulator on",0);
+	display(0,"STOP        	  Turns the boat simulator off",0);
+	display(d,"               The instrument simulator runs when the boat simulator is running",0);
+	display(0,"ROUTE=name     Sets the current route to the (known) name",0);
+	display(d,"                   Re-initializes the simulator",0);
+	display(0,"J=n            Moves the boat to the Nth waypoint in the current route",0);
+	display(d,"                   Stops the boat and turns off autopilot and routing",0);
+	display(0,"WP=n           Sets the target waypoint to the Nth waypoint",0);
+	display(d,"                   Sets the heading to point to the waypoint, does not affect",0);
+	display(d,"                   SOG, autopilot or routing",0);
+	display(0,"S=n            IMPORTANT: Sets the boat's SOG to N knots, and is required",0);
+	display(d,"                   for the virtual boat to start moving",0);
+	display(0,"H=n            Sets the boats heading to N true degrees",0);
+	display(d,"                   if the autopilot is running, this will be overriden",0);
+	display(d,"                   in the next timeslice",0);
+	display(0,"D=n            Sets the depth of water to N feet",0);
+	display(0,"WA=n           Sets the true wind angle to N degrees",0);
+	display(0,"WS=n           Sets the true wind speed to N knots",0);
+	display(0,"RPM=n          Sets the engine RPMs to N",0);
+	display(d,"                   this is overriden by any calls to setSOG, which sets",0);
+	display(d,"                   RPMS to 1800 if SOG>0, or 0 if the boat is not moving.",0);
+	display(0,"AP=1/0         Starts and stops the Autopilot",0);
+	display(d,"                   1 sets a heading to the target waypoint",0);
+	display(d,"                   0 also turns off Routing",0);
+	display(0,"R=1/0          Starts and stops Routing",0);
+	display(d,"                   1 turns on the autopilot, monitors for waypoint arrivals",0);
+	display(d,"                      and advances to the next waypoint upon completed arrival",0);
+	display(d,"                   0 turns off Routineg, but does not turn off autopilot",0);
 
-	display(0,"x = start/stop simulator",0);
-	display(0,"p[name] = pick route; turns off any current routing or goto",0);
-	display(0,"hN, h+N, h-N = set/increment/decrement heading (cog)",0);
-	display(0,"sN, s+N, s-N = set/increment/decrement speed (sog)",0);
-	display(0,"jN, j+N, j-N = jump to waypoint; next waypoint, prev waypoint",0);
-	display(0,"wN, w+N, w-N = set heading to waypoint; next waypoint, prev waypoint",0);
-	display(0,"a = toggle 'autopilot' (0 turns off 'routing' too)",0);
-	display(0,"r = toggle 'routing' (1 turns on 'autopilot' too)",0);
+	display(0,"",0);
+	display(0,"Virtual Instruments",0);
+	display(d,"",0);
+	display(d,"The instruments are turned off and on to the various protocols/ports",0);
+	display(d,"by a bitwise value",0);
+	display(0,"    0 = off",0);
+	display(0,"    1 = Seatalk",0);
+	display(0,"    2 = NMEA0183",0);
+	display(0,"    4 = NMEA2000",0);
+	display(0,"",0);
+	display(0,"I_DEPTH    = bitwise",0);
+	display(0,"I_LOG      = bitwise",0);
+	display(0,"I_WIND     = bitwise",0);
+	display(0,"I_COMPASS  = bitwise",0);
+	display(0,"I_GPS      = bitwise",0);
+	display(0,"I_AIS      = bitwise",0);
+	display(0,"I_AP       = bitwise",0);
+	display(0,"I_ENG      = bitwise",0);
+	display(0,"I_GEN      = bitwise",0);
+	display(d,"",0);
+	display(d,"All instruments can be turned on or off for a given port/protocol",0);
+	display(d,"",0);
+	display(0,"I_ST       = 1/0",0);
+	display(0,"I_0183     = 1/0",0);
+	display(0,"I_2000     = 1/0",0);
 
-	display(0,"g = toggle genset on or off",0);
+	display(0,"",0);
+	display(d,"Monitoring",0);
+	display(d,"",0);
+
+	display(0,"M_SIM  = n    simulator debugging level, default=1",0);
+	display(0,"M_OUT  = 1/0  monitor outbound instrument messages",0);
+	display(0,"M_ST   = 1/0  monitor all incoming Seatalk messags",0);
+	display(0,"M_0183 = 1/0  monitor all incoming NMEA0183 messages",0);
+	display(0,"M_AIS  = 1/0  monitor incoming NMEA0183 AIS messages",0);
+	display(0,"M_2000 = 1/0  monitor known NMEA2000 sensor messages",0);
+	display(0,"M_GPS  = 1/0  separatly monitor known NMEA2000 GPS messages",0);
+	display(0,"M_PROP = 1/0  monitor known NMEA2000 proprietary messages",0);
+	display(0,"M_BUS  = 1/0  monitor any other unhandled bus messages",0);
 
 	proc_leave();
 }
-
 
 
 //------------------------
@@ -104,19 +168,18 @@ void setup()
 		instruments.init();
 	#endif
 
-	#if 0
+	#if 1
 		// hardwire the boat simulator to start running for initial testing
 		boat.jumpToWaypoint(1);
 		boat.setWaypointNum(2);
 		boat.setSOG(90);
 		boat.setRouting(true);
-		boat.start();
+		// boat.start();
 	#endif
 	
 	proc_leave();
 	display(0,"teensyBoat.ino  setup() finished",0);
-	usage();
-
+	display(0,"type ?<enter> for help",0);
 }
 
 
@@ -124,104 +187,109 @@ void setup()
 // handleCommand()
 //--------------------------------------------------
 
-static void handleCommand(int command, char *buf)
+static void handleCommand(String lval, String rval, bool got_equals)
 {
-	int val = 1;
-	int inc = 0;
-	char *orig_buf = buf;
-	if (*buf == '+')
-	{
-		inc = 1;
-		buf++;
-	}
-	else if (*buf == '-')
-	{
-		inc = -1;
-		buf++;
-	}
-	if (*buf >= '0' && *buf <= '9')
-	{
-		val = atoi(buf);
-	}
+	display(0,"command: %s%s%s",
+			lval.c_str(),
+			got_equals?"=":"",
+			rval.c_str());
 
-	display(0,"command(%c) inc(%d) val(%d)",command,inc,val);
-	if (command == 'h')
-	{
-		double cog = boat.getCOG();
+	if (lval.equals("i"))
+		boat.init();
+	else if (lval.equals("run"))
+		boat.start();
+	else if (lval.equals("stop"))
+		boat.stop();
+	else if (lval.equals("route"))
+		boat.setRoute(rval.c_str());
+	else if (lval.equals("j"))
+		boat.jumpToWaypoint(rval.toInt());
+	else if (lval.equals("wp"))
+		boat.setWaypointNum(rval.toInt());
 
-		if (inc)
-			cog += (inc * val);
+	else if (lval.equals("s"))
+		boat.setSOG(rval.toInt());
+	else if (lval.equals("h"))
+		boat.setCOG(rval.toInt());
+	else if (lval.equals("d"))
+		boat.setDepth(rval.toInt());
+	else if (lval.equals("wa"))
+		boat.setWindAngle(rval.toInt());
+	else if (lval.equals("ws"))
+		boat.setWindSpeed(rval.toInt());
+	else if (lval.equals("rpm"))
+		boat.setRPMS(rval.toInt());
+
+	else if (lval.equals("ap"))
+		boat.setAutopilot(rval.toInt());
+	else if (lval.equals("r"))
+		boat.setRouting(rval.toInt());
+
+	else if (lval.startsWith("i_"))
+	{
+		String inst = lval.substring(2);
+		int inum =
+			inst.equals("depth") 	? 0 :
+			inst.equals("log") 		? 1 :
+			inst.equals("wind") 	? 2 :
+			inst.equals("compass") 	? 3 :
+			inst.equals("gps")		? 4 :
+			inst.equals("ais") 		? 5 :
+			inst.equals("ap") 		? 6 :
+			inst.equals("eng") 		? 7 :
+			inst.equals("gen") 		? 8 :
+			inst.equals("st")		? 100 :
+			inst.equals("0183")		? 101 :
+			inst.equals("2000")		? 102 : -1;
+		if (inum == -1)
+			my_error("invalid instrument(%s)",inst.c_str());
+		else if (inum<100)
+			instruments.setPorts(inum,rval.toInt());
 		else
-			cog = val;
-
-		if (cog < 0)
-			cog += 360;
-		if (cog > 360)
-			cog -= 360;
-
-		display(0,"HEADING (COG) <= %0.1f",cog);
-		boat.setCOG(cog);
+			instruments.setAll(inum-100,rval.toInt());
 	}
-	else if (command == 's')
+
+	// monitor temporary implementation
+
+	else if (lval.startsWith("m_"))
 	{
-		double sog = boat.getSOG();
-		if (inc)
-			sog += (inc * val);
+		String what = lval.substring(2);
+		int value = rval.toInt();
+		display(0,0,"monitor %s=%d",what.c_str(),value);
+
+		if (what.equals("sim"))			boat.g_MON_SIM = value;
+		else if (what.equals("out"))	instruments.g_MON_OUT = value;
+		else if (what.equals("st"))		g_MON_ST = value;
+		else if (what.equals("0183"))	g_MON_0183 = value;
+		else if (what.equals("ais"))	g_MON_AIS = value;
+		else if (what.equals("2000"))	nmea2000.m_MON_SENSORS = value;
+		else if (what.equals("gps"))	nmea2000.m_MON_GPS = value;
+		else if (what.equals("prop"))	nmea2000.m_MON_PROP = value;
+		else if (what.equals("bus"))	nmea2000.m_MON_BUS = value;
 		else
-			sog = val;
-		if (sog > 99)
-			sog = 99;
-		if (sog < 0)
-			sog = 0;
-
-		display(0,"SPEED (SOG) <= %0.1f",sog);
-		boat.setSOG(sog);
+			my_error("invalid monitor command(%s)=%d",what.c_str(),value);
 	}
-	else if (command == 'w')
+
+	// monadic commands
+
+	else if (lval.equals("l"))
+		nmea2000.listDevices();
+	else if (lval.equals("q"))
+		nmea2000.sendDeviceQuery();
+	else if (lval.equals("?"))
+		showHelp(0);
+	else if (lval.equals("help"))
+		showHelp(1);
+	else
 	{
-		int wp_num = boat.getWaypointNum();
-		int num_wps = boat.getNumWaypoints();
-
-		if (inc)
-			wp_num += (inc * val);
-		else
-			wp_num = val;
-
-		if (wp_num < 0)
-			wp_num = 0;
-		if (wp_num > num_wps - 1)
-			wp_num = num_wps - 1;
-
-		boat.setWaypointNum(wp_num);
+		my_error("unknown command: %s%s%s",
+			lval.c_str(),
+			got_equals?"=":"",
+			rval.c_str());
 	}
-	else if (command == 'j')
-	{
-		int wp_num = boat.getWaypointNum();
-		int num_wps = boat.getNumWaypoints();
 
-		// we presume that the waypoint we are leaving is
-		// the set waypoint-1
+}	// handleCommand()
 
-		wp_num--;
-		if (wp_num<0) wp_num = 0;
-
-		if (inc)
-			wp_num += (inc * val);
-		else
-			wp_num = val;
-
-		if (wp_num < 0)
-			wp_num = 0;
-		if (wp_num > num_wps - 1)
-			wp_num = num_wps - 1;
-
-		boat.jumpToWaypoint(wp_num);
-	}
-	else if (command == 'p')
-	{
-		boat.setRoute(orig_buf);
-	}
-}
 
 
 //------------------------------------------------
@@ -234,76 +302,29 @@ static void handleSerial()
 
 	if (Serial.available())
 	{
-		#define MAXCOMMAND	12
-
-		static int in_command = 0;
-		static int cmd_ptr = 0;
-		static char command[MAXCOMMAND+1];
-
-		int c = Serial.read();
-
-		if (in_command)
-		{
-			if (c == 0x0a || cmd_ptr==MAXCOMMAND)
-			{
-				command[cmd_ptr++] = 0;
-				handleCommand(in_command,command);
-				in_command = 0;
-				cmd_ptr = 0;
-			}
-			else if (c != 0x0d)
-			{
-				command[cmd_ptr++] = c;
-			}
-		}
-
-		// program specific
-
-		else if (c == '?')
-		{
-			usage();
-		}
-		/*
-		else if (c == 'i')
-		{
-			show_input = (show_input + 1) % 3;
-			display(0,"SHOW INPUT(%d)",show_input);
-		}
-		else if (c == 'o')
-		{
-			show_output = !show_output;
-			display(0,"SHOW OUTPUT(%d)",show_output);
-		}
-		*/
+		static String lval;
+		static String rval;
+		static bool got_equals;
 		
-		// simulator
+		char c = Serial.read();
 
-		else if (c == 'x')
+		if (c == 0x0a)
 		{
-			if (boat.running())
-				boat.stop();
+			handleCommand(lval.toLowerCase(),rval.toLowerCase(),got_equals);
+			lval = "";
+			rval = "";
+			got_equals = 0;
+		}
+		else if (c == '=')
+		{
+			got_equals = 1;
+		}
+		else if (c != 0x0d)
+		{
+			if (got_equals)
+				rval += c;
 			else
-				boat.start();
-		}
-		else if (c == 'y')
-		{
-			boat.init();
-		}
-		else if (c == 'a')
-		{
-			boat.setAutopilot(!boat.getAutopilot());
-		}
-		else if (c == 'r')
-		{
-			boat.setRouting(!boat.getRouting());
-		}
-		else if (c == 'g')
-		{
-			boat.setGenset(!boat.getGenset());
-		}
-		else if (c == 'h' || c == 's' || c == 'w' || c == 'j' || c == 'p')
-		{
-			in_command = c;
+				lval += c;
 		}
 	}
 }	// handleSerial()
@@ -316,7 +337,6 @@ static void handleSerial()
 
 void loop()
 {
-
 	#if TEST_RS232
 
 		static bool out_high = 1;
