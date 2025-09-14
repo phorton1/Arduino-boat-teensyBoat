@@ -67,6 +67,13 @@ pairs, with crlf (\r\n) line terminators:
 
 	LEFT_IDENTIFIER = RIGHT_VALUE\r\n
 
+### Program Control
+
+- **B=N** Sets (bitwise) binary interface
+- **DT=YYYY-MM-DD HH:MM:SS**	sets the RTC to the given date time (UTC)
+
+Binary just uses 1 for everything that is implemented
+
 
 ### Boat Control
 
@@ -108,6 +115,7 @@ The following set more of the boat state variables
 - **RPM=n** sets the engine RPMs to N; note this is overriden
   by any calls to setSOG, which sets the RPMS to 1800 if SOG>0,
   or 0 if the boat is not moving.
+- **GEN=0/1** starts and stops the genset.
 
 The following turn things on or off
 

@@ -8,6 +8,7 @@
 #include <instST.h>
 #include <inst0183.h>
 #include <inst2000.h>
+#include <boatBinary.h>
 
 
 // Teensy Pins Used
@@ -63,6 +64,7 @@ static void showHelp(bool detailed)
 	proc_entry();
 	display(0,"?              show condensed help",0);
 	display(0,"help           show detailed help",0);
+	display(0,"B=N            set binary mode",0);
 
 	display(0,"",0);
 	display(d,"Virtual Boat",0);
@@ -89,6 +91,7 @@ static void showHelp(bool detailed)
 	display(0,"RPM=n          Sets the engine RPMs to N",0);
 	display(d,"                   this is overriden by any calls to setSOG, which sets",0);
 	display(d,"                   RPMS to 1800 if SOG>0, or 0 if the boat is not moving.",0);
+	display(0,"GEN=0/1        Starts and stops the Genset",0);
 	display(0,"AP=1/0         Starts and stops the Autopilot",0);
 	display(d,"                   1 sets a heading to the target waypoint",0);
 	display(d,"                   0 also turns off Routing",0);
@@ -96,6 +99,7 @@ static void showHelp(bool detailed)
 	display(d,"                   1 turns on the autopilot, monitors for waypoint arrivals",0);
 	display(d,"                      and advances to the next waypoint upon completed arrival",0);
 	display(d,"                   0 turns off Routineg, but does not turn off autopilot",0);
+	display(d,"DT=YYYY-MM-DD HH:MM:SS	sets the RTC to the given date time (UTC)",0);
 
 	display(0,"",0);
 	display(0,"Virtual Instruments",0);
@@ -170,12 +174,17 @@ void setup()
 
 	#if 1
 		// hardwire the boat simulator to start running for initial testing
-		boat.jumpToWaypoint(1);
-		boat.setWaypointNum(2);
+		boat.setStartWPNum(1);
+		boat.setTargetWPNum(2);
 		boat.setSOG(90);
 		boat.setRouting(true);
-		// boat.start();
+		instruments.setAll(PORT_SEATALK,1);
+		// g_MON_ST = 1;
+		boat.start();
 	#endif
+	
+	display(0,"sizeof(float)=%d",sizeof(float));
+	display(0,"sizeof(double)=%d",sizeof(double));
 	
 	proc_leave();
 	display(0,"teensyBoat.ino  setup() finished",0);
@@ -194,7 +203,23 @@ static void handleCommand(String lval, String rval, bool got_equals)
 			got_equals?"=":"",
 			rval.c_str());
 
-	if (lval.equals("i"))
+	if (lval.equals('b'))
+	{
+		g_BINARY = rval.toInt();
+	}
+	else if (lval.equals("dt"))
+	{
+		// 0    5  8  11 14 17
+		// 2025-09-14 12:00:00
+		int year = rval.substring(0,4).toInt();
+		int month = rval.substring(5,7).toInt();
+		int day = rval.substring(8,10).toInt();
+		int hour = rval.substring(11,14).toInt();
+		int minute = rval.substring(14,16).toInt();
+		int second = rval.substring(17,19).toInt();
+		boat.setDateTime(year,month,day,hour,minute,second);
+	}
+	else if (lval.equals("i"))
 		boat.init();
 	else if (lval.equals("run"))
 		boat.start();
@@ -203,9 +228,9 @@ static void handleCommand(String lval, String rval, bool got_equals)
 	else if (lval.equals("route"))
 		boat.setRoute(rval.c_str());
 	else if (lval.equals("j"))
-		boat.jumpToWaypoint(rval.toInt());
+		boat.setStartWPNum(rval.toInt());
 	else if (lval.equals("wp"))
-		boat.setWaypointNum(rval.toInt());
+		boat.setTargetWPNum(rval.toInt());
 
 	else if (lval.equals("s"))
 		boat.setSOG(rval.toInt());
@@ -218,7 +243,9 @@ static void handleCommand(String lval, String rval, bool got_equals)
 	else if (lval.equals("ws"))
 		boat.setWindSpeed(rval.toInt());
 	else if (lval.equals("rpm"))
-		boat.setRPMS(rval.toInt());
+		boat.setRPM(rval.toInt());
+	else if (lval.equals("gen"))
+		boat.setGenset(rval.toInt());
 
 	else if (lval.equals("ap"))
 		boat.setAutopilot(rval.toInt());
