@@ -176,9 +176,9 @@ void setup()
 		// hardwire the boat simulator to start running for initial testing
 		boat.setStartWPNum(1);
 		boat.setTargetWPNum(2);
-		boat.setSOG(90);
+		boat.setSOG(1);
 		boat.setRouting(true);
-		instruments.setAll(PORT_SEATALK,1);
+		instruments.setAll(PORT_0183,1);
 		// g_MON_ST = 1;
 		boat.start();
 	#endif
