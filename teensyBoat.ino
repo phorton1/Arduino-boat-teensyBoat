@@ -55,6 +55,14 @@
 #define TEST_OUT2		14
 
 
+static void doExperiment(String rval)
+{
+	#if 1
+		sendNMEA0183Route(rval);
+	#endif
+}
+
+
 
 static void showHelp(bool detailed)
 {
@@ -62,6 +70,7 @@ static void showHelp(bool detailed)
 
 	display(0,"teensyBoat Help",0);
 	proc_entry();
+	display(0,"X			  experiment.  Blast an NMEA0183 route",0);
 	display(0,"?              show condensed help",0);
 	display(0,"help           show detailed help",0);
 	display(0,"B=N            set binary mode",0);
@@ -174,12 +183,19 @@ void setup()
 
 	#if 1
 		// hardwire the boat simulator to start running for initial testing
-		boat.setStartWPNum(1);
-		boat.setTargetWPNum(2);
-		boat.setSOG(1);
-		boat.setRouting(true);
-		instruments.setAll(PORT_0183,1);
+		#if 0
+			boat.setStartWPNum(1);
+			boat.setTargetWPNum(2);
+			boat.setSOG(1);
+			boat.setRouting(true);
+		#endif
+
+		instruments.setAll(PORT_SEATALK,1);
+		instruments.setAll(PORT_0183,0);
+
 		// g_MON_ST = 1;
+
+		g_BINARY = BINARY_TYPE_BOAT | BINARY_TYPE_ST;
 		boat.start();
 	#endif
 	
@@ -203,7 +219,11 @@ static void handleCommand(String lval, String rval, bool got_equals)
 			got_equals?"=":"",
 			rval.c_str());
 
-	if (lval.equals('b'))
+	if (lval.equals('x'))
+	{
+		doExperiment(rval);
+	}
+	else if (lval.equals('b'))
 	{
 		g_BINARY = rval.toInt();
 	}
