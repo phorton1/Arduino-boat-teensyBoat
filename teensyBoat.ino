@@ -190,13 +190,13 @@ void setup()
 			boat.setRouting(true);
 		#endif
 
-		instruments.setAll(PORT_SEATALK,1);
-		// instruments.setAll(PORT_0183,0);
+		// instruments.setAll(PORT_SEATALK,1);
+		instruments.setAll(PORT_0183,1);
 
 		// g_MON_ST = 1;
 
 		g_BINARY = BINARY_TYPE_BOAT | BINARY_TYPE_ST;
-		// boat.start();
+		boat.start();
 	#endif
 	
 	display(0,"sizeof(float)=%d",sizeof(float));
