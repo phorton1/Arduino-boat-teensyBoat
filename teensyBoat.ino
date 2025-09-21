@@ -112,6 +112,10 @@ static void showHelp(bool detailed)
 
 	display(0,"",0);
 	display(0,"Virtual Instruments",0);
+	display(0,"    LOAD = load the current instrument configuration to EEPROM",0);
+	display(0,"    SAVE = save the current instrument configuration to EEPROM",0);
+	display(0,"    STATE = return the state of the instrments via binary",0);
+
 	display(d,"",0);
 	display(d,"The instruments are turned off and on to the various protocols/ports",0);
 	display(d,"by a bitwise value",0);
@@ -186,16 +190,21 @@ void setup()
 		#if 0
 			boat.setStartWPNum(1);
 			boat.setTargetWPNum(2);
-			boat.setSOG(1);
-			boat.setRouting(true);
 		#endif
 
 		// instruments.setAll(PORT_SEATALK,1);
-		instruments.setAll(PORT_0183,1);
+		// instruments.setAll(PORT_0183,1);
 
 		// g_MON_ST = 1;
 
+		// I could lessen the binary traffic by turning these
+		// on in the window ctors, and turning them off in
+		// onClose() methods.
+		
 		g_BINARY = BINARY_TYPE_BOAT | BINARY_TYPE_ST;
+
+		// boat.setRouting(true);
+		// boat.setSOG(1);
 		boat.start();
 	#endif
 	
@@ -275,6 +284,12 @@ static void handleCommand(String lval, String rval, bool got_equals)
 	else if (lval.startsWith("i_"))
 	{
 		String inst = lval.substring(2);
+		uint16_t value = rval.toInt();
+		bool no_echo = value >= NO_ECHO_TO_PERL ? 1 : 0;
+		if (no_echo) value -= NO_ECHO_TO_PERL;
+
+		display(0,"inst=%s value=%d no_echo=%d",inst.c_str(),value,no_echo);
+
 		int inum =
 			inst.equals("depth") 	? 0 :
 			inst.equals("log") 		? 1 :
@@ -291,9 +306,9 @@ static void handleCommand(String lval, String rval, bool got_equals)
 		if (inum == -1)
 			my_error("invalid instrument(%s)",inst.c_str());
 		else if (inum<100)
-			instruments.setPorts(inum,rval.toInt());
+			instruments.setPorts(inum,value,no_echo);
 		else
-			instruments.setAll(inum-100,rval.toInt());
+			instruments.setAll(inum-100,value,no_echo);
 	}
 
 	// monitor temporary implementation
@@ -318,6 +333,12 @@ static void handleCommand(String lval, String rval, bool got_equals)
 	}
 
 	// monadic commands
+	else if (lval.equals("load"))
+		instruments.loadFromEEPROM();
+	else if (lval.equals("save"))
+		instruments.saveToEEPROM();
+	else if (lval.equals("state"))
+		instruments.sendBinaryState();
 
 	else if (lval.equals("l"))
 		nmea2000.listDevices();

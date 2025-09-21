@@ -179,6 +179,23 @@ There is also a verb to turn all instruments on or off for a given port
 - ? = show commands
 - help = show detailed help
 
+- LOAD = load the current instrument configuration to EEPROM
+- SAVE = save the current instrument configuration to EEPROM
+- STATE = return the state of the instrments via binary
+
+The state of the istruments is sent to the perl application
+when it requests it at startup with the STATE command which
+returns $BINARY_TYPE_PROG packet of the instrument states.
+
+Normal I_ commands on the serial console send the
+$BINARY_TYPE_PROG packet whenever the instrument states change.
+
+The perl application sends I_ instrument commands
+with 10000 added so the INO wont echo the PERL changes it.
+Otherwise,
+
+
+
 ### Initial Monitor Command and Implementation
 
 Utilize the existing text monitoring capabilities, with the addition
