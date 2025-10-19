@@ -89,14 +89,21 @@ static void showHelp(bool detailed)
 	display(0,"WP=n           Sets the target waypoint to the Nth waypoint",0);
 	display(d,"                   Sets the heading to point to the waypoint, does not affect",0);
 	display(d,"                   SOG, autopilot or routing",0);
-	display(0,"S=n            IMPORTANT: Sets the boat's SOG to N knots, and is required",0);
-	display(d,"                   for the virtual boat to start moving",0);
-	display(0,"H=n            Sets the boats heading to N true degrees",0);
+
+	display(0,"D=n            Sets the depth of water to N feet",0);
+	display(0,"H=n            Sets the boats Heading to N true degrees",0);
 	display(d,"                   if the autopilot is running, this will be overriden",0);
 	display(d,"                   in the next timeslice",0);
-	display(0,"D=n            Sets the depth of water to N feet",0);
+	display(0,"S=n            Sets the boat's Speed Through the Water to N knots, and may be required",0);
+	display(d,"                   for the virtual boat to start moving",0);
+	display(0,"CS=n           Sets the Current Set (angle) to N degrees True",0);
+	display(0,"CD=n           Sets the Current Drift (speed) to N knots Absolute",0);
 	display(0,"WA=n           Sets the true wind angle to N degrees",0);
 	display(0,"WS=n           Sets the true wind speed to N knots",0);
+	display(0,"DH=n           Sets the AP desired heading to N true degrees",0);
+	display(d,"                   if routing, this will be overriden",0);
+	display(d,"                   in the next timeslice",0);
+
 	display(0,"RPM=n          Sets the engine RPMs to N",0);
 	display(d,"                   this is overriden by any calls to setSOG, which sets",0);
 	display(d,"                   RPMS to 1800 if SOG>0, or 0 if the boat is not moving.",0);
@@ -261,10 +268,18 @@ static void handleCommand(String lval, String rval, bool got_equals)
 	else if (lval.equals("wp"))
 		boat.setTargetWPNum(rval.toInt());
 
-	else if (lval.equals("s"))
-		boat.setSOG(rval.toInt());
+
 	else if (lval.equals("h"))
-		boat.setCOG(rval.toInt());
+		boat.setHeading(rval.toInt());
+	else if (lval.equals("dh"))
+		boat.setDesiredHeading(rval.toInt());
+	else if (lval.equals("s"))
+		boat.setWaterSpeed(rval.toInt());
+	else if (lval.equals("cs"))
+		boat.setCurrentSet(rval.toInt());
+	else if (lval.equals("cd"))
+		boat.setCurrentDrift(rval.toInt());
+
 	else if (lval.equals("d"))
 		boat.setDepth(rval.toInt());
 	else if (lval.equals("wa"))
