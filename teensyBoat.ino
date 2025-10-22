@@ -215,9 +215,6 @@ void setup()
 		boat.start();
 	#endif
 	
-	display(0,"sizeof(float)=%d",sizeof(float));
-	display(0,"sizeof(double)=%d",sizeof(double));
-	
 	proc_leave();
 	display(0,"teensyBoat.ino  setup() finished",0);
 	display(0,"type ?<enter> for help",0);
