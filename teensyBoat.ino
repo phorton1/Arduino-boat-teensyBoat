@@ -90,6 +90,17 @@ static void showHelp(bool detailed)
 	display(d,"                   Sets the heading to point to the waypoint, does not affect",0);
 	display(d,"                   SOG, autopilot or routing",0);
 
+	display(0,"AP=1/0         Starts and stops the Autopilot",0);
+	display(d,"                   1 sets a heading to the target waypoint",0);
+	display(d,"                   0 also turns off Routing",0);
+	display(0,"R=1/0          Starts and stops Routing",0);
+	display(d,"                   1 turns on the autopilot, monitors for waypoint arrivals",0);
+	display(d,"                      and advances to the next waypoint upon completed arrival",0);
+	display(d,"                   0 turns off Routineg, but does not turn off autopilot",0);
+
+	display(0,"TRIP=N         Set the Trip Distance",0);
+	display(0,"TRIP_ON=1/0    Turn the Trip Odometer on/off",0);
+
 	display(0,"D=n            Sets the depth of water to N feet",0);
 	display(0,"H=n            Sets the boats Heading to N true degrees",0);
 	display(d,"                   if the autopilot is running, this will be overriden",0);
@@ -108,13 +119,7 @@ static void showHelp(bool detailed)
 	display(d,"                   this is overriden by any calls to setSOG, which sets",0);
 	display(d,"                   RPMS to 1800 if SOG>0, or 0 if the boat is not moving.",0);
 	display(0,"GEN=0/1        Starts and stops the Genset",0);
-	display(0,"AP=1/0         Starts and stops the Autopilot",0);
-	display(d,"                   1 sets a heading to the target waypoint",0);
-	display(d,"                   0 also turns off Routing",0);
-	display(0,"R=1/0          Starts and stops Routing",0);
-	display(d,"                   1 turns on the autopilot, monitors for waypoint arrivals",0);
-	display(d,"                      and advances to the next waypoint upon completed arrival",0);
-	display(d,"                   0 turns off Routineg, but does not turn off autopilot",0);
+
 	display(d,"DT=YYYY-MM-DD HH:MM:SS	sets the RTC to the given date time (UTC)",0);
 
 	display(0,"",0);
@@ -252,6 +257,7 @@ static void handleCommand(String lval, String rval, bool got_equals)
 		int second = rval.substring(17,19).toInt();
 		boat.setDateTime(year,month,day,hour,minute,second);
 	}
+
 	else if (lval.equals("i"))
 		boat.init();
 	else if (lval.equals("run"))
@@ -265,7 +271,18 @@ static void handleCommand(String lval, String rval, bool got_equals)
 	else if (lval.equals("wp"))
 		boat.setTargetWPNum(rval.toInt());
 
+	else if (lval.equals("ap"))
+		boat.setAutopilot(rval.toInt());
+	else if (lval.equals("r"))
+		boat.setRouting(rval.toInt());
 
+	else if (lval.equals("trip"))
+		boat.setTripDistance(rval.toInt());
+	else if (lval.equals("trip_on"))
+		boat.setTripOn(rval.toInt());
+
+	else if (lval.equals("d"))
+		boat.setDepth(rval.toInt());
 	else if (lval.equals("h"))
 		boat.setHeading(rval.toInt());
 	else if (lval.equals("dh"))
@@ -277,21 +294,16 @@ static void handleCommand(String lval, String rval, bool got_equals)
 	else if (lval.equals("cd"))
 		boat.setCurrentDrift(rval.toInt());
 
-	else if (lval.equals("d"))
-		boat.setDepth(rval.toInt());
 	else if (lval.equals("wa"))
 		boat.setWindAngle(rval.toInt());
 	else if (lval.equals("ws"))
 		boat.setWindSpeed(rval.toInt());
+
 	else if (lval.equals("rpm"))
 		boat.setRPM(rval.toInt());
 	else if (lval.equals("gen"))
 		boat.setGenset(rval.toInt());
 
-	else if (lval.equals("ap"))
-		boat.setAutopilot(rval.toInt());
-	else if (lval.equals("r"))
-		boat.setRouting(rval.toInt());
 
 	else if (lval.startsWith("i_"))
 	{
