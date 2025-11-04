@@ -74,6 +74,9 @@ static void showHelp(bool detailed)
 	display(0,"?              show condensed help",0);
 	display(0,"help           show detailed help",0);
 	display(0,"B=N            set binary mode",0);
+	display(0,"LOAD           get instrument setup from EEPROM",0);
+	display(0,"SAVE           save instrument setup to EEPROM",0);
+	display(0,"STATE          send binary 'state' message",0);
 
 	display(0,"",0);
 	display(d,"Virtual Boat",0);
@@ -109,8 +112,10 @@ static void showHelp(bool detailed)
 	display(d,"                   for the virtual boat to start moving",0);
 	display(0,"CS=n           Sets the Current Set (angle) to N degrees True",0);
 	display(0,"CD=n           Sets the Current Drift (speed) to N knots Absolute",0);
+
 	display(0,"WA=n           Sets the true wind angle to N degrees",0);
 	display(0,"WS=n           Sets the true wind speed to N knots",0);
+
 	display(0,"DH=n           Sets the AP desired heading to N true degrees",0);
 	display(d,"                   if routing, this will be overriden",0);
 	display(d,"                   in the next timeslice",0);
@@ -165,6 +170,13 @@ static void showHelp(bool detailed)
 	display(0,"M_GPS  = 1/0  separatly monitor known NMEA2000 GPS messages",0);
 	display(0,"M_PROP = 1/0  monitor known NMEA2000 proprietary messages",0);
 	display(0,"M_BUS  = 1/0  monitor any other unhandled bus messages",0);
+
+	display(0,"",0);
+	display(d,"NMEA2000 specific",0);
+	display(d,"",0);
+
+	display(0,"L 	monidic command to Show NMEA2000 Device List",0);
+	display(0,"Q    monidic command to  Query NMEA2000 Devices",0);
 
 	proc_leave();
 }
@@ -285,8 +297,6 @@ static void handleCommand(String lval, String rval, bool got_equals)
 		boat.setDepth(rval.toInt());
 	else if (lval.equals("h"))
 		boat.setHeading(rval.toInt());
-	else if (lval.equals("dh"))
-		boat.setDesiredHeading(rval.toInt());
 	else if (lval.equals("s"))
 		boat.setWaterSpeed(rval.toInt());
 	else if (lval.equals("cs"))
@@ -298,6 +308,10 @@ static void handleCommand(String lval, String rval, bool got_equals)
 		boat.setWindAngle(rval.toInt());
 	else if (lval.equals("ws"))
 		boat.setWindSpeed(rval.toInt());
+
+	else if (lval.equals("dh"))
+		boat.setDesiredHeading(rval.toInt());
+
 
 	else if (lval.equals("rpm"))
 		boat.setRPM(rval.toInt());
