@@ -15,12 +15,12 @@
 //
 // 23 - CRX from CANBUS module
 // 22 - CTX to CANBUS module
-// 7  - RX2
-// 8  - TX2
-// 15 - RX3 breadboard Seatalk / initial_board NMEA0813
-// 14 - TX3 breadboard Seatalk / initial_board NMEA0813
-// 16 - RX4 breadboard NMEA0183 / initial_board Seatalk
-// 17 - TX4 breadboard NMEA0183 / initial_board Seatalk
+// 7  - RX2 breadboard Seatalk
+// 8  - TX2 breadboard Seatalk
+// 15 - RX3 breadboard NMEA0183-1 / initial_board NMEA0813-1
+// 14 - TX3 breadboard NMEA0183-1 / initial_board NMEA0813-1
+// 16 - RX4 breadboard NMEA0183-2 / initial_board Seatalk
+// 17 - TX4 breadboard NMEA0183-2 / initial_board Seatalk
 //
 // 4  - SPEED_PULSE out for testing ST50 lOG instrument
 // 5  - WIND_PULSE out for testing ST50 WIND instrument
@@ -30,7 +30,7 @@
 // 3  - T_CS (I think this was supposed to be 5)
 // 9  - LCD_DC
 // 10 - LCD_CS
-// 11 - MISO
+// 11 - MISO	(breadboard SPEAD/WIND pulse
 // 12 - MOSI
 // 13 - SCLK	(breadboard ALIVE_LED)
 //
