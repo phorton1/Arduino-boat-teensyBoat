@@ -55,14 +55,6 @@
 #define TEST_OUT2		14
 
 
-static void doExperiment(String rval)
-{
-	#if 1
-		sendNMEA0183Route(rval);
-	#endif
-}
-
-
 
 static void showHelp(bool detailed)
 {
@@ -70,7 +62,6 @@ static void showHelp(bool detailed)
 
 	display(0,"teensyBoat Help",0);
 	proc_entry();
-	display(0,"X			  experiment.  Blast an NMEA0183 route",0);
 	display(0,"?              show condensed help",0);
 	display(0,"help           show detailed help",0);
 	display(0,"B=N            set binary mode",0);
@@ -154,7 +145,8 @@ static void showHelp(bool detailed)
 	display(d,"All instruments can be turned on or off for a given port/protocol",0);
 	display(d,"",0);
 	display(0,"I_ST       = 1/0",0);
-	display(0,"I_0183     = 1/0",0);
+	display(0,"I_83A      = 1/0",0);
+	display(0,"I_83B      = 1/0",0);
 	display(0,"I_2000     = 1/0",0);
 
 	display(0,"",0);
@@ -162,21 +154,31 @@ static void showHelp(bool detailed)
 	display(d,"",0);
 
 	display(0,"M_SIM  = n    simulator debugging level, default=1",0);
-	display(0,"M_OUT  = 1/0  monitor outbound instrument messages",0);
+	// display(0,"M_OUT  = 1/0  monitor outbound instrument messages",0);
 	display(0,"M_ST   = 1/0  monitor all incoming Seatalk messags",0);
-	display(0,"M_0183 = 1/0  monitor all incoming NMEA0183 messages",0);
-	display(0,"M_AIS  = 1/0  monitor incoming NMEA0183 AIS messages",0);
+	display(0,"M_83A  = 1/0  monitor NMEA0183 messages",0);
+	display(0,"M_83B  = 1/0  monitor NMEA0183 messages",0);
+	display(0,"              0x01 = all in/out",0);
+	display(0,"              0x02 = ais in only",0);
 	display(0,"M_2000 = 1/0  monitor known NMEA2000 sensor messages",0);
-	display(0,"M_GPS  = 1/0  separatly monitor known NMEA2000 GPS messages",0);
-	display(0,"M_PROP = 1/0  monitor known NMEA2000 proprietary messages",0);
-	display(0,"M_BUS  = 1/0  monitor any other unhandled bus messages",0);
+	display(0,"              0x01	= sensors out, known messages in",0);
+	display(0,"              0x02 = GPS/AIS specifically",0);
+	display(0,"              0x04 = known proprietary in",0);
+	display(0,"              0x08 = unknown (not busi.e. proprietary) in",0);
+	display(0,"              0x10 = BUS in",0);
+	display(0,"              0x20 = BUS out",0);
+
+	display(0,"",0);
+	display(d,"NMEA0183 specific",0);
+	display(d,"",0);
+	display(0,"FWD = 0..2	0=none, 1=A to B, 2=B to A",0);
 
 	display(0,"",0);
 	display(d,"NMEA2000 specific",0);
 	display(d,"",0);
 
-	display(0,"L 	monidic command to Show NMEA2000 Device List",0);
-	display(0,"Q    monidic command to  Query NMEA2000 Devices",0);
+	display(0,"L 	monadic command to Show NMEA2000 Device List",0);
+	display(0,"Q    monadic command to  Query NMEA2000 Devices",0);
 
 	proc_leave();
 }
@@ -198,19 +200,13 @@ void setup()
 	display(0,"teensyBoat.ino setup() started",0);
 	proc_entry();
 
-	#if TEST_RS232
-		pinMode(TEST_OUT1,OUTPUT);
-		pinMode(TEST_IN1,INPUT_PULLUP);
-		pinMode(TEST_OUT2,OUTPUT);
-		pinMode(TEST_IN2,INPUT_PULLUP);
-		digitalWrite(TEST_OUT1,1);
-		digitalWrite(TEST_OUT2,1);
-	#else
-		instruments.init();
-	#endif
+	// initialize instrumetns
 
+	instruments.init();
+
+	// hardwire the boat simulator to start running for initial testing
+	
 	#if 1
-		// hardwire the boat simulator to start running for initial testing
 		#if 0
 			boat.setStartWPNum(1);
 			boat.setTargetWPNum(2);
@@ -249,11 +245,7 @@ static void handleCommand(String lval, String rval, bool got_equals)
 			got_equals?"=":"",
 			rval.c_str());
 
-	if (lval.equals('x'))
-	{
-		doExperiment(rval);
-	}
-	else if (lval.equals('b'))
+	if (lval.equals('b'))
 	{
 		g_BINARY = rval.toInt();
 	}
@@ -318,6 +310,7 @@ static void handleCommand(String lval, String rval, bool got_equals)
 	else if (lval.equals("gen"))
 		boat.setGenset(rval.toInt());
 
+	// instruments
 
 	else if (lval.startsWith("i_"))
 	{
@@ -339,8 +332,9 @@ static void handleCommand(String lval, String rval, bool got_equals)
 			inst.equals("eng") 		? 7 :
 			inst.equals("gen") 		? 8 :
 			inst.equals("st")		? 100 :
-			inst.equals("0183")		? 101 :
-			inst.equals("2000")		? 102 : -1;
+			inst.equals("83a")		? 101 :
+			inst.equals("83b")		? 102 :
+			inst.equals("2000")		? 103 : -1;
 		if (inum == -1)
 			my_error("invalid instrument(%s)",inst.c_str());
 		else if (inum<100)
@@ -349,25 +343,37 @@ static void handleCommand(String lval, String rval, bool got_equals)
 			instruments.setAll(inum-100,value,no_echo);
 	}
 
-	// monitor temporary implementation
+	// monitor
 
 	else if (lval.startsWith("m_"))
 	{
 		String what = lval.substring(2);
 		int value = rval.toInt();
-		display(0,0,"monitor %s=%d",what.c_str(),value);
+		display(0,"monitor %s=%d",what.c_str(),value);
 
 		if (what.equals("sim"))			boat.g_MON_SIM = value;
-		else if (what.equals("out"))	instruments.g_MON_OUT = value;
-		else if (what.equals("st"))		g_MON_ST = value;
-		else if (what.equals("0183"))	g_MON_0183 = value;
-		else if (what.equals("ais"))	g_MON_AIS = value;
-		else if (what.equals("2000"))	nmea2000.m_MON_SENSORS = value;
-		else if (what.equals("gps"))	nmea2000.m_MON_GPS = value;
-		else if (what.equals("prop"))	nmea2000.m_MON_PROP = value;
-		else if (what.equals("bus"))	nmea2000.m_MON_BUS = value;
+			// 0..4 = details about boat simulator calculations
+
+		else if (what.equals("st"))		instruments.g_MON[PORT_ST] = value;
+		else if (what.equals("83a"))	instruments.g_MON[PORT_83A] = value;
+		else if (what.equals("83b"))	instruments.g_MON[PORT_83B] = value;
+		else if (what.equals("2000"))	instruments.g_MON[PORT_2000] = value;
 		else
 			my_error("invalid monitor command(%s)=%d",what.c_str(),value);
+	}
+
+	// forwarding
+
+	else if (lval.equals("fwd"))
+	{
+		int value = rval.toInt();
+		display(0,"FWD=%d",value);
+		if (value == 0 ||
+			value == 1 ||
+			value == 2)
+			instruments.g_FWD = value;
+		else
+			my_error("invalid FWD value=%d",value);
 	}
 
 	// monadic commands
