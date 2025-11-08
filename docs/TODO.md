@@ -1,29 +1,25 @@
 # teensyBoat.ino
 
+TODO: I probably want to add a virtual AIS instrument, particularly
+to the degree that I can already parse NMEA0183 and NMEA2000 AIS
+messages, and for completeness, want to consider "BUS" messages to
+be any messages that are not to "known" instruments (known and
+sent NMEA2000 PGNS, NMEA0183 or Seatalk sentences).
 
-A does-it-all teensy4.0 based NMEA2000, NMEA0183, and Seatalk box
-with a corresponding optional MSWindows wxPerl/console User Interface.
 
-- Protocol Monitor for all three protocols
-- Physical Boat Simulator
-- Simulated Instruments (Protocol Simulator) for all three protocols
-- ST50 Instrument Testing
-- Can be used with a serial monitor, like Putty (or Buddy) or,
-  more completely, with the custom built, (installable), MSWindows
-  UI program.
+A does-it-all NMEA2000, NMEA0183, Seatalk box.
+
+- Protocol Monitor for Boat
+- Protocol Simulator for Desktop testing
+- Also sends ST50 pulses to test Log and Wind instruments
 
 **teensyBoat.ino** electrically attaches to the various protocols
 using modules or onboard circutry:
 
 - NMEA2000 uses SN65HVD230 CANBUS Transceiver Module
-  to act as the bus itself, with a jumper for the terminating
-  resistor(s), or as a "drop", without the terminating resistor(s).
-- NMEA0183 uses a dual MAX3232 Serial Module to provide
-  two NMEA0183 ports with optional forwarding between them
+- NMEA0183 uses two MAX3232 Serial Modules (at this time)
 - Seatalk uses onboard opto-isolator circut to connect to Seatalk Junction Box
 - Pulse Output is used in addition to Seatalk connector to ST50 device
-- Works on the boat passively (without the Teensy running),
-  in-vitro, based on a single NMEA0183 forwarding jumper
 
 teensyBoat.ino makes use of the **Arduino-libraries-Boat** library
 
@@ -164,7 +160,7 @@ the NMEA0183 output channel.  The instruments are as follows:
 - I_WIND
 - I_COMPASS
 - I_GPS
-- I_AIS 
+- I_AIS
 - I_AP
 - I_ENG
 - I_GEN
@@ -444,12 +440,3 @@ I would have to wait to make a "real" "boat" version of this PCB.
 The alternative is to redesign/add to the current teensy breadboard
 with wires to pheonix 3.81 connectors like before, making the desktop
 situation complicated.
-
-
-
-
-
-
-
-
-

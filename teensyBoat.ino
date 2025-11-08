@@ -15,8 +15,10 @@
 //
 // 23 - CRX from CANBUS module
 // 22 - CTX to CANBUS module
-// 7  - RX2 breadboard Seatalk
-// 8  - TX2 breadboard Seatalk
+// 0  - RX1 breadboard Seatalk1
+// 1  = TX1 breadboard Seatalk1
+// 7  - RX2 breadboard Seatalk2
+// 8  - TX2 breadboard Seatalk2
 // 15 - RX3 breadboard NMEA0183-1 / initial_board NMEA0813-1
 // 14 - TX3 breadboard NMEA0183-1 / initial_board NMEA0813-1
 // 16 - RX4 breadboard NMEA0183-2 / initial_board Seatalk
