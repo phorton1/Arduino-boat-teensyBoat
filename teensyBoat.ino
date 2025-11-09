@@ -15,14 +15,14 @@
 //
 // 23 - CRX from CANBUS module
 // 22 - CTX to CANBUS module
-// 0  - RX1 breadboard Seatalk1
-// 1  = TX1 breadboard Seatalk1
-// 7  - RX2 breadboard Seatalk2
-// 8  - TX2 breadboard Seatalk2
-// 15 - RX3 breadboard NMEA0183-1 / initial_board NMEA0813-1
-// 14 - TX3 breadboard NMEA0183-1 / initial_board NMEA0813-1
-// 16 - RX4 breadboard NMEA0183-2 / initial_board Seatalk
-// 17 - TX4 breadboard NMEA0183-2 / initial_board Seatalk
+// 0  - RX1 Seatalk1
+// 1  = TX1 Seatalk1
+// 7  - RX2 Seatalk2
+// 8  - TX2 Seatalk2
+// 15 - RX3 NMEA0183A
+// 14 - TX3 NMEA0183A
+// 16 - RX4 NMEA0183B
+// 17 - TX4 NMEA0183B
 //
 // 4  - SPEED_PULSE out for testing ST50 lOG instrument
 // 5  - WIND_PULSE out for testing ST50 WIND instrument
@@ -38,7 +38,7 @@
 //
 // 2 - ALIVE_LED (initial_board)
 
-#if BREADBOARD
+#if 1
 	#define ALIVE_LED		13
 #else
 	#define ALIVE_LED		2
@@ -157,12 +157,15 @@ static void showHelp(bool detailed)
 
 	display(0,"M_SIM  = n    simulator debugging level, default=1",0);
 	// display(0,"M_OUT  = 1/0  monitor outbound instrument messages",0);
-	display(0,"M_ST   = 1/0  monitor all incoming Seatalk messags",0);
-	display(0,"M_83A  = 1/0  monitor NMEA0183 messages",0);
-	display(0,"M_83B  = 1/0  monitor NMEA0183 messages",0);
+	display(0,"M_ST1  = N    monitor Seatalk messags",0);
+	display(0,"M_ST2  = N    monitor Seatalk messags",0);
+	display(0,"              >= 1 = all in/out",0);
+	display(0,"              >= 4 = with debugging",0);
+	display(0,"M_83A  = N    monitor NMEA0183 messages",0);
+	display(0,"M_83B  = N    monitor NMEA0183 messages",0);
 	display(0,"              0x01 = all in/out",0);
 	display(0,"              0x02 = ais in only",0);
-	display(0,"M_2000 = 1/0  monitor known NMEA2000 sensor messages",0);
+	display(0,"M_2000 = N    monitor known NMEA2000 sensor messages",0);
 	display(0,"              0x01	= sensors out, known messages in",0);
 	display(0,"              0x02 = GPS/AIS specifically",0);
 	display(0,"              0x04 = known proprietary in",0);
@@ -214,16 +217,11 @@ void setup()
 			boat.setTargetWPNum(2);
 		#endif
 
-		// instruments.setAll(PORT_SEATALK,1);
-		// instruments.setAll(PORT_0183,1);
-
-		// g_MON_ST = 1;
-
 		// I could lessen the binary traffic by turning these
 		// on in the window ctors, and turning them off in
 		// onClose() methods.
 		
-		g_BINARY = BINARY_TYPE_BOAT | BINARY_TYPE_ST;
+		g_BINARY = BINARY_TYPE_BOAT | BINARY_TYPE_ST1 | BINARY_TYPE_ST2;
 
 		// boat.setRouting(true);
 		// boat.setSOG(1);
@@ -333,10 +331,11 @@ static void handleCommand(String lval, String rval, bool got_equals)
 			inst.equals("ap") 		? 6 :
 			inst.equals("eng") 		? 7 :
 			inst.equals("gen") 		? 8 :
-			inst.equals("st")		? 100 :
-			inst.equals("83a")		? 101 :
-			inst.equals("83b")		? 102 :
-			inst.equals("2000")		? 103 : -1;
+			inst.equals("st1")		? 100 :
+			inst.equals("st2")		? 101 :
+			inst.equals("83a")		? 102 :
+			inst.equals("83b")		? 103 :
+			inst.equals("2000")		? 104 : -1;
 		if (inum == -1)
 			my_error("invalid instrument(%s)",inst.c_str());
 		else if (inum<100)
@@ -356,7 +355,8 @@ static void handleCommand(String lval, String rval, bool got_equals)
 		if (what.equals("sim"))			boat.g_MON_SIM = value;
 			// 0..4 = details about boat simulator calculations
 
-		else if (what.equals("st"))		instruments.g_MON[PORT_ST] = value;
+		else if (what.equals("st1"))	instruments.g_MON[PORT_ST1] = value;
+		else if (what.equals("st2"))	instruments.g_MON[PORT_ST2] = value;
 		else if (what.equals("83a"))	instruments.g_MON[PORT_83A] = value;
 		else if (what.equals("83b"))	instruments.g_MON[PORT_83B] = value;
 		else if (what.equals("2000"))	instruments.g_MON[PORT_2000] = value;
@@ -369,13 +369,8 @@ static void handleCommand(String lval, String rval, bool got_equals)
 	else if (lval.equals("fwd"))
 	{
 		int value = rval.toInt();
-		display(0,"FWD=%d",value);
-		if (value == 0 ||
-			value == 1 ||
-			value == 2)
-			instruments.g_FWD = value;
-		else
-			my_error("invalid FWD value=%d",value);
+		display(1,"fwd=%d",value);
+		instruments.setFWD(value);
 	}
 
 	// monadic commands
