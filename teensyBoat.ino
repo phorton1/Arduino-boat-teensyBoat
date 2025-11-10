@@ -9,6 +9,8 @@
 #include <inst0183.h>
 #include <inst2000.h>
 #include <boatBinary.h>
+#include <instST.h>
+#include <inst0183.h>
 
 
 // Teensy Pins Used
@@ -47,14 +49,25 @@
 #define ALIVE_ON_TIME	20
 
 
-// Output a slow square waves, and monitor the inputs, on the two
-// NMEA Serial ports. Used to test the MAX3232 board.
+#define PIN_SPEED_PULSE	 4
+	// set this to zero to turn the feature off
+#if PIN_SPEED_PULSE
+	static bool speed_pulses_on = 1;
+	static float last_pulse_speed = -1;
+	static bool pulse_state = false;
+	static unsigned long last_pulse_toggle = 0;
+	static uint32_t pulse_interval_ms = 0;
 
-#define TEST_RS232   	0
-#define TEST_IN1		7
-#define TEST_OUT1		8
-#define TEST_IN2		15
-#define TEST_OUT2		14
+	void initSpeedPulse()
+	{
+		pinMode(PIN_SPEED_PULSE,OUTPUT);
+		digitalWrite(PIN_SPEED_PULSE,0);
+		last_pulse_speed = -1;
+		pulse_state = false;
+		last_pulse_toggle = 0;
+		pulse_interval_ms = 0;
+	}
+#endif
 
 
 
@@ -130,9 +143,11 @@ static void showHelp(bool detailed)
 	display(d,"The instruments are turned off and on to the various protocols/ports",0);
 	display(d,"by a bitwise value",0);
 	display(0,"    0 = off",0);
-	display(0,"    1 = Seatalk",0);
-	display(0,"    2 = NMEA0183",0);
-	display(0,"    4 = NMEA2000",0);
+	display(0,"    0x01 = Seatalk1",0);
+	display(0,"    0x02 = Seatalk2",0);
+	display(0,"    0x04 = NMEA0183A",0);
+	display(0,"    0x08 = NMEA0183B",0);
+	display(0,"    0x10 = NMEA2000",0);
 	display(0,"",0);
 	display(0,"I_DEPTH    = bitwise",0);
 	display(0,"I_LOG      = bitwise",0);
@@ -146,7 +161,8 @@ static void showHelp(bool detailed)
 	display(d,"",0);
 	display(d,"All instruments can be turned on or off for a given port/protocol",0);
 	display(d,"",0);
-	display(0,"I_ST       = 1/0",0);
+	display(0,"I_ST1      = 1/0",0);
+	display(0,"I_ST2      = 1/0",0);
 	display(0,"I_83A      = 1/0",0);
 	display(0,"I_83B      = 1/0",0);
 	display(0,"I_2000     = 1/0",0);
@@ -174,9 +190,15 @@ static void showHelp(bool detailed)
 	display(0,"              0x20 = BUS out",0);
 
 	display(0,"",0);
-	display(d,"NMEA0183 specific",0);
+	display(d,"Forwarding",0);
 	display(d,"",0);
-	display(0,"FWD = 0..2	0=none, 1=A to B, 2=B to A",0);
+	display(0,"FWD  = N      0=none",0);
+	display(0,"              0x01 = Port ST1 to ST2",0);
+	display(0,"              0x02 = Port ST2 to ST1",0);
+	display(0,"              0x20 = Port 83A to 83B",0);
+	display(0,"              0x20 = Port 83B to 83A",0);
+	display(0,"E80_FILTER=N  turning this on stops GSA,GLL,and RMC from being forwarded",0);
+	display(0,"               from 83A to 83B because they KILL the GX2410's GPS!",0);
 
 	display(0,"",0);
 	display(d,"NMEA2000 specific",0);
@@ -185,6 +207,14 @@ static void showHelp(bool detailed)
 	display(0,"L 	monadic command to Show NMEA2000 Device List",0);
 	display(0,"Q    monadic command to  Query NMEA2000 Devices",0);
 
+
+	display(0,"",0);
+	display(d,"ST50 Specific & Testing",0);
+	display(d,"",0);
+	display(0,"LAMP =0..3           Sends lamp messages to all ST ports",0);
+#if PIN_SPEED_PULSE
+	display(0,"SPEED_PULSE = 0/1  	Turns the SPEED pulse generator on and off",0);
+#endif
 	proc_leave();
 }
 
@@ -205,6 +235,13 @@ void setup()
 	display(0,"teensyBoat.ino setup() started",0);
 	proc_entry();
 
+	// ST50 instrument test initialization
+
+	#if PIN_SPEED_PULSE
+		initSpeedPulse();
+	#endif
+
+	
 	// initialize instrumetns
 
 	instruments.init();
@@ -237,6 +274,13 @@ void setup()
 //--------------------------------------------------
 // handleCommand()
 //--------------------------------------------------
+
+uint16_t hexOrUint(const String &str)
+	// // base 0 auto-detects "0x" prefix
+{
+	return strtol(str.c_str(), nullptr, 0);
+}
+
 
 static void handleCommand(String lval, String rval, bool got_equals)
 {
@@ -281,28 +325,28 @@ static void handleCommand(String lval, String rval, bool got_equals)
 		boat.setRouting(rval.toInt());
 
 	else if (lval.equals("trip"))
-		boat.setTripDistance(rval.toInt());
+		boat.setTripDistance(rval.toFloat());
 	else if (lval.equals("trip_on"))
 		boat.setTripOn(rval.toInt());
 
 	else if (lval.equals("d"))
-		boat.setDepth(rval.toInt());
+		boat.setDepth(rval.toFloat());
 	else if (lval.equals("h"))
-		boat.setHeading(rval.toInt());
+		boat.setHeading(rval.toFloat());
 	else if (lval.equals("s"))
-		boat.setWaterSpeed(rval.toInt());
+		boat.setWaterSpeed(rval.toFloat());
 	else if (lval.equals("cs"))
-		boat.setCurrentSet(rval.toInt());
+		boat.setCurrentSet(rval.toFloat());
 	else if (lval.equals("cd"))
-		boat.setCurrentDrift(rval.toInt());
+		boat.setCurrentDrift(rval.toFloat());
 
 	else if (lval.equals("wa"))
-		boat.setWindAngle(rval.toInt());
+		boat.setWindAngle(rval.toFloat());
 	else if (lval.equals("ws"))
-		boat.setWindSpeed(rval.toInt());
+		boat.setWindSpeed(rval.toFloat());
 
 	else if (lval.equals("dh"))
-		boat.setDesiredHeading(rval.toInt());
+		boat.setDesiredHeading(rval.toFloat());
 
 
 	else if (lval.equals("rpm"))
@@ -315,11 +359,9 @@ static void handleCommand(String lval, String rval, bool got_equals)
 	else if (lval.startsWith("i_"))
 	{
 		String inst = lval.substring(2);
-		uint16_t value = rval.toInt();
-		bool no_echo = value >= NO_ECHO_TO_PERL ? 1 : 0;
-		if (no_echo) value -= NO_ECHO_TO_PERL;
+		uint16_t value = hexOrUint(rval);
 
-		display(0,"inst=%s value=%d no_echo=%d",inst.c_str(),value,no_echo);
+		display(0,"inst=%s value=0x%02x",inst.c_str(),value);
 
 		int inum =
 			inst.equals("depth") 	? 0 :
@@ -339,18 +381,38 @@ static void handleCommand(String lval, String rval, bool got_equals)
 		if (inum == -1)
 			my_error("invalid instrument(%s)",inst.c_str());
 		else if (inum<100)
-			instruments.setPorts(inum,value,no_echo);
+			instruments.setPorts(inum,value);
 		else
-			instruments.setAll(inum-100,value,no_echo);
+			instruments.setAll(inum-100,value);
 	}
+
+	// ST50 specific
+
+	else if (lval.equals("lamp"))
+	{
+		setLampIntensity(rval.toInt());
+	}
+#if PIN_SPEED_PULSE
+	else if (lval.equals("speed_pulse"))
+	{
+		int value = rval.toInt() ? 1 : 0;
+		display(0,"SPEED_PULSES=%d",value);
+		if (speed_pulses_on != value)
+		{
+			speed_pulses_on = value;
+			initSpeedPulse();
+		}
+	}
+#endif
+
 
 	// monitor
 
 	else if (lval.startsWith("m_"))
 	{
 		String what = lval.substring(2);
-		int value = rval.toInt();
-		display(0,"monitor %s=%d",what.c_str(),value);
+		int value = hexOrUint(rval);
+		display(0,"monitor %s=0x%02x",what.c_str(),value);
 
 		if (what.equals("sim"))			boat.g_MON_SIM = value;
 			// 0..4 = details about boat simulator calculations
@@ -362,15 +424,21 @@ static void handleCommand(String lval, String rval, bool got_equals)
 		else if (what.equals("2000"))	instruments.g_MON[PORT_2000] = value;
 		else
 			my_error("invalid monitor command(%s)=%d",what.c_str(),value);
+
+		instruments.sendBinaryState();
 	}
 
 	// forwarding
 
 	else if (lval.equals("fwd"))
 	{
-		int value = rval.toInt();
+		int value = hexOrUint(rval);
 		display(1,"fwd=%d",value);
 		instruments.setFWD(value);
+	}
+	else if (lval.equals("e80_filter"))
+	{
+		setE80Filter(rval.toInt());
 	}
 
 	// monadic commands
@@ -441,42 +509,84 @@ static void handleSerial()
 
 
 //--------------------------------------------
+// pulses
+//--------------------------------------------
+
+#if PIN_SPEED_PULSE
+	void doPulses()
+	{
+		if (!speed_pulses_on)
+			return;
+		
+		uint32_t pulse_now = millis();
+
+		float speed = boat.getWaterSpeed();
+		if (last_pulse_speed != speed)
+		{
+			last_pulse_speed = speed;
+
+			if (speed <= 0.0)
+			{
+				display(0,"turning SPEED pulses off",0);
+				pulse_state = false;
+				pulse_interval_ms = 0;
+				pinMode(PIN_SPEED_PULSE, OUTPUT);
+				digitalWrite(PIN_SPEED_PULSE,0);
+			}
+			else
+			{
+
+				#define STD_HZ_PER_KNOT  		5.6
+				#define CALIBRATION_FACTOR 		1.0
+				#define HZ_PER_KNOT				(STD_HZ_PER_KNOT / CALIBRATION_FACTOR)
+
+				int pulseHz = round(speed * HZ_PER_KNOT);
+
+				if (pulseHz >= 18)
+				{
+					// Use PWM for higher frequencies
+					display(0,"using PWM speed(%0.2f) Hz(%d)", speed, pulseHz);
+					pulse_interval_ms = 0;
+					pinMode(PIN_SPEED_PULSE, OUTPUT);
+					analogWriteFrequency(PIN_SPEED_PULSE, pulseHz);
+					analogWrite(PIN_SPEED_PULSE, 128); // 50% duty
+				}
+				else
+				{
+					// Switch to manual toggling
+					pinMode(PIN_SPEED_PULSE, OUTPUT);
+					float pulseFreq = speed * HZ_PER_KNOT * 1.1;	// fudge factor
+					pulse_interval_ms = (pulseFreq > 0.0) ? round(500.0 / pulseFreq) : 0;
+					last_pulse_toggle = pulse_now; // reset timer
+					display(0,"using MS timer speed(%0.2f) MS(%d)",speed,pulse_interval_ms);
+				}
+				
+			} 	// speed > 0
+		}	// speed changed
+
+		// Manual toggling loop (only active if pulseHz < 18)
+		if (pulse_interval_ms > 0 && pulse_now - last_pulse_toggle >= pulse_interval_ms)
+		{
+			last_pulse_toggle = pulse_now;
+			pulse_state = !pulse_state;
+			display(1,"MS pulse(%d)",pulse_state);
+			digitalWrite(PIN_SPEED_PULSE, pulse_state ? HIGH : LOW);
+		}
+	}
+#endif
+
+//--------------------------------------------
 // loop()
 //--------------------------------------------
 
 void loop()
 {
-	#if TEST_RS232
-
-		static bool out_high = 1;
-		static bool in_high1 = 0;
-		static bool in_high2 = 0;
-		static uint32_t last_toggle = 0;
-		uint32_t toggle_now = millis();
-		if (toggle_now - last_toggle >= 6000)
-		{
-			last_toggle = toggle_now;
-			out_high = !out_high;
-			display(0,"OUT(%d)",out_high);
-			digitalWrite(TEST_OUT1,out_high);
-			digitalWrite(TEST_OUT2,out_high);
-		}
-		bool high = digitalRead(TEST_IN1);
-		if (in_high1 != high)
-		{
-			in_high1 = high;
-			display(0," IN1(%d)",in_high1);
-		}
-		high = digitalRead(TEST_IN2);
-		if (in_high2 != high)
-		{
-			in_high2 = high;
-			display(0," IN2(%d)",in_high2);
-		}
-	#else
-		instruments.run();
+	#if PIN_SPEED_PULSE
+		doPulses();
 	#endif
 
+	
+	instruments.run();
 	
 	#if ALIVE_LED
 		static bool alive_on = 0;
@@ -492,6 +602,9 @@ void loop()
 	#endif
 	
 	handleSerial();
+
+
+
 
 }	// loop()
 
