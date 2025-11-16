@@ -1,4 +1,4 @@
-update=11/14/2025 02:46:59 PM
+update=11/15/2025 12:24:49 PM
 version=1
 last_client=pcbnew
 [general]
@@ -25,7 +25,7 @@ ERC_TestSimilarLabels=1
 [pcbnew]
 version=1
 PageLayoutDescrFile=
-LastNetListRead=board0.net
+LastNetListRead=board0_max3333.net
 CopperLayerCount=2
 BoardThickness=1.6
 AllowMicroVias=0
@@ -41,8 +41,9 @@ MinHoleToHole=0.25
 TrackWidth1=0.25
 TrackWidth2=1
 TrackWidth3=1.5
-TrackWidth4=2
-TrackWidth5=2.2
+TrackWidth4=1.8
+TrackWidth5=2
+TrackWidth6=2.2
 ViaDiameter1=0.8
 ViaDrill1=0.4
 ViaDiameter2=2
@@ -63,7 +64,7 @@ CopperTextThickness=0.3
 CopperTextItalic=0
 CopperTextUpright=1
 EdgeCutLineWidth=0.09999999999999999
-CourtyardLineWidth=0.12
+CourtyardLineWidth=0.05
 OthersLineWidth=0.15
 OthersTextSizeV=1
 OthersTextSizeH=1
