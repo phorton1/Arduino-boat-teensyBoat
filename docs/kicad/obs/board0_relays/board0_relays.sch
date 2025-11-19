@@ -568,7 +568,7 @@ L Connector_Generic:Conn_01x02 J1
 U 1 1 63C47095
 P 2300 3000
 F 0 "J1" H 2950 2950 50  0000 C CNN
-F 1 "INST_POWER" H 2600 2950 50  0000 C CNN
+F 1 "ST_PWR" H 2600 2950 50  0000 C CNN
 F 2 "0_my_footprints:myPheonix2x3.81_right" H 2300 3000 50  0001 C CNN
 F 3 "~" H 2300 3000 50  0001 C CNN
 	1    2300 3000
@@ -962,25 +962,12 @@ CANH
 Text GLabel 6000 4850 3    50   Input ~ 0
 CANL
 $Comp
-L Device:R R2
-U 1 1 69C09B31
-P 6000 4700
-F 0 "R2" H 6070 4746 50  0001 L CNN
-F 1 "120" V 6000 4700 50  0000 C CNN
-F 2 "0_my_footprints:myResistor" V 5930 4700 50  0001 C CNN
-F 3 "~" H 6000 4700 50  0001 C CNN
-	1    6000 4700
-	-1   0    0    1   
-$EndComp
-Wire Wire Line
-	5900 4850 5900 4550
-$Comp
 L Connector_Generic:Conn_01x02 J10
 U 1 1 69C27C1B
 P 2100 5300
 F 0 "J10" V 2350 5250 50  0000 C CNN
-F 1 "12V_TEST" V 2250 5250 50  0000 C CNN
-F 2 "0_my_footprints2:pinSocket1x2" H 2100 5300 50  0001 C CNN
+F 1 "ST_12V" V 2250 5250 50  0000 C CNN
+F 2 "0_my_footprints:myPhoenix2x3.81_vertical" H 2100 5300 50  0001 C CNN
 F 3 "~" H 2100 5300 50  0001 C CNN
 	1    2100 5300
 	0    -1   1    0   
@@ -1291,5 +1278,18 @@ F 2 "0_my_footprints:myJSTx03" H 17650 4050 50  0001 C CNN
 F 3 "~" H 17650 4050 50  0001 C CNN
 	1    17650 4050
 	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	5900 4850 5900 4550
+$Comp
+L Device:R R2
+U 1 1 69C09B31
+P 6000 4700
+F 0 "R2" H 6070 4746 50  0001 L CNN
+F 1 "120" V 6000 4700 50  0000 C CNN
+F 2 "0_my_footprints:myResistor" V 5930 4700 50  0001 C CNN
+F 3 "~" H 6000 4700 50  0001 C CNN
+	1    6000 4700
+	-1   0    0    1   
 $EndComp
 $EndSCHEMATC
