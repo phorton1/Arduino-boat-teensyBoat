@@ -1,6 +1,6 @@
 board=teensy40
 boardsmanager.additional.urls=https://dl.espressif.com/dl/package_esp32_index.json, http://arduino.esp8266.com/stable/package_esp8266com_index.json
-build.path=C:\src\ArduinoBuild\teensyBoat
+build.path=C:\src\ArduinoBuilds\teensyBoat
 build.warn_data_percentage=75
 cache.enable=true
 console=true
