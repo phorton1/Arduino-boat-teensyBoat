@@ -535,74 +535,6 @@ F 3 "" H 6150 3900 50  0001 C CNN
 	1    6150 3900
 	1    0    0    -1  
 $EndComp
-Text GLabel 4700 5200 1    50   Input ~ 0
-POT_CS2
-Text GLabel 4800 5200 1    50   Input ~ 0
-POT_CS1
-Text GLabel 5300 7300 3    50   Input ~ 0
-POT_MISO
-Text GLabel 4200 7300 3    63   Input ~ 0
-TX1
-Text GLabel 4100 7300 3    63   Input ~ 0
-RX1
-$Comp
-L power:GND #PWR028
-U 1 1 681F5B40
-P 4100 5200
-F 0 "#PWR028" H 4100 4950 50  0001 C CNN
-F 1 "GND" V 4100 5000 50  0000 C CNN
-F 2 "" H 4100 5200 50  0001 C CNN
-F 3 "" H 4100 5200 50  0001 C CNN
-	1    4100 5200
-	-1   0    0    1   
-$EndComp
-$Comp
-L power:+3V3 #PWR029
-U 1 1 681F6BDE
-P 4200 5200
-F 0 "#PWR029" H 4200 5050 50  0001 C CNN
-F 1 "+3V3" V 4200 5400 50  0000 C CNN
-F 2 "" H 4200 5200 50  0001 C CNN
-F 3 "" H 4200 5200 50  0001 C CNN
-	1    4200 5200
-	1    0    0    -1  
-$EndComp
-Text GLabel 5100 5200 1    63   Input ~ 0
-RX3
-Text GLabel 5200 5200 1    63   Input ~ 0
-TX3
-$Comp
-L 0_my_teensy:myTeensy4.0 U3
-U 1 1 681E4C83
-P 4550 6200
-F 0 "U3" H 5378 6203 60  0001 L CNN
-F 1 "myTeensy4.0" H 4400 6100 60  0000 L CNN
-F 2 "0_my_teensy:teensy40" V 5450 6250 60  0001 C CNN
-F 3 "" V 5450 6250 60  0000 C CNN
-	1    4550 6200
-	1    0    0    -1  
-$EndComp
-Text GLabel 4900 7300 3    63   Input ~ 0
-TX2
-Text GLabel 4800 7300 3    63   Input ~ 0
-RX2
-Text GLabel 4900 5200 1    63   Input ~ 0
-TX4
-Text GLabel 5000 5200 1    63   Input ~ 0
-RX4
-Text GLabel 5200 7300 3    50   Input ~ 0
-WIND_PULSE
-$Comp
-L power:+5V #PWR027
-U 1 1 68C5F036
-P 4000 5200
-F 0 "#PWR027" H 4000 5050 50  0001 C CNN
-F 1 "+5V" V 4000 5300 50  0000 L CNN
-F 2 "" H 4000 5200 50  0001 C CNN
-F 3 "" H 4000 5200 50  0001 C CNN
-	1    4000 5200
-	1    0    0    -1  
-$EndComp
 Text GLabel 7150 5550 3    63   Input ~ 0
 83A_IN
 Text GLabel 7050 5550 3    63   Input ~ 0
@@ -611,91 +543,6 @@ Text GLabel 6950 5550 3    63   Input ~ 0
 83A_OUT
 Text GLabel 6850 5550 3    63   Input ~ 0
 83B_OUT
-$Comp
-L power:GND #PWR037
-U 1 1 69A1A92C
-P 4000 7300
-F 0 "#PWR037" H 4000 7050 50  0001 C CNN
-F 1 "GND" V 4000 7100 50  0000 C CNN
-F 2 "" H 4000 7300 50  0001 C CNN
-F 3 "" H 4000 7300 50  0001 C CNN
-	1    4000 7300
-	1    0    0    -1  
-$EndComp
-Text GLabel 4600 5200 1    63   Input ~ 0
-TX5
-Text GLabel 4500 5200 1    63   Input ~ 0
-RX5
-Text Notes 900  7300 0    50   ~ 0
-The board has holes and pads to wire an additional Serial Port (RX5)\n for future expansion, i.e. an ESP32 for LAN access
-Text GLabel 2100 7600 2    63   Input ~ 0
-RX5
-Text GLabel 2100 7700 2    63   Input ~ 0
-TX5
-$Comp
-L power:GND #PWR030
-U 1 1 69AAA64C
-P 2100 7500
-F 0 "#PWR030" H 2100 7250 50  0001 C CNN
-F 1 "GND" V 2100 7300 50  0000 C CNN
-F 2 "" H 2100 7500 50  0001 C CNN
-F 3 "" H 2100 7500 50  0001 C CNN
-	1    2100 7500
-	0    -1   -1   0   
-$EndComp
-Text GLabel 5300 5200 1    50   Input ~ 0
-POT_SCLK
-Text GLabel 5000 7300 3    50   Input ~ 0
-ALIVE_LED
-$Comp
-L Connector_Generic:Conn_01x08 J6
-U 1 1 69AE5894
-P 4750 9000
-F 0 "J6" V 4900 9200 50  0000 L CNN
-F 1 "TEST_RIG" V 4900 8600 50  0000 L CNN
-F 2 "0_my_footprints:myJSTx08" H 4750 9000 50  0001 C CNN
-F 3 "~" H 4750 9000 50  0001 C CNN
-	1    4750 9000
-	0    -1   1    0   
-$EndComp
-$Comp
-L power:GND #PWR039
-U 1 1 69B016D2
-P 5150 8800
-F 0 "#PWR039" H 5150 8550 50  0001 C CNN
-F 1 "GND" V 5150 8600 50  0000 C CNN
-F 2 "" H 5150 8800 50  0001 C CNN
-F 3 "" H 5150 8800 50  0001 C CNN
-	1    5150 8800
-	1    0    0    1   
-$EndComp
-$Comp
-L power:+5V #PWR040
-U 1 1 69B0D841
-P 5050 8800
-F 0 "#PWR040" H 5050 8650 50  0001 C CNN
-F 1 "+5V" V 5050 8900 50  0000 L CNN
-F 2 "" H 5050 8800 50  0001 C CNN
-F 3 "" H 5050 8800 50  0001 C CNN
-	1    5050 8800
-	-1   0    0    -1  
-$EndComp
-Text GLabel 4300 7300 3    50   Input ~ 0
-SPEED_PULSE
-Text GLabel 4850 8800 1    50   Input ~ 0
-WIND_PULSE
-Text GLabel 4950 8800 1    50   Input ~ 0
-SPEED_PULSE
-Text GLabel 4650 8800 1    50   Input ~ 0
-POT_SCLK
-Text GLabel 4750 8800 1    50   Input ~ 0
-POT_MISO
-Text GLabel 4450 8800 1    50   Input ~ 0
-POT_CS2
-Text GLabel 4550 8800 1    50   Input ~ 0
-POT_CS1
-Text Notes 900  9150 0    50   ~ 0
-The JST8 TEST_RIG connector is a general purpose connector.\nAlthough initially designed for testing ST50 instruments, since\nit brings out full SPI signals, it should be general enough to run\nan SPI TFT display if desired.\n\nIt also brings out the I2C signals, should the need arise. \n\nAs initially designed It provides pulses  to spoof the ST50 Speed/Log \nand Wind instruments, and allows for the addition of digital potentiometers\n(inc/dec, SPI, or I2C) for resistance based spoofing (Log Temperature, Wind \nDirection, etc).  The instrument itself is powered and connected  to one of the \ntwo ST ports on this PCB.\n 
 $Comp
 L Device:LED D4
 U 1 1 69BBC2B7
@@ -742,10 +589,6 @@ F 3 "~" H 5100 3650 50  0001 C CNN
 	1    5100 3650
 	0    1    -1   0   
 $EndComp
-Text GLabel 5000 4150 3    50   Input ~ 0
-CANH
-Text GLabel 5100 4150 3    50   Input ~ 0
-CANL
 $Comp
 L Device:R R2
 U 1 1 69C09B31
@@ -1329,8 +1172,167 @@ F 3 "~" H 9350 4650 50  0001 C CNN
 	1    9350 4650
 	1    0    0    -1  
 $EndComp
-Text GLabel 4300 5200 1    50   Input ~ 0
-CTX
-Text GLabel 4400 5200 1    50   Input ~ 0
+$Comp
+L power:GND #PWR030
+U 1 1 69AAA64C
+P 2150 9800
+F 0 "#PWR030" H 2150 9550 50  0001 C CNN
+F 1 "GND" V 2150 9600 50  0000 C CNN
+F 2 "" H 2150 9800 50  0001 C CNN
+F 3 "" H 2150 9800 50  0001 C CNN
+	1    2150 9800
+	0    -1   -1   0   
+$EndComp
+Text GLabel 2150 10000 2    63   Input ~ 0
+TX5
+Text GLabel 2150 9900 2    63   Input ~ 0
+RX5
+Text Notes 950  9600 0    50   ~ 0
+The board has holes and pads to wire an additional Serial Port (RX5)\n for future expansion, i.e. an ESP32 for LAN access
+$Comp
+L 0_my_teensy:myTeensy4.0 U3
+U 1 1 681E4C83
+P 4550 6950
+F 0 "U3" H 5378 6953 60  0001 L CNN
+F 1 "myTeensy4.0" H 4400 6850 60  0000 L CNN
+F 2 "0_my_teensy:teensy40" V 5450 7000 60  0001 C CNN
+F 3 "" V 5450 7000 60  0000 C CNN
+	1    4550 6950
+	1    0    0    -1  
+$EndComp
+Text GLabel 4500 8050 3    50   Input ~ 0
+UDP_ENABLE
+Text GLabel 4400 5950 1    50   Input ~ 0
 CRX
+Text GLabel 4300 5950 1    50   Input ~ 0
+CTX
+Text GLabel 5100 4150 3    50   Input ~ 0
+CANL
+Text GLabel 5000 4150 3    50   Input ~ 0
+CANH
+Text GLabel 4300 8050 3    50   Input ~ 0
+SPEED_PULSE-LCD_CS
+Text GLabel 5000 8050 3    50   Input ~ 0
+ALIVE_LED
+Text GLabel 5300 5950 1    50   Input ~ 0
+SCLK-GP
+Text GLabel 4500 5950 1    63   Input ~ 0
+RX5
+Text GLabel 4600 5950 1    63   Input ~ 0
+TX5
+$Comp
+L power:GND #PWR037
+U 1 1 69A1A92C
+P 4000 8050
+F 0 "#PWR037" H 4000 7800 50  0001 C CNN
+F 1 "GND" V 4000 7850 50  0000 C CNN
+F 2 "" H 4000 8050 50  0001 C CNN
+F 3 "" H 4000 8050 50  0001 C CNN
+	1    4000 8050
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:+5V #PWR027
+U 1 1 68C5F036
+P 4000 5950
+F 0 "#PWR027" H 4000 5800 50  0001 C CNN
+F 1 "+5V" V 4000 6050 50  0000 L CNN
+F 2 "" H 4000 5950 50  0001 C CNN
+F 3 "" H 4000 5950 50  0001 C CNN
+	1    4000 5950
+	1    0    0    -1  
+$EndComp
+Text GLabel 5200 8050 3    50   Input ~ 0
+MOSI-GP
+Text GLabel 5000 5950 1    63   Input ~ 0
+RX4
+Text GLabel 4900 5950 1    63   Input ~ 0
+TX4
+Text GLabel 4800 8050 3    63   Input ~ 0
+RX2
+Text GLabel 4900 8050 3    63   Input ~ 0
+TX2
+Text GLabel 5200 5950 1    63   Input ~ 0
+TX3
+Text GLabel 5100 5950 1    63   Input ~ 0
+RX3
+$Comp
+L power:+3V3 #PWR029
+U 1 1 681F6BDE
+P 4200 5950
+F 0 "#PWR029" H 4200 5800 50  0001 C CNN
+F 1 "+3V3" V 4200 6150 50  0000 C CNN
+F 2 "" H 4200 5950 50  0001 C CNN
+F 3 "" H 4200 5950 50  0001 C CNN
+	1    4200 5950
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR028
+U 1 1 681F5B40
+P 4100 5950
+F 0 "#PWR028" H 4100 5700 50  0001 C CNN
+F 1 "GND" V 4100 5750 50  0000 C CNN
+F 2 "" H 4100 5950 50  0001 C CNN
+F 3 "" H 4100 5950 50  0001 C CNN
+	1    4100 5950
+	-1   0    0    1   
+$EndComp
+Text GLabel 4100 8050 3    63   Input ~ 0
+RX1
+Text GLabel 4200 8050 3    63   Input ~ 0
+TX1
+Text GLabel 5300 8050 3    50   Input ~ 0
+MISO-GP
+Text GLabel 4800 5950 1    50   Input ~ 0
+SDA-WIND_PULSE-LCD_DC
+Text GLabel 4700 5950 1    50   Input ~ 0
+SCL-GP-T_CS
+Text Notes 950  11450 0    50   ~ 0
+The JST8 TEST_RIG connector is a general purpose connector.\nAlthough initially designed for testing ST50 instruments, since\nit brings out full SPI signals, it should be general enough to run\nan SPI TFT display if desired.\n\nIt also brings out the I2C signals, should the need arise. \n\nAs initially designed It provides pulses  to spoof the ST50 Speed/Log \nand Wind instruments, and allows for the addition of digital potentiometers\n(inc/dec, SPI, or I2C) for resistance based spoofing (Log Temperature, Wind \nDirection, etc).  The instrument itself is powered and connected  to one of the \ntwo ST ports on this PCB.\n 
+Text GLabel 4750 10800 1    50   Input ~ 0
+SDA-WIND_PULSE-LCD_DC
+Text GLabel 4650 10800 1    50   Input ~ 0
+SCL-GP-T_CS
+Text GLabel 4950 10800 1    50   Input ~ 0
+MISO-GP
+Text GLabel 4850 10800 1    50   Input ~ 0
+SCLK-GP
+Text GLabel 5150 10800 1    50   Input ~ 0
+SPEED_PULSE-LCD_CS
+Text GLabel 5050 10800 1    50   Input ~ 0
+MOSI-GP
+$Comp
+L power:+5V #PWR040
+U 1 1 69B0D841
+P 5250 10800
+F 0 "#PWR040" H 5250 10650 50  0001 C CNN
+F 1 "+5V" V 5250 10900 50  0000 L CNN
+F 2 "" H 5250 10800 50  0001 C CNN
+F 3 "" H 5250 10800 50  0001 C CNN
+	1    5250 10800
+	-1   0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR039
+U 1 1 69B016D2
+P 5350 10800
+F 0 "#PWR039" H 5350 10550 50  0001 C CNN
+F 1 "GND" V 5350 10600 50  0000 C CNN
+F 2 "" H 5350 10800 50  0001 C CNN
+F 3 "" H 5350 10800 50  0001 C CNN
+	1    5350 10800
+	1    0    0    1   
+$EndComp
+$Comp
+L Connector_Generic:Conn_01x08 J6
+U 1 1 69AE5894
+P 4950 11000
+F 0 "J6" V 5100 11200 50  0000 L CNN
+F 1 "TEST_RIG" V 5100 10600 50  0000 L CNN
+F 2 "0_my_footprints:myJSTx08" H 4950 11000 50  0001 C CNN
+F 3 "~" H 4950 11000 50  0001 C CNN
+	1    4950 11000
+	0    -1   1    0   
+$EndComp
 $EndSCHEMATC
