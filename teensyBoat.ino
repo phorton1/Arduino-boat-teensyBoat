@@ -476,7 +476,6 @@ static void handleSerial()
 		static String lval;
 		static String rval;
 		static bool got_equals;
-		
 		char c = Serial.read();
 
 		if (c == 0x0a)
@@ -498,6 +497,36 @@ static void handleSerial()
 				lval += c;
 		}
 	}
+
+	#ifdef SERIAL_ESP32
+		if (SERIAL_ESP32.available())
+		{
+			static String lval;
+			static String rval;
+			static bool got_equals;
+			char c = SERIAL_ESP32.read();
+
+			if (c == 0x0a)
+			{
+				handleCommand(lval.toLowerCase(),rval.toLowerCase(),got_equals);
+				lval = "";
+				rval = "";
+				got_equals = 0;
+			}
+			else if (c == '=')
+			{
+				got_equals = 1;
+			}
+			else if (c != 0x0d)
+			{
+				if (got_equals)
+					rval += c;
+				else
+					lval += c;
+			}
+		}
+	#endif
+
 }	// handleSerial()
 
 
