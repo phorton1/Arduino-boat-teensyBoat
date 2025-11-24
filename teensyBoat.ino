@@ -37,14 +37,8 @@
 // 11 - MISO	(breadboard SPEAD/WIND pulse
 // 12 - MOSI
 // 13 - SCLK	(breadboard ALIVE_LED)
-//
-// 2 - ALIVE_LED (initial_board)
 
-#if 1
-	#define ALIVE_LED		13
-#else
-	#define ALIVE_LED		2
-#endif
+#define ALIVE_LED		9
 #define ALIVE_OFF_TIME	980
 #define ALIVE_ON_TIME	20
 
