@@ -165,17 +165,6 @@ Wire Wire Line
 	9350 2800 9350 2650
 Wire Wire Line
 	9500 2800 9350 2800
-$Comp
-L Device:R R1
-U 1 1 6822159F
-P 9350 2500
-F 0 "R1" H 9420 2546 50  0001 L CNN
-F 1 "4.7K" V 9350 2500 50  0000 C CNN
-F 2 "0_my_footprints:myResistor" V 9280 2500 50  0001 C CNN
-F 3 "~" H 9350 2500 50  0001 C CNN
-	1    9350 2500
-	1    0    0    -1  
-$EndComp
 Wire Wire Line
 	9500 3000 9350 3000
 Wire Wire Line
@@ -328,17 +317,6 @@ Wire Wire Line
 	9350 4950 9350 4800
 Wire Wire Line
 	9500 4950 9350 4950
-$Comp
-L Device:R R7
-U 1 1 69145A90
-P 9350 4650
-F 0 "R7" H 9420 4696 50  0001 L CNN
-F 1 "4.7K" V 9350 4650 50  0000 C CNN
-F 2 "0_my_footprints:myResistor" V 9280 4650 50  0001 C CNN
-F 3 "~" H 9350 4650 50  0001 C CNN
-	1    9350 4650
-	1    0    0    -1  
-$EndComp
 Wire Wire Line
 	9500 5150 9350 5150
 Wire Wire Line
@@ -625,10 +603,6 @@ F 3 "" H 4000 5200 50  0001 C CNN
 	1    4000 5200
 	1    0    0    -1  
 $EndComp
-Text GLabel 4400 5200 1    50   Input ~ 0
-CRX
-Text GLabel 4300 5200 1    50   Input ~ 0
-CTX
 Text GLabel 7150 5550 3    63   Input ~ 0
 83A_IN
 Text GLabel 7050 5550 3    63   Input ~ 0
@@ -1333,4 +1307,30 @@ Text GLabel 9550 6550 0    50   Input ~ 0
 ST1
 Text GLabel 9550 6450 0    50   Input ~ 0
 ST2
+$Comp
+L Device:R R1
+U 1 1 6822159F
+P 9350 2500
+F 0 "R1" H 9420 2546 50  0001 L CNN
+F 1 "10K" V 9350 2500 50  0000 C CNN
+F 2 "0_my_footprints:myResistor" V 9280 2500 50  0001 C CNN
+F 3 "~" H 9350 2500 50  0001 C CNN
+	1    9350 2500
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:R R7
+U 1 1 69145A90
+P 9350 4650
+F 0 "R7" H 9420 4696 50  0001 L CNN
+F 1 "10k" V 9350 4650 50  0000 C CNN
+F 2 "0_my_footprints:myResistor" V 9280 4650 50  0001 C CNN
+F 3 "~" H 9350 4650 50  0001 C CNN
+	1    9350 4650
+	1    0    0    -1  
+$EndComp
+Text GLabel 4300 5200 1    50   Input ~ 0
+CTX
+Text GLabel 4400 5200 1    50   Input ~ 0
+CRX
 $EndSCHEMATC
