@@ -25,25 +25,49 @@
 // 14 - TX3 NMEA0183A
 // 16 - RX4 NMEA0183B
 // 17 - TX4 NMEA0183B
+// 20 - TX5 tbESP32
+// 21 - RX5 tbESP32
 //
-// 4  - SPEED_PULSE out for testing ST50 lOG instrument
-// 5  - WIND_PULSE out for testing ST50 WIND instrument
+// 2  - SPEED_PULSE out for testing ST50 lOG instrument
+// 18 - WIND_PULSE out for testing ST50 WIND instrument
 //
-// When I thought it would have a Touchscreen:
+//-------------------------
+// EIGHT PIN CONNECTOR
+//-------------------------
+// Note that the 8 pin connector brings out signals that can be used
+// for ST50 testing (with digipots if needed), I2C (SDA and SCL) as well
+// as full SPI and which could be used for a TFT display.
+// Because the digipots I have either use inc/dec or SPI, the
+// 		(currently unprogrammed) WIND_PULSE pin is assigned to the
+//		otherwise unused SDA line
+// GP indicates it can be used for inc/dec if not using SPI
 //
-// 3  - T_CS (I think this was supposed to be 5)
-// 9  - LCD_DC
-// 10 - LCD_CS
-// 11 - MISO	(breadboard SPEAD/WIND pulse
-// 12 - MOSI
-// 13 - SCLK	(breadboard ALIVE_LED)
+// pin	ST50 testing 	official	display
+//-----------------------------------------------------------------
+// GND								GND
+// 5V								5V
+// 2  - SPEED_PULSE					LCD_CS
+// 11 - GP				MOSI		MOSI
+// 12 - GP				MISO		MISO
+// 13 - GP				SCLK		MISO
+// 18 - WIND_PULSE		SDA			LCD_DC
+// 19 - GP				SCL			T_CS
+//
+//------------------------------
+// UDP Enable
+//------------------------------
+// Known by the Boat library, this pin is set to INPUT_PULLDOWN,
+// and if an tbESP32 is hooked up, it pulls it high, enabling UDP
+// transmissions.
+//
+// 4 == UDP_ENABLE
 
 #define ALIVE_LED		9
 #define ALIVE_OFF_TIME	980
 #define ALIVE_ON_TIME	20
 
 
-#define PIN_SPEED_PULSE	 4
+#define PIN_SPEED_PULSE	 0		// 2
 	// set this to zero to turn the feature off
 #if PIN_SPEED_PULSE
 	static bool speed_pulses_on = 1;
@@ -499,6 +523,10 @@ static void handleSerial()
 	}
 
 	#ifdef SERIAL_ESP32
+		// If udp_enabled, we process the bytes, but
+		// we read (clear) the SERIAL_ESP32 serial port
+		// even if udp_enabled is not true.
+
 		if (SERIAL_ESP32.available())
 		{
 			static String lval;
@@ -506,23 +534,26 @@ static void handleSerial()
 			static bool got_equals;
 			char c = SERIAL_ESP32.read();
 
-			if (c == 0x0a)
+			if (udp_enabled)
 			{
-				handleCommand(lval.toLowerCase(),rval.toLowerCase(),got_equals);
-				lval = "";
-				rval = "";
-				got_equals = 0;
-			}
-			else if (c == '=')
-			{
-				got_equals = 1;
-			}
-			else if (c != 0x0d)
-			{
-				if (got_equals)
-					rval += c;
-				else
-					lval += c;
+				if (c == 0x0a)
+				{
+					handleCommand(lval.toLowerCase(),rval.toLowerCase(),got_equals);
+					lval = "";
+					rval = "";
+					got_equals = 0;
+				}
+				else if (c == '=')
+				{
+					got_equals = 1;
+				}
+				else if (c != 0x0d)
+				{
+					if (got_equals)
+						rval += c;
+					else
+						lval += c;
+				}
 			}
 		}
 	#endif
