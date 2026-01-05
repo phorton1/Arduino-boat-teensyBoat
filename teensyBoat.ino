@@ -28,39 +28,36 @@
 // 20 - TX5 tbESP32
 // 21 - RX5 tbESP32
 //
-// 2  - SPEED_PULSE out for testing ST50 lOG instrument
-// 18 - WIND_PULSE out for testing ST50 WIND instrument
+// 2  - SPEED_PULSE out for testing ST50 LOG/WIND instrument
+
+//---------------------------------------------------------------
+// EIGHT PIN CONNECTOR - tbESP32 Serial5 and UDP_ENABLE
+//---------------------------------------------------------------
+// The 8 pin connector was transiently designed and never tested
+// to support a TFT display.
 //
-//-------------------------
-// EIGHT PIN CONNECTOR
-//-------------------------
-// Note that the 8 pin connector brings out signals that can be used
-// for ST50 testing (with digipots if needed), I2C (SDA and SCL) as well
-// as full SPI and which could be used for a TFT display.
-// Because the digipots I have either use inc/dec or SPI, the
-// 		(currently unprogrammed) WIND_PULSE pin is assigned to the
-//		otherwise unused SDA line
-// GP indicates it can be used for inc/dec if not using SPI
+// It is now designed to interface the teensy to the tbESP32 myIOT
+// device via Serial5 (RX5 and TX5) and UDP_ENABLE.
 //
-// pin	ST50 testing 	official	display
-//-----------------------------------------------------------------
-// GND								GND
-// 5V								5V
-// 2  - SPEED_PULSE					LCD_CS
-// 11 - GP				MOSI		MOSI
-// 12 - GP				MISO		MISO
-// 13 - GP				SCLK		MISO
-// 18 - WIND_PULSE		SDA			LCD_DC
-// 19 - GP				SCL			T_CS
+// SPEED_PULSE is turned off by default and must be defined
+// for testing ST50 devices.
 //
-//------------------------------
-// UDP Enable
-//------------------------------
-// Known by the Boat library, this pin is set to INPUT_PULLDOWN,
-// and if an tbESP32 is hooked up, it pulls it high, enabling UDP
-// transmissions.
+//		teensy
+// conn	gpio	tbESP32		ST50 testing 	display
+// -----------------------------------------------------------------
+// 1	20 		TX5							LCD_DC
+// 2	21		RX5  						T_CS
+// 3	13									SCLK
+// 4	12 		UDP_ENABLE 					MISO
+// 5	11 	 								MOSI
+// 6	2  					SPEED_PULSE		LCD_CS
+// 7	5V		5V			5V				5V
+// 8	GND		GND			GND				GND
 //
-// 4 == UDP_ENABLE
+// UDP_ENABLE is defined in the Boat library, where the pin is set
+// to INPUT_PULLDOWN, and if an tbESP32 is hooked up, it pulls it high,
+// enabling UDP transmissions.
+
 
 #define ALIVE_LED		9
 #define ALIVE_OFF_TIME	980
@@ -68,7 +65,9 @@
 
 
 #define PIN_SPEED_PULSE	 0		// 2
-	// set this to zero to turn the feature off
+	// The SPEED_PULSE pin has been used to generate square
+	// wave pulses that can drive the LOG and WIND instruments.
+	// See the documentation for more details.
 #if PIN_SPEED_PULSE
 	static bool speed_pulses_on = 1;
 	static float last_pulse_speed = -1;

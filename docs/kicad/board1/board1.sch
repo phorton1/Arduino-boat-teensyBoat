@@ -13,1326 +13,1307 @@ Comment2 ""
 Comment3 ""
 Comment4 ""
 $EndDescr
-Text GLabel 4050 3850 3    50   Input ~ 0
+Text GLabel 5350 3900 3    50   Input ~ 0
 CTX
-Text GLabel 4150 2900 3    50   Input ~ 0
+Text GLabel 5450 2950 3    50   Input ~ 0
 CANH
-Text GLabel 4050 2900 3    50   Input ~ 0
+Text GLabel 5350 2950 3    50   Input ~ 0
 CANL
-Text GLabel 4350 3850 3    50   Input ~ 0
+Text GLabel 5650 3900 3    50   Input ~ 0
 CANL
-Text GLabel 4250 3850 3    50   Input ~ 0
+Text GLabel 5550 3900 3    50   Input ~ 0
 CANH
-Text GLabel 4150 3850 3    50   Input ~ 0
+Text GLabel 5450 3900 3    50   Input ~ 0
 CRX
 $Comp
 L power:GND #PWR016
 U 1 1 68C8AF7F
-P 3950 3850
-F 0 "#PWR016" H 3950 3600 50  0001 C CNN
-F 1 "GND" V 3950 3650 50  0000 C CNN
-F 2 "" H 3950 3850 50  0001 C CNN
-F 3 "" H 3950 3850 50  0001 C CNN
-	1    3950 3850
+P 5250 3900
+F 0 "#PWR016" H 5250 3650 50  0001 C CNN
+F 1 "GND" V 5250 3700 50  0000 C CNN
+F 2 "" H 5250 3900 50  0001 C CNN
+F 3 "" H 5250 3900 50  0001 C CNN
+	1    5250 3900
 	1    0    0    -1  
 $EndComp
 $Comp
 L power:+3V3 #PWR015
 U 1 1 68C85564
-P 3850 3850
-F 0 "#PWR015" H 3850 3700 50  0001 C CNN
-F 1 "+3V3" V 3850 4050 50  0000 C CNN
-F 2 "" H 3850 3850 50  0001 C CNN
-F 3 "" H 3850 3850 50  0001 C CNN
-	1    3850 3850
+P 5150 3900
+F 0 "#PWR015" H 5150 3750 50  0001 C CNN
+F 1 "+3V3" V 5150 4100 50  0000 C CNN
+F 2 "" H 5150 3900 50  0001 C CNN
+F 3 "" H 5150 3900 50  0001 C CNN
+	1    5150 3900
 	-1   0    0    1   
 $EndComp
 $Comp
 L Connector_Generic:Conn_01x06 J10
 U 1 1 68C7D765
-P 4050 3650
-F 0 "J10" V 4200 3800 50  0000 L CNN
-F 1 "SN65HVD230" V 4200 3250 50  0000 L CNN
-F 2 "0_my_footprints:CANBUS_Module1" H 4050 3650 50  0001 C CNN
-F 3 "~" H 4050 3650 50  0001 C CNN
-	1    4050 3650
+P 5350 3700
+F 0 "J10" V 5500 3850 50  0000 L CNN
+F 1 "SN65HVD230" V 5500 3300 50  0000 L CNN
+F 2 "0_my_footprints:CANBUS_Module1" H 5350 3700 50  0001 C CNN
+F 3 "~" H 5350 3700 50  0001 C CNN
+	1    5350 3700
 	0    -1   -1   0   
 $EndComp
-Text GLabel 6250 3900 3    63   Input ~ 0
+Text GLabel 7550 3950 3    63   Input ~ 0
 83A_IN
 Wire Wire Line
-	8800 8600 9050 8600
+	10100 8650 10350 8650
 Wire Wire Line
-	8800 8700 9050 8700
-Text Notes 8450 8750 0    63   ~ 0
+	10100 8750 10350 8750
+Text Notes 9750 8800 0    63   ~ 0
 12V\nData\nGND\n
-Text Notes 9700 8850 0    63   ~ 0
+Text Notes 11000 8900 0    63   ~ 0
 unused alarm return\nunused alarm\n12V (except it's not)\nseatalk TX\nseatalk RX (except it's not)\nGND (excpt it's not)
-Text Notes 9300 8150 0    50   ~ 0
+Text Notes 10600 8200 0    50   ~ 0
 Seatalk Alarm Cable from E80\n(red not connected)
 $Comp
 L power:GND #PWR024
 U 1 1 68BD4022
-P 10350 3800
-F 0 "#PWR024" H 10350 3550 50  0001 C CNN
-F 1 "GND" H 10355 3627 50  0000 C CNN
-F 2 "" H 10350 3800 50  0001 C CNN
-F 3 "" H 10350 3800 50  0001 C CNN
-	1    10350 3800
+P 11650 3850
+F 0 "#PWR024" H 11650 3600 50  0001 C CNN
+F 1 "GND" H 11655 3677 50  0000 C CNN
+F 2 "" H 11650 3850 50  0001 C CNN
+F 3 "" H 11650 3850 50  0001 C CNN
+	1    11650 3850
 	1    0    0    -1  
 $EndComp
-Text Notes 8450 1950 0    50   ~ 0
+Text Notes 9750 2000 0    50   ~ 0
 TRANSMIT\nTXD is normally high, and the other side is pulled up to 3.3v thru 220 ohms,\nso no current flows through opto2_diode, and thus, the yellow (bus) is NOT \npulled down to ground.   When we transmit data, TXD goes low, lights the diode\nand the yellow (bus) is pulled down to ground through opto2.\n
-Text Notes 8450 1450 0    50   ~ 0
+Text Notes 9750 1500 0    50   ~ 0
 RECEIVE\nThe yellow (bus) is pulled up to 12V (idle) thru 4.7K ohms.  All devices pull the bus up. \nIf the bus is high (idle), no current flows through opto1_diode, and so RXD is pulled\nup to 3.3V through the 4.7K ohm resistor.   When another device pulls the bus low,\nthe diode lights up and RXD is pulled to ground through opto1.
 Wire Wire Line
-	9000 3700 9500 3700
+	10300 3750 10800 3750
 Wire Wire Line
-	9350 3200 10350 3200
+	10650 3250 11650 3250
 Wire Wire Line
-	9350 3000 9350 3200
+	10650 3050 10650 3250
 Wire Wire Line
-	10250 2800 10250 2350
+	11550 2850 11550 2400
 Wire Wire Line
-	9000 3500 9000 3400
+	10300 3550 10300 3450
 Wire Wire Line
-	9100 3500 9000 3500
+	10400 3550 10300 3550
 Wire Wire Line
-	9500 3500 9400 3500
+	10800 3550 10700 3550
 $Comp
 L Device:R R3
 U 1 1 68211A3C
-P 10400 3000
-F 0 "R3" H 10470 3046 50  0001 L CNN
-F 1 "4.7K" V 10400 3000 50  0000 C CNN
-F 2 "0_my_footprints:myResistor" V 10330 3000 50  0001 C CNN
-F 3 "~" H 10400 3000 50  0001 C CNN
-	1    10400 3000
+P 11700 3050
+F 0 "R3" H 11770 3096 50  0001 L CNN
+F 1 "4.7K" V 11700 3050 50  0000 C CNN
+F 2 "0_my_footprints:myResistor" V 11630 3050 50  0001 C CNN
+F 3 "~" H 11700 3050 50  0001 C CNN
+	1    11700 3050
 	0    -1   -1   0   
 $EndComp
 $Comp
 L power:+3V3 #PWR023
 U 1 1 68244B74
-P 9000 3400
-F 0 "#PWR023" H 9000 3250 50  0001 C CNN
-F 1 "+3V3" H 9015 3573 50  0000 C CNN
-F 2 "" H 9000 3400 50  0001 C CNN
-F 3 "" H 9000 3400 50  0001 C CNN
-	1    9000 3400
+P 10300 3450
+F 0 "#PWR023" H 10300 3300 50  0001 C CNN
+F 1 "+3V3" H 10315 3623 50  0000 C CNN
+F 2 "" H 10300 3450 50  0001 C CNN
+F 3 "" H 10300 3450 50  0001 C CNN
+	1    10300 3450
 	1    0    0    -1  
 $EndComp
 $Comp
 L Device:R R5
 U 1 1 68236F3F
-P 9250 3500
-F 0 "R5" H 9320 3546 50  0001 L CNN
-F 1 "220" V 9250 3500 50  0000 C CNN
-F 2 "0_my_footprints:myResistor" V 9180 3500 50  0001 C CNN
-F 3 "~" H 9250 3500 50  0001 C CNN
-	1    9250 3500
+P 10550 3550
+F 0 "R5" H 10620 3596 50  0001 L CNN
+F 1 "220" V 10550 3550 50  0000 C CNN
+F 2 "0_my_footprints:myResistor" V 10480 3550 50  0001 C CNN
+F 3 "~" H 10550 3550 50  0001 C CNN
+	1    10550 3550
 	0    1    1    0   
 $EndComp
-Text GLabel 9000 3700 0    63   Input ~ 0
+Text GLabel 10300 3750 0    63   Input ~ 0
 TX1
 $Comp
 L Isolator:TLP291 U2
 U 1 1 68235388
-P 9800 3600
-F 0 "U2" H 9800 3925 50  0001 C CNN
-F 1 "TLP521" H 9800 3833 50  0000 C CNN
-F 2 "0_my_footprints:myDip4" H 9600 3400 50  0001 L CIN
-F 3 "https://toshiba.semicon-storage.com/info/docget.jsp?did=12884&prodName=TLP291" H 9800 3600 50  0001 L CNN
-	1    9800 3600
+P 11100 3650
+F 0 "U2" H 11100 3975 50  0001 C CNN
+F 1 "TLP521" H 11100 3883 50  0000 C CNN
+F 2 "0_my_footprints:myDip4" H 10900 3450 50  0001 L CIN
+F 3 "https://toshiba.semicon-storage.com/info/docget.jsp?did=12884&prodName=TLP291" H 11100 3650 50  0001 L CNN
+	1    11100 3650
 	1    0    0    -1  
 $EndComp
 $Comp
 L Isolator:TLP291 U1
 U 1 1 6822E37B
-P 9800 2900
-F 0 "U1" H 9800 3225 50  0001 C CNN
-F 1 "TLP521" H 9800 3133 50  0000 C CNN
-F 2 "0_my_footprints:myDip4" H 9600 2700 50  0001 L CIN
-F 3 "https://toshiba.semicon-storage.com/info/docget.jsp?did=12884&prodName=TLP291" H 9800 2900 50  0001 L CNN
-	1    9800 2900
+P 11100 2950
+F 0 "U1" H 11100 3275 50  0001 C CNN
+F 1 "TLP521" H 11100 3183 50  0000 C CNN
+F 2 "0_my_footprints:myDip4" H 10900 2750 50  0001 L CIN
+F 3 "https://toshiba.semicon-storage.com/info/docget.jsp?did=12884&prodName=TLP291" H 11100 2950 50  0001 L CNN
+	1    11100 2950
 	-1   0    0    -1  
 $EndComp
-Connection ~ 9350 2800
+Connection ~ 10650 2850
 Wire Wire Line
-	9000 2800 9350 2800
-Text GLabel 9000 2800 0    63   Input ~ 0
+	10300 2850 10650 2850
+Text GLabel 10300 2850 0    63   Input ~ 0
 RX1
 Wire Wire Line
-	9350 2800 9350 2650
+	10650 2850 10650 2700
 Wire Wire Line
-	9500 2800 9350 2800
+	10800 2850 10650 2850
 Wire Wire Line
-	9500 3000 9350 3000
+	10800 3050 10650 3050
 Wire Wire Line
-	10100 2800 10250 2800
+	11400 2850 11550 2850
 Wire Wire Line
-	10250 3000 10100 3000
+	11550 3050 11400 3050
 $Comp
 L power:+12V #PWR013
 U 1 1 6820AAC2
-P 10250 2350
-F 0 "#PWR013" H 10250 2200 50  0001 C CNN
-F 1 "+12V" H 10265 2523 50  0000 C CNN
-F 2 "" H 10250 2350 50  0001 C CNN
-F 3 "" H 10250 2350 50  0001 C CNN
-	1    10250 2350
+P 11550 2400
+F 0 "#PWR013" H 11550 2250 50  0001 C CNN
+F 1 "+12V" H 11565 2573 50  0000 C CNN
+F 2 "" H 11550 2400 50  0001 C CNN
+F 3 "" H 11550 2400 50  0001 C CNN
+	1    11550 2400
 	1    0    0    -1  
 $EndComp
 $Comp
 L power:+3V3 #PWR012
 U 1 1 681EA407
-P 9350 2350
-F 0 "#PWR012" H 9350 2200 50  0001 C CNN
-F 1 "+3V3" H 9365 2523 50  0000 C CNN
-F 2 "" H 9350 2350 50  0001 C CNN
-F 3 "" H 9350 2350 50  0001 C CNN
-	1    9350 2350
+P 10650 2400
+F 0 "#PWR012" H 10650 2250 50  0001 C CNN
+F 1 "+3V3" H 10665 2573 50  0000 C CNN
+F 2 "" H 10650 2400 50  0001 C CNN
+F 3 "" H 10650 2400 50  0001 C CNN
+	1    10650 2400
 	1    0    0    -1  
 $EndComp
-Text Notes 9200 8850 0    63   ~ 0
+Text Notes 10500 8900 0    63   ~ 0
 brown\nwhite\nred\nyellow\nblack\nshield
 $Comp
 L Device:CP C1
 U 1 1 68D022FD
-P 2850 3900
-F 0 "C1" H 2968 3946 50  0001 L CNN
-F 1 "100uf" H 2500 3900 50  0000 L CNN
-F 2 "0_my_footprints2:CP_my100uf" H 2888 3750 50  0001 C CNN
-F 3 "~" H 2850 3900 50  0001 C CNN
-	1    2850 3900
+P 4150 3950
+F 0 "C1" H 4268 3996 50  0001 L CNN
+F 1 "100uf" H 3800 3950 50  0000 L CNN
+F 2 "0_my_footprints2:CP_my100uf" H 4188 3800 50  0001 C CNN
+F 3 "~" H 4150 3950 50  0001 C CNN
+	1    4150 3950
 	1    0    0    -1  
 $EndComp
 $Comp
 L Connector_Generic:Conn_01x04 J2
 U 1 1 68DEB69F
-P 4050 2700
-F 0 "J2" V 4200 2800 50  0000 L CNN
-F 1 "NMEA2000" V 4200 2350 50  0000 L CNN
-F 2 "0_my_footprints:myPheonix4x3.81_right" H 4050 2700 50  0001 C CNN
-F 3 "~" H 4050 2700 50  0001 C CNN
-	1    4050 2700
+P 5350 2750
+F 0 "J2" V 5500 2850 50  0000 L CNN
+F 1 "NMEA2000" V 5500 2400 50  0000 L CNN
+F 2 "0_my_footprints:myPheonix4x3.81_right" H 5350 2750 50  0001 C CNN
+F 3 "~" H 5350 2750 50  0001 C CNN
+	1    5350 2750
 	0    -1   -1   0   
 $EndComp
 $Comp
 L power:GND #PWR04
 U 1 1 68DFEA73
-P 4250 2900
-F 0 "#PWR04" H 4250 2650 50  0001 C CNN
-F 1 "GND" V 4250 2700 50  0000 C CNN
-F 2 "" H 4250 2900 50  0001 C CNN
-F 3 "" H 4250 2900 50  0001 C CNN
-	1    4250 2900
+P 5550 2950
+F 0 "#PWR04" H 5550 2700 50  0001 C CNN
+F 1 "GND" V 5550 2750 50  0000 C CNN
+F 2 "" H 5550 2950 50  0001 C CNN
+F 3 "" H 5550 2950 50  0001 C CNN
+	1    5550 2950
 	1    0    0    -1  
 $EndComp
 $Comp
 L power:GND #PWR036
 U 1 1 69145A55
-P 10350 6000
-F 0 "#PWR036" H 10350 5750 50  0001 C CNN
-F 1 "GND" H 10355 5827 50  0000 C CNN
-F 2 "" H 10350 6000 50  0001 C CNN
-F 3 "" H 10350 6000 50  0001 C CNN
-	1    10350 6000
+P 11650 6050
+F 0 "#PWR036" H 11650 5800 50  0001 C CNN
+F 1 "GND" H 11655 5877 50  0000 C CNN
+F 2 "" H 11650 6050 50  0001 C CNN
+F 3 "" H 11650 6050 50  0001 C CNN
+	1    11650 6050
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
-	9000 5850 9500 5850
+	10300 5900 10800 5900
 Wire Wire Line
-	9350 5150 9350 5350
+	10650 5200 10650 5400
 Wire Wire Line
-	10250 4950 10250 4500
+	11550 5000 11550 4550
 Wire Wire Line
-	9000 5650 9000 5550
+	10300 5700 10300 5600
 Wire Wire Line
-	9100 5650 9000 5650
+	10400 5700 10300 5700
 Wire Wire Line
-	9500 5650 9400 5650
+	10800 5700 10700 5700
 $Comp
 L Device:R R8
 U 1 1 69145A6C
-P 10400 5150
-F 0 "R8" H 10470 5196 50  0001 L CNN
-F 1 "4.7K" V 10400 5150 50  0000 C CNN
-F 2 "0_my_footprints:myResistor" V 10330 5150 50  0001 C CNN
-F 3 "~" H 10400 5150 50  0001 C CNN
-	1    10400 5150
+P 11700 5200
+F 0 "R8" H 11770 5246 50  0001 L CNN
+F 1 "4.7K" V 11700 5200 50  0000 C CNN
+F 2 "0_my_footprints:myResistor" V 11630 5200 50  0001 C CNN
+F 3 "~" H 11700 5200 50  0001 C CNN
+	1    11700 5200
 	0    -1   -1   0   
 $EndComp
 $Comp
 L power:+3V3 #PWR035
 U 1 1 69145A72
-P 9000 5550
-F 0 "#PWR035" H 9000 5400 50  0001 C CNN
-F 1 "+3V3" H 9015 5723 50  0000 C CNN
-F 2 "" H 9000 5550 50  0001 C CNN
-F 3 "" H 9000 5550 50  0001 C CNN
-	1    9000 5550
+P 10300 5600
+F 0 "#PWR035" H 10300 5450 50  0001 C CNN
+F 1 "+3V3" H 10315 5773 50  0000 C CNN
+F 2 "" H 10300 5600 50  0001 C CNN
+F 3 "" H 10300 5600 50  0001 C CNN
+	1    10300 5600
 	1    0    0    -1  
 $EndComp
 $Comp
 L Device:R R10
 U 1 1 69145A78
-P 9250 5650
-F 0 "R10" H 9320 5696 50  0001 L CNN
-F 1 "220" V 9250 5650 50  0000 C CNN
-F 2 "0_my_footprints:myResistor" V 9180 5650 50  0001 C CNN
-F 3 "~" H 9250 5650 50  0001 C CNN
-	1    9250 5650
+P 10550 5700
+F 0 "R10" H 10620 5746 50  0001 L CNN
+F 1 "220" V 10550 5700 50  0000 C CNN
+F 2 "0_my_footprints:myResistor" V 10480 5700 50  0001 C CNN
+F 3 "~" H 10550 5700 50  0001 C CNN
+	1    10550 5700
 	0    1    1    0   
 $EndComp
-Text GLabel 9000 5850 0    63   Input ~ 0
+Text GLabel 10300 5900 0    63   Input ~ 0
 TX2
 $Comp
 L Isolator:TLP291 U5
 U 1 1 69145A7F
-P 9800 5750
-F 0 "U5" H 9800 6075 50  0001 C CNN
-F 1 "TLP521" H 9800 5983 50  0000 C CNN
-F 2 "0_my_footprints:myDip4" H 9600 5550 50  0001 L CIN
-F 3 "https://toshiba.semicon-storage.com/info/docget.jsp?did=12884&prodName=TLP291" H 9800 5750 50  0001 L CNN
-	1    9800 5750
+P 11100 5800
+F 0 "U5" H 11100 6125 50  0001 C CNN
+F 1 "TLP521" H 11100 6033 50  0000 C CNN
+F 2 "0_my_footprints:myDip4" H 10900 5600 50  0001 L CIN
+F 3 "https://toshiba.semicon-storage.com/info/docget.jsp?did=12884&prodName=TLP291" H 11100 5800 50  0001 L CNN
+	1    11100 5800
 	1    0    0    -1  
 $EndComp
 $Comp
 L Isolator:TLP291 U4
 U 1 1 69145A85
-P 9800 5050
-F 0 "U4" H 9800 5375 50  0001 C CNN
-F 1 "TLP521" H 9800 5283 50  0000 C CNN
-F 2 "0_my_footprints:myDip4" H 9600 4850 50  0001 L CIN
-F 3 "https://toshiba.semicon-storage.com/info/docget.jsp?did=12884&prodName=TLP291" H 9800 5050 50  0001 L CNN
-	1    9800 5050
+P 11100 5100
+F 0 "U4" H 11100 5425 50  0001 C CNN
+F 1 "TLP521" H 11100 5333 50  0000 C CNN
+F 2 "0_my_footprints:myDip4" H 10900 4900 50  0001 L CIN
+F 3 "https://toshiba.semicon-storage.com/info/docget.jsp?did=12884&prodName=TLP291" H 11100 5100 50  0001 L CNN
+	1    11100 5100
 	-1   0    0    -1  
 $EndComp
-Connection ~ 9350 4950
+Connection ~ 10650 5000
 Wire Wire Line
-	9000 4950 9350 4950
-Text GLabel 9000 4950 0    63   Input ~ 0
+	10300 5000 10650 5000
+Text GLabel 10300 5000 0    63   Input ~ 0
 RX2
 Wire Wire Line
-	9350 4950 9350 4800
+	10650 5000 10650 4850
 Wire Wire Line
-	9500 4950 9350 4950
+	10800 5000 10650 5000
 Wire Wire Line
-	9500 5150 9350 5150
+	10800 5200 10650 5200
 Wire Wire Line
-	10100 4950 10250 4950
+	11400 5000 11550 5000
 Wire Wire Line
-	10250 5150 10100 5150
+	11550 5200 11400 5200
 $Comp
 L power:+12V #PWR032
 U 1 1 69145A99
-P 10250 4500
-F 0 "#PWR032" H 10250 4350 50  0001 C CNN
-F 1 "+12V" H 10265 4673 50  0000 C CNN
-F 2 "" H 10250 4500 50  0001 C CNN
-F 3 "" H 10250 4500 50  0001 C CNN
-	1    10250 4500
+P 11550 4550
+F 0 "#PWR032" H 11550 4400 50  0001 C CNN
+F 1 "+12V" H 11565 4723 50  0000 C CNN
+F 2 "" H 11550 4550 50  0001 C CNN
+F 3 "" H 11550 4550 50  0001 C CNN
+	1    11550 4550
 	1    0    0    -1  
 $EndComp
 $Comp
 L power:+3V3 #PWR031
 U 1 1 69145AA1
-P 9350 4500
-F 0 "#PWR031" H 9350 4350 50  0001 C CNN
-F 1 "+3V3" H 9365 4673 50  0000 C CNN
-F 2 "" H 9350 4500 50  0001 C CNN
-F 3 "" H 9350 4500 50  0001 C CNN
-	1    9350 4500
+P 10650 4550
+F 0 "#PWR031" H 10650 4400 50  0001 C CNN
+F 1 "+3V3" H 10665 4723 50  0000 C CNN
+F 2 "" H 10650 4550 50  0001 C CNN
+F 3 "" H 10650 4550 50  0001 C CNN
+	1    10650 4550
 	1    0    0    -1  
 $EndComp
-Text GLabel 10750 3000 2    50   Input ~ 0
+Text GLabel 12050 3050 2    50   Input ~ 0
 ST1
-Text GLabel 10750 5150 2    50   Input ~ 0
+Text GLabel 12050 5200 2    50   Input ~ 0
 ST2
 $Comp
 L power:GND #PWR02
 U 1 1 61C56583
-P 2150 3050
-F 0 "#PWR02" H 2150 2800 50  0001 C CNN
-F 1 "GND" V 2150 2850 50  0000 C CNN
-F 2 "" H 2150 3050 50  0001 C CNN
-F 3 "" H 2150 3050 50  0001 C CNN
-	1    2150 3050
+P 3450 3100
+F 0 "#PWR02" H 3450 2850 50  0001 C CNN
+F 1 "GND" V 3450 2900 50  0000 C CNN
+F 2 "" H 3450 3100 50  0001 C CNN
+F 3 "" H 3450 3100 50  0001 C CNN
+	1    3450 3100
 	0    -1   -1   0   
 $EndComp
 $Comp
 L power:+12V #PWR01
 U 1 1 61DE37E9
-P 2150 2950
-F 0 "#PWR01" H 2150 2800 50  0001 C CNN
-F 1 "+12V" V 2150 3150 50  0000 C CNN
-F 2 "" H 2150 2950 50  0001 C CNN
-F 3 "" H 2150 2950 50  0001 C CNN
-	1    2150 2950
+P 3450 3000
+F 0 "#PWR01" H 3450 2850 50  0001 C CNN
+F 1 "+12V" V 3450 3200 50  0000 C CNN
+F 2 "" H 3450 3000 50  0001 C CNN
+F 3 "" H 3450 3000 50  0001 C CNN
+	1    3450 3000
 	0    1    1    0   
 $EndComp
 $Comp
 L Connector_Generic:Conn_01x02 J1
 U 1 1 63C47095
-P 1950 2950
-F 0 "J1" H 2600 2900 50  0000 C CNN
-F 1 "INST_POWER" H 2250 2900 50  0000 C CNN
-F 2 "0_my_footprints:myPheonix2x3.81_right" H 1950 2950 50  0001 C CNN
-F 3 "~" H 1950 2950 50  0001 C CNN
-	1    1950 2950
+P 3250 3000
+F 0 "J1" H 3900 2950 50  0000 C CNN
+F 1 "INST_POWER" H 3550 2950 50  0000 C CNN
+F 2 "0_my_footprints:myPheonix2x3.81_right" H 3250 3000 50  0001 C CNN
+F 3 "~" H 3250 3000 50  0001 C CNN
+	1    3250 3000
 	-1   0    0    -1  
 $EndComp
 $Comp
 L power:+5V #PWR09
 U 1 1 61D92C26
-P 3000 3750
-F 0 "#PWR09" H 3000 3600 50  0001 C CNN
-F 1 "+5V" V 3000 3950 50  0000 C CNN
-F 2 "" H 3000 3750 50  0001 C CNN
-F 3 "" H 3000 3750 50  0001 C CNN
-	1    3000 3750
+P 4300 3800
+F 0 "#PWR09" H 4300 3650 50  0001 C CNN
+F 1 "+5V" V 4300 4000 50  0000 C CNN
+F 2 "" H 4300 3800 50  0001 C CNN
+F 3 "" H 4300 3800 50  0001 C CNN
+	1    4300 3800
 	0    1    -1   0   
 $EndComp
 $Comp
 L cnc3018_Library:BUCK01 M1
 U 1 1 61B26C43
-P 2050 3900
-F 0 "M1" H 2200 3900 50  0000 C CNN
-F 1 "BUCK01" H 1950 3900 50  0000 C CNN
-F 2 "0_my_footprints:myMini360BuckConverter" H 2000 4200 50  0001 C CNN
-F 3 "" H 2000 4200 50  0001 C CNN
-	1    2050 3900
+P 3350 3950
+F 0 "M1" H 3500 3950 50  0000 C CNN
+F 1 "BUCK01" H 3250 3950 50  0000 C CNN
+F 2 "0_my_footprints:myMini360BuckConverter" H 3300 4250 50  0001 C CNN
+F 3 "" H 3300 4250 50  0001 C CNN
+	1    3350 3950
 	1    0    0    1   
 $EndComp
 $Comp
 L Diode:1N4001 D2
 U 1 1 69362762
-P 2550 3750
-F 0 "D2" H 2750 3550 50  0000 L CNN
-F 1 "1N5819" H 2400 3550 50  0000 L CNN
-F 2 "0_my_footprints:myDiodeSchotsky" H 2550 3575 50  0001 C CNN
-F 3 "http://www.vishay.com/docs/88503/1n4001.pdf" H 2550 3750 50  0001 C CNN
-	1    2550 3750
+P 3850 3800
+F 0 "D2" H 4050 3600 50  0000 L CNN
+F 1 "1N5819" H 3700 3600 50  0000 L CNN
+F 2 "0_my_footprints:myDiodeSchotsky" H 3850 3625 50  0001 C CNN
+F 3 "http://www.vishay.com/docs/88503/1n4001.pdf" H 3850 3800 50  0001 C CNN
+	1    3850 3800
 	-1   0    0    1   
 $EndComp
 $Comp
 L power:GND #PWR011
 U 1 1 693ABDD2
-P 2400 4150
-F 0 "#PWR011" H 2400 3900 50  0001 C CNN
-F 1 "GND" H 2405 3977 50  0000 C CNN
-F 2 "" H 2400 4150 50  0001 C CNN
-F 3 "" H 2400 4150 50  0001 C CNN
-	1    2400 4150
+P 3700 4200
+F 0 "#PWR011" H 3700 3950 50  0001 C CNN
+F 1 "GND" H 3705 4027 50  0000 C CNN
+F 2 "" H 3700 4200 50  0001 C CNN
+F 3 "" H 3700 4200 50  0001 C CNN
+	1    3700 4200
 	1    0    0    -1  
 $EndComp
 $Comp
 L power:GND #PWR010
 U 1 1 693B1C91
-P 1650 4150
-F 0 "#PWR010" H 1650 3900 50  0001 C CNN
-F 1 "GND" H 1655 3977 50  0000 C CNN
-F 2 "" H 1650 4150 50  0001 C CNN
-F 3 "" H 1650 4150 50  0001 C CNN
-	1    1650 4150
+P 2950 4200
+F 0 "#PWR010" H 2950 3950 50  0001 C CNN
+F 1 "GND" H 2955 4027 50  0000 C CNN
+F 2 "" H 2950 4200 50  0001 C CNN
+F 3 "" H 2950 4200 50  0001 C CNN
+	1    2950 4200
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
-	2400 4050 2400 4150
+	3700 4100 3700 4200
 Wire Wire Line
-	1650 4050 1650 4150
+	2950 4100 2950 4200
 Wire Wire Line
-	2700 3750 2850 3750
-Connection ~ 2850 3750
+	4000 3800 4150 3800
+Connection ~ 4150 3800
 Wire Wire Line
-	2850 3750 3000 3750
+	4150 3800 4300 3800
 Wire Wire Line
-	2850 4050 2400 4050
-Connection ~ 2400 4050
+	4150 4100 3700 4100
+Connection ~ 3700 4100
 $Comp
 L power:+12V #PWR03
 U 1 1 694CBA8F
-P 3950 2900
-F 0 "#PWR03" H 3950 2750 50  0001 C CNN
-F 1 "+12V" V 3950 3100 50  0000 C CNN
-F 2 "" H 3950 2900 50  0001 C CNN
-F 3 "" H 3950 2900 50  0001 C CNN
-	1    3950 2900
+P 5250 2950
+F 0 "#PWR03" H 5250 2800 50  0001 C CNN
+F 1 "+12V" V 5250 3150 50  0000 C CNN
+F 2 "" H 5250 2950 50  0001 C CNN
+F 3 "" H 5250 2950 50  0001 C CNN
+	1    5250 2950
 	-1   0    0    1   
 $EndComp
-Text GLabel 6250 5550 3    63   Input ~ 0
+Text GLabel 7550 5600 3    63   Input ~ 0
 RX4
 $Comp
 L power:+3V3 #PWR018
 U 1 1 69544CCB
-P 6750 5550
-F 0 "#PWR018" H 6750 5400 50  0001 C CNN
-F 1 "+3V3" V 6750 5750 50  0000 C CNN
-F 2 "" H 6750 5550 50  0001 C CNN
-F 3 "" H 6750 5550 50  0001 C CNN
-	1    6750 5550
+P 8050 5600
+F 0 "#PWR018" H 8050 5450 50  0001 C CNN
+F 1 "+3V3" V 8050 5800 50  0000 C CNN
+F 2 "" H 8050 5600 50  0001 C CNN
+F 3 "" H 8050 5600 50  0001 C CNN
+	1    8050 5600
 	-1   0    0    1   
 $EndComp
 $Comp
 L power:GND #PWR017
 U 1 1 6953CC62
-P 6650 5550
-F 0 "#PWR017" H 6650 5300 50  0001 C CNN
-F 1 "GND" V 6650 5350 50  0000 C CNN
-F 2 "" H 6650 5550 50  0001 C CNN
-F 3 "" H 6650 5550 50  0001 C CNN
-	1    6650 5550
+P 7950 5600
+F 0 "#PWR017" H 7950 5350 50  0001 C CNN
+F 1 "GND" V 7950 5400 50  0000 C CNN
+F 2 "" H 7950 5600 50  0001 C CNN
+F 3 "" H 7950 5600 50  0001 C CNN
+	1    7950 5600
 	1    0    0    -1  
 $EndComp
-Text GLabel 6350 5550 3    63   Input ~ 0
+Text GLabel 7650 5600 3    63   Input ~ 0
 RX3
-Text GLabel 6550 5550 3    63   Input ~ 0
+Text GLabel 7850 5600 3    63   Input ~ 0
 TX3
-Text GLabel 6450 5550 3    63   Input ~ 0
+Text GLabel 7750 5600 3    63   Input ~ 0
 TX4
 $Comp
 L Connector_Generic:Conn_01x10 J14
 U 1 1 694EB22B
-P 6650 5350
-F 0 "J14" V 7200 5600 50  0000 C CNN
-F 1 "MAX3232" V 7200 5200 50  0000 C CNN
-F 2 "0_my_footprints:MAX3232_Module" H 6650 5350 50  0001 C CNN
-F 3 "~" H 6650 5350 50  0001 C CNN
-	1    6650 5350
+P 7950 5400
+F 0 "J14" V 8500 5650 50  0000 C CNN
+F 1 "MAX3232" V 8500 5250 50  0000 C CNN
+F 2 "0_my_footprints:MAX3232_Module" H 7950 5400 50  0001 C CNN
+F 3 "~" H 7950 5400 50  0001 C CNN
+	1    7950 5400
 	0    -1   -1   0   
 $EndComp
-Text Notes 5700 1800 0    50   ~ 0
+Text Notes 7000 1850 0    50   ~ 0
 Directions are extern device centric:\n    83x_IN connects to the Input of the connected device.\n    83x_OUT connects to the Output of the connected device.\n
-Text Notes 7200 5250 1    63   ~ 0
+Text Notes 8500 5300 1    63   ~ 0
 R2OUT\nR1OUT\nT2IN\nT1IN\nGND\n3V\nR2IN\nR1IN\nT2OUT\nT1OUT
-Text Notes 7150 2800 1    63   ~ 0
+Text Notes 8450 2850 1    63   ~ 0
 GREEN+GREY\nYELLOW\nBLUE
-Text Notes 7050 2300 0    50   ~ 0
+Text Notes 8350 2350 0    50   ~ 0
 GX2410
-Text Notes 6400 2800 1    63   ~ 0
+Text Notes 7700 2850 1    63   ~ 0
 GREEN+BROWN\nWHITE\nYELLOW
-Text Notes 6300 2300 0    50   ~ 0
+Text Notes 7600 2350 0    50   ~ 0
 E80
 $Comp
 L power:GND #PWR06
 U 1 1 697936EC
-P 6900 3900
-F 0 "#PWR06" H 6900 3650 50  0001 C CNN
-F 1 "GND" V 6900 3700 50  0000 C CNN
-F 2 "" H 6900 3900 50  0001 C CNN
-F 3 "" H 6900 3900 50  0001 C CNN
-	1    6900 3900
+P 8200 3950
+F 0 "#PWR06" H 8200 3700 50  0001 C CNN
+F 1 "GND" V 8200 3750 50  0000 C CNN
+F 2 "" H 8200 3950 50  0001 C CNN
+F 3 "" H 8200 3950 50  0001 C CNN
+	1    8200 3950
 	1    0    0    -1  
 $EndComp
 $Comp
 L power:GND #PWR05
 U 1 1 6979FE97
-P 6150 3900
-F 0 "#PWR05" H 6150 3650 50  0001 C CNN
-F 1 "GND" V 6150 3700 50  0000 C CNN
-F 2 "" H 6150 3900 50  0001 C CNN
-F 3 "" H 6150 3900 50  0001 C CNN
-	1    6150 3900
+P 7450 3950
+F 0 "#PWR05" H 7450 3700 50  0001 C CNN
+F 1 "GND" V 7450 3750 50  0000 C CNN
+F 2 "" H 7450 3950 50  0001 C CNN
+F 3 "" H 7450 3950 50  0001 C CNN
+	1    7450 3950
 	1    0    0    -1  
 $EndComp
-Text GLabel 7150 5550 3    63   Input ~ 0
+Text GLabel 8450 5600 3    63   Input ~ 0
 83A_IN
-Text GLabel 7050 5550 3    63   Input ~ 0
+Text GLabel 8350 5600 3    63   Input ~ 0
 83B_IN
-Text GLabel 6950 5550 3    63   Input ~ 0
+Text GLabel 8250 5600 3    63   Input ~ 0
 83A_OUT
-Text GLabel 6850 5550 3    63   Input ~ 0
+Text GLabel 8150 5600 3    63   Input ~ 0
 83B_OUT
 $Comp
 L Device:LED D4
 U 1 1 69BBC2B7
-P 2350 6550
-F 0 "D4" H 2343 6767 50  0000 C CNN
-F 1 "ALIVE_LED" H 2343 6676 50  0000 C CNN
-F 2 "0_my_footprints2:led_small_red" H 2350 6550 50  0001 C CNN
-F 3 "~" H 2350 6550 50  0001 C CNN
-	1    2350 6550
+P 8100 6850
+F 0 "D4" H 8093 7067 50  0000 C CNN
+F 1 "ALIVE_LED" H 8093 6976 50  0000 C CNN
+F 2 "0_my_footprints2:led_small_red" H 8100 6850 50  0001 C CNN
+F 3 "~" H 8100 6850 50  0001 C CNN
+	1    8100 6850
 	1    0    0    -1  
 $EndComp
-Text GLabel 2500 6550 2    50   Input ~ 0
+Text GLabel 8250 6850 2    50   Input ~ 0
 ALIVE_LED
 $Comp
 L Device:R R9
 U 1 1 69BC4C2F
-P 2050 6550
-F 0 "R9" H 2120 6596 50  0001 L CNN
-F 1 "220" V 2050 6550 50  0000 C CNN
-F 2 "0_my_footprints:myResistor" V 1980 6550 50  0001 C CNN
-F 3 "~" H 2050 6550 50  0001 C CNN
-	1    2050 6550
+P 7800 6850
+F 0 "R9" H 7870 6896 50  0001 L CNN
+F 1 "220" V 7800 6850 50  0000 C CNN
+F 2 "0_my_footprints:myResistor" V 7730 6850 50  0001 C CNN
+F 3 "~" H 7800 6850 50  0001 C CNN
+	1    7800 6850
 	0    1    1    0   
 $EndComp
 $Comp
 L power:GND #PWR034
 U 1 1 69BD7043
-P 1900 6550
-F 0 "#PWR034" H 1900 6300 50  0001 C CNN
-F 1 "GND" V 1900 6350 50  0000 C CNN
-F 2 "" H 1900 6550 50  0001 C CNN
-F 3 "" H 1900 6550 50  0001 C CNN
-	1    1900 6550
+P 7650 6850
+F 0 "#PWR034" H 7650 6600 50  0001 C CNN
+F 1 "GND" V 7650 6650 50  0000 C CNN
+F 2 "" H 7650 6850 50  0001 C CNN
+F 3 "" H 7650 6850 50  0001 C CNN
+	1    7650 6850
 	0    1    1    0   
 $EndComp
 $Comp
 L Connector_Generic:Conn_01x02 J11
 U 1 1 69BF4FBB
-P 5100 3650
-F 0 "J11" V 5250 3200 50  0000 C CNN
-F 1 "CAN_TERMINATOR" V 5250 3600 50  0000 C CNN
-F 2 "0_my_footprints2:pinHeader1x2" H 5100 3650 50  0001 C CNN
-F 3 "~" H 5100 3650 50  0001 C CNN
-	1    5100 3650
+P 6400 3700
+F 0 "J11" V 6550 3250 50  0000 C CNN
+F 1 "CAN_TERMINATOR" V 6550 3650 50  0000 C CNN
+F 2 "0_my_footprints2:pinHeader1x2" H 6400 3700 50  0001 C CNN
+F 3 "~" H 6400 3700 50  0001 C CNN
+	1    6400 3700
 	0    1    -1   0   
 $EndComp
 $Comp
 L Device:R R2
 U 1 1 69C09B31
-P 5100 4000
-F 0 "R2" H 5170 4046 50  0001 L CNN
-F 1 "120" V 5100 4000 50  0000 C CNN
-F 2 "0_my_footprints:myResistor" V 5030 4000 50  0001 C CNN
-F 3 "~" H 5100 4000 50  0001 C CNN
-	1    5100 4000
+P 6400 4050
+F 0 "R2" H 6470 4096 50  0001 L CNN
+F 1 "120" V 6400 4050 50  0000 C CNN
+F 2 "0_my_footprints:myResistor" V 6330 4050 50  0001 C CNN
+F 3 "~" H 6400 4050 50  0001 C CNN
+	1    6400 4050
 	-1   0    0    1   
 $EndComp
 Wire Wire Line
-	5000 4150 5000 3850
+	6300 4200 6300 3900
 $Comp
 L Connector_Generic:Conn_01x02 J8
 U 1 1 69C27C1B
-P 1750 5250
-F 0 "J8" V 2000 5200 50  0000 C CNN
-F 1 "12V_TEST" V 1900 5200 50  0000 C CNN
-F 2 "0_my_footprints2:pinSocket1x2" H 1750 5250 50  0001 C CNN
-F 3 "~" H 1750 5250 50  0001 C CNN
-	1    1750 5250
+P 3050 5300
+F 0 "J8" V 3300 5250 50  0000 C CNN
+F 1 "12V_TEST" V 3200 5250 50  0000 C CNN
+F 2 "0_my_footprints2:pinSocket1x2" H 3050 5300 50  0001 C CNN
+F 3 "~" H 3050 5300 50  0001 C CNN
+	1    3050 5300
 	0    -1   1    0   
 $EndComp
 $Comp
 L Connector_Generic:Conn_01x02 J9
 U 1 1 69C3DC2B
-P 2350 5250
-F 0 "J9" V 2600 5200 50  0000 C CNN
-F 1 "5V_TEST" V 2500 5200 50  0000 C CNN
-F 2 "0_my_footprints2:pinSocket1x2" H 2350 5250 50  0001 C CNN
-F 3 "~" H 2350 5250 50  0001 C CNN
-	1    2350 5250
+P 3650 5300
+F 0 "J9" V 3900 5250 50  0000 C CNN
+F 1 "5V_TEST" V 3800 5250 50  0000 C CNN
+F 2 "0_my_footprints2:pinSocket1x2" H 3650 5300 50  0001 C CNN
+F 3 "~" H 3650 5300 50  0001 C CNN
+	1    3650 5300
 	0    -1   1    0   
 $EndComp
 $Comp
 L power:+5V #PWR021
 U 1 1 69C4194B
-P 2350 5050
-F 0 "#PWR021" H 2350 4900 50  0001 C CNN
-F 1 "+5V" V 2350 5250 50  0000 C CNN
-F 2 "" H 2350 5050 50  0001 C CNN
-F 3 "" H 2350 5050 50  0001 C CNN
-	1    2350 5050
+P 3650 5100
+F 0 "#PWR021" H 3650 4950 50  0001 C CNN
+F 1 "+5V" V 3650 5300 50  0000 C CNN
+F 2 "" H 3650 5100 50  0001 C CNN
+F 3 "" H 3650 5100 50  0001 C CNN
+	1    3650 5100
 	-1   0    0    -1  
 $EndComp
 $Comp
 L power:GND #PWR020
 U 1 1 69C48BFA
-P 1850 5050
-F 0 "#PWR020" H 1850 4800 50  0001 C CNN
-F 1 "GND" V 1850 4850 50  0000 C CNN
-F 2 "" H 1850 5050 50  0001 C CNN
-F 3 "" H 1850 5050 50  0001 C CNN
-	1    1850 5050
+P 3150 5100
+F 0 "#PWR020" H 3150 4850 50  0001 C CNN
+F 1 "GND" V 3150 4900 50  0000 C CNN
+F 2 "" H 3150 5100 50  0001 C CNN
+F 3 "" H 3150 5100 50  0001 C CNN
+	1    3150 5100
 	-1   0    0    1   
 $EndComp
 $Comp
 L power:+12V #PWR019
 U 1 1 69C48C00
-P 1750 5050
-F 0 "#PWR019" H 1750 4900 50  0001 C CNN
-F 1 "+12V" V 1750 5250 50  0000 C CNN
-F 2 "" H 1750 5050 50  0001 C CNN
-F 3 "" H 1750 5050 50  0001 C CNN
-	1    1750 5050
+P 3050 5100
+F 0 "#PWR019" H 3050 4950 50  0001 C CNN
+F 1 "+12V" V 3050 5300 50  0000 C CNN
+F 2 "" H 3050 5100 50  0001 C CNN
+F 3 "" H 3050 5100 50  0001 C CNN
+	1    3050 5100
 	1    0    0    -1  
 $EndComp
 $Comp
 L power:GND #PWR022
 U 1 1 69C577D4
-P 2450 5050
-F 0 "#PWR022" H 2450 4800 50  0001 C CNN
-F 1 "GND" V 2450 4850 50  0000 C CNN
-F 2 "" H 2450 5050 50  0001 C CNN
-F 3 "" H 2450 5050 50  0001 C CNN
-	1    2450 5050
+P 3750 5100
+F 0 "#PWR022" H 3750 4850 50  0001 C CNN
+F 1 "GND" V 3750 4900 50  0000 C CNN
+F 2 "" H 3750 5100 50  0001 C CNN
+F 3 "" H 3750 5100 50  0001 C CNN
+	1    3750 5100
 	-1   0    0    1   
 $EndComp
-Text Notes 5700 1050 0    50   ~ 0
+Text Notes 7000 1100 0    50   ~ 0
 In passive mode, the blue AIS out+ from the GX2410 \nis connected to the white NMEA In + on the E80, and\nthe yellow GPS In+ to the GX2410 is connected to the \nyellow NMEA out+ from the E80 via jumpers.
-Text Notes 8450 900  0    50   ~ 0
+Text Notes 9750 950  0    50   ~ 0
 In passive mode, the Seatalk busses are connected\ntogether.  In active mode they are not. 
-Text Notes 5700 1400 0    50   ~ 0
+Text Notes 7000 1450 0    50   ~ 0
 In active mode, the jumpers are removed and the teensy\ngets in between the NMEA ports, allowing software control\nof forwarding between the two ports.
-Text GLabel 6350 3900 3    63   Input ~ 0
+Text GLabel 7650 3950 3    63   Input ~ 0
 83A_OUT
-Text Notes 1000 2200 0    50   ~ 0
-Features:\n- NMEA2000 port with optional terminating resistor\n- two NMEA0183 ports\n- two Seatalk ST ports\n- passive binding of 0183 and ST ports when turned off\n- active monitoring/manipulation/forward of 0183 and ST ports when turned on\n- TEST_RIG connector to allow for variety of external PCBs for testing instruments\n- Connector for RX5 for future expansion to possible ESP32 LAN interface\n- 5V and 12V test points for calibrating the Buck Converter\n\nExisting teensyBoat.ino firmware\n- provides sophisticated monitoring of all protocols\n- provides a physical boat simulator that drives\n- simulated instruments that can be assigned to any protocol\n- can be run as command line app with serial monitor (i.e. Putty or Arduino IDE)\n\nWorks with teensyBoat.pm wxPerl user interface that provides\n- a serial monitor / console\n- a windowed user interface to easily control aspects of the teensyBoat.ino program
+Text Notes 2300 2150 0    50   ~ 0
+Features:\n- NMEA2000 port with optional terminating resistor\n- two NMEA0183 ports\n- two Seatalk ST ports\n- passive binding of 0183 and ST ports when turned off\n- active monitoring/manipulation/forward of 0183 and ST ports when turned on\n- 5V and 12V test points for calibrating the Buck Converter\n\nExisting teensyBoat.ino firmware\n- provides sophisticated monitoring of all protocols\n- provides a physical boat simulator that drives\n- simulated instruments that can be assigned to any protocol\n- can be run as command line app with serial monitor (i.e. Putty or Arduino IDE)\n\nWorks with teensyBoat.pm wxPerl user interface that provides\n- a serial monitor / console\n- a windowed user interface to easily control aspects of the teensyBoat.ino program
 $Comp
 L Connector_Generic:Conn_01x03 J4
 U 1 1 69181E1C
-P 6250 3000
-F 0 "J4" V 6350 2850 50  0000 L CNN
-F 1 "83A" V 6350 3000 50  0000 L CNN
-F 2 "0_my_footprints:myPheonix3x3.81_right" H 6250 3000 50  0001 C CNN
-F 3 "~" H 6250 3000 50  0001 C CNN
-	1    6250 3000
+P 7550 3050
+F 0 "J4" V 7650 2900 50  0000 L CNN
+F 1 "83A" V 7650 3050 50  0000 L CNN
+F 2 "0_my_footprints:myPheonix3x3.81_right" H 7550 3050 50  0001 C CNN
+F 3 "~" H 7550 3050 50  0001 C CNN
+	1    7550 3050
 	0    1    -1   0   
 $EndComp
 $Comp
 L Connector_Generic:Conn_01x03 J5
 U 1 1 69202C90
-P 7000 3000
-F 0 "J5" V 7100 2850 50  0000 L CNN
-F 1 "83B" V 7100 3000 50  0000 L CNN
-F 2 "0_my_footprints:myPheonix3x3.81_right" H 7000 3000 50  0001 C CNN
-F 3 "~" H 7000 3000 50  0001 C CNN
-	1    7000 3000
+P 8300 3050
+F 0 "J5" V 8400 2900 50  0000 L CNN
+F 1 "83B" V 8400 3050 50  0000 L CNN
+F 2 "0_my_footprints:myPheonix3x3.81_right" H 8300 3050 50  0001 C CNN
+F 3 "~" H 8300 3050 50  0001 C CNN
+	1    8300 3050
 	0    1    -1   0   
 $EndComp
-Text GLabel 4950 2900 3    50   Input ~ 0
+Text GLabel 6250 2950 3    50   Input ~ 0
 CANH
-Text GLabel 4850 2900 3    50   Input ~ 0
+Text GLabel 6150 2950 3    50   Input ~ 0
 CANL
 $Comp
 L Connector_Generic:Conn_01x04 J3
 U 1 1 6925D224
-P 4850 2700
-F 0 "J3" V 5000 2800 50  0000 L CNN
-F 1 "NMEA2000" V 5000 2350 50  0000 L CNN
-F 2 "0_my_footprints:myPheonix4x3.81_right" H 4850 2700 50  0001 C CNN
-F 3 "~" H 4850 2700 50  0001 C CNN
-	1    4850 2700
+P 6150 2750
+F 0 "J3" V 6300 2850 50  0000 L CNN
+F 1 "NMEA2000" V 6300 2400 50  0000 L CNN
+F 2 "0_my_footprints:myPheonix4x3.81_right" H 6150 2750 50  0001 C CNN
+F 3 "~" H 6150 2750 50  0001 C CNN
+	1    6150 2750
 	0    -1   -1   0   
 $EndComp
 $Comp
 L power:GND #PWR0101
 U 1 1 6925D22A
-P 5050 2900
-F 0 "#PWR0101" H 5050 2650 50  0001 C CNN
-F 1 "GND" V 5050 2700 50  0000 C CNN
-F 2 "" H 5050 2900 50  0001 C CNN
-F 3 "" H 5050 2900 50  0001 C CNN
-	1    5050 2900
+P 6350 2950
+F 0 "#PWR0101" H 6350 2700 50  0001 C CNN
+F 1 "GND" V 6350 2750 50  0000 C CNN
+F 2 "" H 6350 2950 50  0001 C CNN
+F 3 "" H 6350 2950 50  0001 C CNN
+	1    6350 2950
 	1    0    0    -1  
 $EndComp
 $Comp
 L power:+12V #PWR0102
 U 1 1 6925D230
-P 4750 2900
-F 0 "#PWR0102" H 4750 2750 50  0001 C CNN
-F 1 "+12V" V 4750 3100 50  0000 C CNN
-F 2 "" H 4750 2900 50  0001 C CNN
-F 3 "" H 4750 2900 50  0001 C CNN
-	1    4750 2900
+P 6050 2950
+F 0 "#PWR0102" H 6050 2800 50  0001 C CNN
+F 1 "+12V" V 6050 3150 50  0000 C CNN
+F 2 "" H 6050 2950 50  0001 C CNN
+F 3 "" H 6050 2950 50  0001 C CNN
+	1    6050 2950
 	-1   0    0    1   
 $EndComp
 $Comp
 L Connector_Generic:Conn_01x02 J7
 U 1 1 691DDC2F
-P 1350 3750
-F 0 "J7" H 1650 3750 50  0000 C CNN
-F 1 "BUCK_PWR" H 1650 3650 50  0000 C CNN
-F 2 "0_my_footprints2:pinHeader1x2" H 1350 3750 50  0001 C CNN
-F 3 "~" H 1350 3750 50  0001 C CNN
-	1    1350 3750
+P 2650 3800
+F 0 "J7" H 2950 3800 50  0000 C CNN
+F 1 "BUCK_PWR" H 2950 3700 50  0000 C CNN
+F 2 "0_my_footprints2:pinHeader1x2" H 2650 3800 50  0001 C CNN
+F 3 "~" H 2650 3800 50  0001 C CNN
+	1    2650 3800
 	-1   0    0    1   
 $EndComp
 $Comp
 L power:+12V #PWR0103
 U 1 1 691E044F
-P 1550 3550
-F 0 "#PWR0103" H 1550 3400 50  0001 C CNN
-F 1 "+12V" H 1550 3750 50  0000 C CNN
-F 2 "" H 1550 3550 50  0001 C CNN
-F 3 "" H 1550 3550 50  0001 C CNN
-	1    1550 3550
+P 2850 3600
+F 0 "#PWR0103" H 2850 3450 50  0001 C CNN
+F 1 "+12V" H 2850 3800 50  0000 C CNN
+F 2 "" H 2850 3600 50  0001 C CNN
+F 3 "" H 2850 3600 50  0001 C CNN
+	1    2850 3600
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
-	1550 3550 1550 3650
+	2850 3600 2850 3700
 Wire Wire Line
-	1550 3750 1650 3750
+	2850 3800 2950 3800
 $Comp
 L Connector_Generic:Conn_01x03 J21
 U 1 1 691B72AF
-P 8600 7050
-F 0 "J21" V 8700 7000 50  0000 L CNN
-F 1 "ST1" H 8680 7001 50  0001 L CNN
-F 2 "0_my_footprints:myPheonix3x3.81_right" H 8600 7050 50  0001 C CNN
-F 3 "~" H 8600 7050 50  0001 C CNN
-	1    8600 7050
+P 9900 7100
+F 0 "J21" V 10000 7050 50  0000 L CNN
+F 1 "ST1" H 9980 7051 50  0001 L CNN
+F 2 "0_my_footprints:myPheonix3x3.81_right" H 9900 7100 50  0001 C CNN
+F 3 "~" H 9900 7100 50  0001 C CNN
+	1    9900 7100
 	0    1    -1   0   
 $EndComp
 $Comp
 L power:+12V #PWR0104
 U 1 1 691B842B
-P 8500 7250
-F 0 "#PWR0104" H 8500 7100 50  0001 C CNN
-F 1 "+12V" V 8500 7350 50  0000 L CNN
-F 2 "" H 8500 7250 50  0001 C CNN
-F 3 "" H 8500 7250 50  0001 C CNN
-	1    8500 7250
+P 9800 7300
+F 0 "#PWR0104" H 9800 7150 50  0001 C CNN
+F 1 "+12V" V 9800 7400 50  0000 L CNN
+F 2 "" H 9800 7300 50  0001 C CNN
+F 3 "" H 9800 7300 50  0001 C CNN
+	1    9800 7300
 	-1   0    0    1   
 $EndComp
-Text GLabel 8600 7250 3    50   Input ~ 0
+Text GLabel 9900 7300 3    50   Input ~ 0
 ST1
 $Comp
 L power:GND #PWR0105
 U 1 1 691BA5E9
-P 8700 7250
-F 0 "#PWR0105" H 8700 7000 50  0001 C CNN
-F 1 "GND" V 8700 7050 50  0000 C CNN
-F 2 "" H 8700 7250 50  0001 C CNN
-F 3 "" H 8700 7250 50  0001 C CNN
-	1    8700 7250
+P 10000 7300
+F 0 "#PWR0105" H 10000 7050 50  0001 C CNN
+F 1 "GND" V 10000 7100 50  0000 C CNN
+F 2 "" H 10000 7300 50  0001 C CNN
+F 3 "" H 10000 7300 50  0001 C CNN
+	1    10000 7300
 	1    0    0    -1  
 $EndComp
 $Comp
 L Connector_Generic:Conn_01x03 J22
 U 1 1 691BB74B
-P 8950 7050
-F 0 "J22" V 9050 7000 50  0000 L CNN
-F 1 "ST1" H 9030 7001 50  0001 L CNN
-F 2 "0_my_footprints:myJSTx03" H 8950 7050 50  0001 C CNN
-F 3 "~" H 8950 7050 50  0001 C CNN
-	1    8950 7050
+P 10250 7100
+F 0 "J22" V 10350 7050 50  0000 L CNN
+F 1 "ST1" H 10330 7051 50  0001 L CNN
+F 2 "0_my_footprints:myJSTx03" H 10250 7100 50  0001 C CNN
+F 3 "~" H 10250 7100 50  0001 C CNN
+	1    10250 7100
 	0    -1   -1   0   
 $EndComp
 $Comp
 L power:+12V #PWR0106
 U 1 1 691BB751
-P 8850 7250
-F 0 "#PWR0106" H 8850 7100 50  0001 C CNN
-F 1 "+12V" V 8850 7350 50  0000 L CNN
-F 2 "" H 8850 7250 50  0001 C CNN
-F 3 "" H 8850 7250 50  0001 C CNN
-	1    8850 7250
+P 10150 7300
+F 0 "#PWR0106" H 10150 7150 50  0001 C CNN
+F 1 "+12V" V 10150 7400 50  0000 L CNN
+F 2 "" H 10150 7300 50  0001 C CNN
+F 3 "" H 10150 7300 50  0001 C CNN
+	1    10150 7300
 	-1   0    0    1   
 $EndComp
 $Comp
 L power:GND #PWR0107
 U 1 1 691BB758
-P 9050 7250
-F 0 "#PWR0107" H 9050 7000 50  0001 C CNN
-F 1 "GND" V 9050 7050 50  0000 C CNN
-F 2 "" H 9050 7250 50  0001 C CNN
-F 3 "" H 9050 7250 50  0001 C CNN
-	1    9050 7250
+P 10350 7300
+F 0 "#PWR0107" H 10350 7050 50  0001 C CNN
+F 1 "GND" V 10350 7100 50  0000 C CNN
+F 2 "" H 10350 7300 50  0001 C CNN
+F 3 "" H 10350 7300 50  0001 C CNN
+	1    10350 7300
 	1    0    0    -1  
 $EndComp
 $Comp
 L Connector_Generic:Conn_01x03 J23
 U 1 1 691BC18D
-P 9300 7050
-F 0 "J23" V 9400 7000 50  0000 L CNN
-F 1 "ST1" H 9380 7001 50  0001 L CNN
-F 2 "0_my_footprints:myJSTx03" H 9300 7050 50  0001 C CNN
-F 3 "~" H 9300 7050 50  0001 C CNN
-	1    9300 7050
+P 10600 7100
+F 0 "J23" V 10700 7050 50  0000 L CNN
+F 1 "ST1" H 10680 7051 50  0001 L CNN
+F 2 "0_my_footprints:myJSTx03" H 10600 7100 50  0001 C CNN
+F 3 "~" H 10600 7100 50  0001 C CNN
+	1    10600 7100
 	0    -1   -1   0   
 $EndComp
 $Comp
 L power:+12V #PWR0108
 U 1 1 691BC193
-P 9200 7250
-F 0 "#PWR0108" H 9200 7100 50  0001 C CNN
-F 1 "+12V" V 9200 7350 50  0000 L CNN
-F 2 "" H 9200 7250 50  0001 C CNN
-F 3 "" H 9200 7250 50  0001 C CNN
-	1    9200 7250
+P 10500 7300
+F 0 "#PWR0108" H 10500 7150 50  0001 C CNN
+F 1 "+12V" V 10500 7400 50  0000 L CNN
+F 2 "" H 10500 7300 50  0001 C CNN
+F 3 "" H 10500 7300 50  0001 C CNN
+	1    10500 7300
 	-1   0    0    1   
 $EndComp
 $Comp
 L power:GND #PWR0109
 U 1 1 691BC19A
-P 9400 7250
-F 0 "#PWR0109" H 9400 7000 50  0001 C CNN
-F 1 "GND" V 9400 7050 50  0000 C CNN
-F 2 "" H 9400 7250 50  0001 C CNN
-F 3 "" H 9400 7250 50  0001 C CNN
-	1    9400 7250
+P 10700 7300
+F 0 "#PWR0109" H 10700 7050 50  0001 C CNN
+F 1 "GND" V 10700 7100 50  0000 C CNN
+F 2 "" H 10700 7300 50  0001 C CNN
+F 3 "" H 10700 7300 50  0001 C CNN
+	1    10700 7300
 	1    0    0    -1  
 $EndComp
 $Comp
 L Connector_Generic:Conn_01x03 J24
 U 1 1 691BC287
-P 9650 7050
-F 0 "J24" V 9750 7000 50  0000 L CNN
-F 1 "ST1" H 9730 7001 50  0001 L CNN
-F 2 "0_my_footprints:myJSTx03" H 9650 7050 50  0001 C CNN
-F 3 "~" H 9650 7050 50  0001 C CNN
-	1    9650 7050
+P 10950 7100
+F 0 "J24" V 11050 7050 50  0000 L CNN
+F 1 "ST1" H 11030 7051 50  0001 L CNN
+F 2 "0_my_footprints:myJSTx03" H 10950 7100 50  0001 C CNN
+F 3 "~" H 10950 7100 50  0001 C CNN
+	1    10950 7100
 	0    -1   -1   0   
 $EndComp
 $Comp
 L power:+12V #PWR07
 U 1 1 691BC28D
-P 9550 7250
-F 0 "#PWR07" H 9550 7100 50  0001 C CNN
-F 1 "+12V" V 9550 7350 50  0000 L CNN
-F 2 "" H 9550 7250 50  0001 C CNN
-F 3 "" H 9550 7250 50  0001 C CNN
-	1    9550 7250
+P 10850 7300
+F 0 "#PWR07" H 10850 7150 50  0001 C CNN
+F 1 "+12V" V 10850 7400 50  0000 L CNN
+F 2 "" H 10850 7300 50  0001 C CNN
+F 3 "" H 10850 7300 50  0001 C CNN
+	1    10850 7300
 	-1   0    0    1   
 $EndComp
 $Comp
 L power:GND #PWR08
 U 1 1 691BC294
-P 9750 7250
-F 0 "#PWR08" H 9750 7000 50  0001 C CNN
-F 1 "GND" V 9750 7050 50  0000 C CNN
-F 2 "" H 9750 7250 50  0001 C CNN
-F 3 "" H 9750 7250 50  0001 C CNN
-	1    9750 7250
+P 11050 7300
+F 0 "#PWR08" H 11050 7050 50  0001 C CNN
+F 1 "GND" V 11050 7100 50  0000 C CNN
+F 2 "" H 11050 7300 50  0001 C CNN
+F 3 "" H 11050 7300 50  0001 C CNN
+	1    11050 7300
 	1    0    0    -1  
 $EndComp
 $Comp
 L Connector_Generic:Conn_01x03 J25
 U 1 1 691BC5E9
-P 10000 7050
-F 0 "J25" V 10100 7000 50  0000 L CNN
-F 1 "ST1" H 10080 7001 50  0001 L CNN
-F 2 "0_my_footprints:myJSTx03" H 10000 7050 50  0001 C CNN
-F 3 "~" H 10000 7050 50  0001 C CNN
-	1    10000 7050
+P 11300 7100
+F 0 "J25" V 11400 7050 50  0000 L CNN
+F 1 "ST1" H 11380 7051 50  0001 L CNN
+F 2 "0_my_footprints:myJSTx03" H 11300 7100 50  0001 C CNN
+F 3 "~" H 11300 7100 50  0001 C CNN
+	1    11300 7100
 	0    -1   -1   0   
 $EndComp
 $Comp
 L power:+12V #PWR0110
 U 1 1 691BC5EF
-P 9900 7250
-F 0 "#PWR0110" H 9900 7100 50  0001 C CNN
-F 1 "+12V" V 9900 7350 50  0000 L CNN
-F 2 "" H 9900 7250 50  0001 C CNN
-F 3 "" H 9900 7250 50  0001 C CNN
-	1    9900 7250
+P 11200 7300
+F 0 "#PWR0110" H 11200 7150 50  0001 C CNN
+F 1 "+12V" V 11200 7400 50  0000 L CNN
+F 2 "" H 11200 7300 50  0001 C CNN
+F 3 "" H 11200 7300 50  0001 C CNN
+	1    11200 7300
 	-1   0    0    1   
 $EndComp
 $Comp
 L power:GND #PWR0111
 U 1 1 691BC5F6
-P 10100 7250
-F 0 "#PWR0111" H 10100 7000 50  0001 C CNN
-F 1 "GND" V 10100 7050 50  0000 C CNN
-F 2 "" H 10100 7250 50  0001 C CNN
-F 3 "" H 10100 7250 50  0001 C CNN
-	1    10100 7250
+P 11400 7300
+F 0 "#PWR0111" H 11400 7050 50  0001 C CNN
+F 1 "GND" V 11400 7100 50  0000 C CNN
+F 2 "" H 11400 7300 50  0001 C CNN
+F 3 "" H 11400 7300 50  0001 C CNN
+	1    11400 7300
 	1    0    0    -1  
 $EndComp
 $Comp
 L Connector_Generic:Conn_01x03 J26
 U 1 1 691BCBC3
-P 10350 7050
-F 0 "J26" V 10450 7000 50  0000 L CNN
-F 1 "ST1" H 10430 7001 50  0001 L CNN
-F 2 "0_my_footprints:myJSTx03" H 10350 7050 50  0001 C CNN
-F 3 "~" H 10350 7050 50  0001 C CNN
-	1    10350 7050
+P 11650 7100
+F 0 "J26" V 11750 7050 50  0000 L CNN
+F 1 "ST1" H 11730 7051 50  0001 L CNN
+F 2 "0_my_footprints:myJSTx03" H 11650 7100 50  0001 C CNN
+F 3 "~" H 11650 7100 50  0001 C CNN
+	1    11650 7100
 	0    -1   -1   0   
 $EndComp
 $Comp
 L power:+12V #PWR0112
 U 1 1 691BCBC9
-P 10250 7250
-F 0 "#PWR0112" H 10250 7100 50  0001 C CNN
-F 1 "+12V" V 10250 7350 50  0000 L CNN
-F 2 "" H 10250 7250 50  0001 C CNN
-F 3 "" H 10250 7250 50  0001 C CNN
-	1    10250 7250
+P 11550 7300
+F 0 "#PWR0112" H 11550 7150 50  0001 C CNN
+F 1 "+12V" V 11550 7400 50  0000 L CNN
+F 2 "" H 11550 7300 50  0001 C CNN
+F 3 "" H 11550 7300 50  0001 C CNN
+	1    11550 7300
 	-1   0    0    1   
 $EndComp
 $Comp
 L power:GND #PWR0113
 U 1 1 691BCBD0
-P 10450 7250
-F 0 "#PWR0113" H 10450 7000 50  0001 C CNN
-F 1 "GND" V 10450 7050 50  0000 C CNN
-F 2 "" H 10450 7250 50  0001 C CNN
-F 3 "" H 10450 7250 50  0001 C CNN
-	1    10450 7250
+P 11750 7300
+F 0 "#PWR0113" H 11750 7050 50  0001 C CNN
+F 1 "GND" V 11750 7100 50  0000 C CNN
+F 2 "" H 11750 7300 50  0001 C CNN
+F 3 "" H 11750 7300 50  0001 C CNN
+	1    11750 7300
 	1    0    0    -1  
 $EndComp
 $Comp
 L Connector_Generic:Conn_01x03 J27
 U 1 1 691BD105
-P 10700 7050
-F 0 "J27" V 10800 7000 50  0000 L CNN
-F 1 "ST1" H 10780 7001 50  0001 L CNN
-F 2 "0_my_footprints:myJSTx03" H 10700 7050 50  0001 C CNN
-F 3 "~" H 10700 7050 50  0001 C CNN
-	1    10700 7050
+P 12000 7100
+F 0 "J27" V 12100 7050 50  0000 L CNN
+F 1 "ST1" H 12080 7051 50  0001 L CNN
+F 2 "0_my_footprints:myJSTx03" H 12000 7100 50  0001 C CNN
+F 3 "~" H 12000 7100 50  0001 C CNN
+	1    12000 7100
 	0    -1   -1   0   
 $EndComp
 $Comp
 L power:+12V #PWR0114
 U 1 1 691BD10B
-P 10600 7250
-F 0 "#PWR0114" H 10600 7100 50  0001 C CNN
-F 1 "+12V" V 10600 7350 50  0000 L CNN
-F 2 "" H 10600 7250 50  0001 C CNN
-F 3 "" H 10600 7250 50  0001 C CNN
-	1    10600 7250
+P 11900 7300
+F 0 "#PWR0114" H 11900 7150 50  0001 C CNN
+F 1 "+12V" V 11900 7400 50  0000 L CNN
+F 2 "" H 11900 7300 50  0001 C CNN
+F 3 "" H 11900 7300 50  0001 C CNN
+	1    11900 7300
 	-1   0    0    1   
 $EndComp
 $Comp
 L power:GND #PWR014
 U 1 1 691BD112
-P 10800 7250
-F 0 "#PWR014" H 10800 7000 50  0001 C CNN
-F 1 "GND" V 10800 7050 50  0000 C CNN
-F 2 "" H 10800 7250 50  0001 C CNN
-F 3 "" H 10800 7250 50  0001 C CNN
-	1    10800 7250
+P 12100 7300
+F 0 "#PWR014" H 12100 7050 50  0001 C CNN
+F 1 "GND" V 12100 7100 50  0000 C CNN
+F 2 "" H 12100 7300 50  0001 C CNN
+F 3 "" H 12100 7300 50  0001 C CNN
+	1    12100 7300
 	1    0    0    -1  
 $EndComp
 $Comp
 L Connector_Generic:Conn_01x03 J28
 U 1 1 691BD93F
-P 11150 7050
-F 0 "J28" V 11250 7000 50  0000 L CNN
-F 1 "ST2" H 11230 7001 50  0001 L CNN
-F 2 "0_my_footprints:myJSTx03" H 11150 7050 50  0001 C CNN
-F 3 "~" H 11150 7050 50  0001 C CNN
-	1    11150 7050
+P 12450 7100
+F 0 "J28" V 12550 7050 50  0000 L CNN
+F 1 "ST2" H 12530 7051 50  0001 L CNN
+F 2 "0_my_footprints:myJSTx03" H 12450 7100 50  0001 C CNN
+F 3 "~" H 12450 7100 50  0001 C CNN
+	1    12450 7100
 	0    -1   -1   0   
 $EndComp
 $Comp
 L power:+12V #PWR0115
 U 1 1 691BD945
-P 11050 7250
-F 0 "#PWR0115" H 11050 7100 50  0001 C CNN
-F 1 "+12V" V 11050 7350 50  0000 L CNN
-F 2 "" H 11050 7250 50  0001 C CNN
-F 3 "" H 11050 7250 50  0001 C CNN
-	1    11050 7250
+P 12350 7300
+F 0 "#PWR0115" H 12350 7150 50  0001 C CNN
+F 1 "+12V" V 12350 7400 50  0000 L CNN
+F 2 "" H 12350 7300 50  0001 C CNN
+F 3 "" H 12350 7300 50  0001 C CNN
+	1    12350 7300
 	-1   0    0    1   
 $EndComp
-Text GLabel 11150 7250 3    50   Input ~ 0
+Text GLabel 12450 7300 3    50   Input ~ 0
 ST2
 $Comp
 L power:GND #PWR0116
 U 1 1 691BD94C
-P 11250 7250
-F 0 "#PWR0116" H 11250 7000 50  0001 C CNN
-F 1 "GND" V 11250 7050 50  0000 C CNN
-F 2 "" H 11250 7250 50  0001 C CNN
-F 3 "" H 11250 7250 50  0001 C CNN
-	1    11250 7250
+P 12550 7300
+F 0 "#PWR0116" H 12550 7050 50  0001 C CNN
+F 1 "GND" V 12550 7100 50  0000 C CNN
+F 2 "" H 12550 7300 50  0001 C CNN
+F 3 "" H 12550 7300 50  0001 C CNN
+	1    12550 7300
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
-	10350 3200 10350 3700
+	11650 3250 11650 3750
 Wire Wire Line
-	10100 3700 10350 3700
-Connection ~ 10350 3700
+	11400 3750 11650 3750
+Connection ~ 11650 3750
 Wire Wire Line
-	10350 3700 10350 3800
+	11650 3750 11650 3850
 Wire Wire Line
-	10550 3000 10650 3000
+	11850 3050 11950 3050
 Wire Wire Line
-	10650 3000 10650 3500
+	11950 3050 11950 3550
 Wire Wire Line
-	10650 3500 10100 3500
-Connection ~ 10650 3000
+	11950 3550 11400 3550
+Connection ~ 11950 3050
 Wire Wire Line
-	10650 3000 10750 3000
+	11950 3050 12050 3050
 Wire Wire Line
-	9350 5350 10350 5350
+	10650 5400 11650 5400
 Wire Wire Line
-	10350 5350 10350 5850
+	11650 5400 11650 5900
 Wire Wire Line
-	10100 5850 10350 5850
-Connection ~ 10350 5850
+	11400 5900 11650 5900
+Connection ~ 11650 5900
 Wire Wire Line
-	10350 5850 10350 6000
+	11650 5900 11650 6050
 Wire Wire Line
-	10550 5150 10650 5150
+	11850 5200 11950 5200
 Wire Wire Line
-	10100 5650 10650 5650
+	11400 5700 11950 5700
 Wire Wire Line
-	10650 5650 10650 5150
-Connection ~ 10650 5150
+	11950 5700 11950 5200
+Connection ~ 11950 5200
 Wire Wire Line
-	10650 5150 10750 5150
+	11950 5200 12050 5200
 $Comp
 L Connector_Generic:Conn_01x02 J15
 U 1 1 692A6692
-P 7600 3300
-F 0 "J15" H 7750 3300 50  0000 C CNN
-F 1 "AIS" H 7750 3200 50  0000 C CNN
-F 2 "0_my_footprints2:pinHeader1x2" H 7600 3300 50  0001 C CNN
-F 3 "~" H 7600 3300 50  0001 C CNN
-	1    7600 3300
+P 8900 3350
+F 0 "J15" H 9050 3350 50  0000 C CNN
+F 1 "AIS" H 9050 3250 50  0000 C CNN
+F 2 "0_my_footprints2:pinHeader1x2" H 8900 3350 50  0001 C CNN
+F 3 "~" H 8900 3350 50  0001 C CNN
+	1    8900 3350
 	1    0    0    -1  
 $EndComp
 $Comp
 L Connector_Generic:Conn_01x02 J16
 U 1 1 692F85B5
-P 7600 3700
-F 0 "J16" H 7750 3600 50  0000 C CNN
-F 1 "GPS" H 7750 3700 50  0000 C CNN
-F 2 "0_my_footprints2:pinHeader1x2" H 7600 3700 50  0001 C CNN
-F 3 "~" H 7600 3700 50  0001 C CNN
-	1    7600 3700
+P 8900 3750
+F 0 "J16" H 9050 3650 50  0000 C CNN
+F 1 "GPS" H 9050 3750 50  0000 C CNN
+F 2 "0_my_footprints2:pinHeader1x2" H 8900 3750 50  0001 C CNN
+F 3 "~" H 8900 3750 50  0001 C CNN
+	1    8900 3750
 	1    0    0    1   
 $EndComp
-Text GLabel 7100 3900 3    63   Input ~ 0
+Text GLabel 8400 3950 3    63   Input ~ 0
 83B_OUT
-Text GLabel 7000 3900 3    63   Input ~ 0
+Text GLabel 8300 3950 3    63   Input ~ 0
 83B_IN
 Wire Wire Line
-	6150 3200 6150 3900
+	7450 3250 7450 3950
 Wire Wire Line
-	6250 3200 6250 3400
+	7550 3250 7550 3450
 Wire Wire Line
-	6350 3200 6350 3700
+	7650 3250 7650 3750
 Wire Wire Line
-	6900 3200 6900 3900
+	8200 3250 8200 3950
 Wire Wire Line
-	7000 3200 7000 3600
+	8300 3250 8300 3650
 Wire Wire Line
-	7100 3200 7100 3300
+	8400 3250 8400 3350
 Wire Wire Line
-	7400 3300 7100 3300
-Connection ~ 7100 3300
+	8700 3350 8400 3350
+Connection ~ 8400 3350
 Wire Wire Line
-	7100 3300 7100 3900
+	8400 3350 8400 3950
 Wire Wire Line
-	7400 3400 6250 3400
-Connection ~ 6250 3400
+	8700 3450 7550 3450
+Connection ~ 7550 3450
 Wire Wire Line
-	6250 3400 6250 3900
+	7550 3450 7550 3950
 Wire Wire Line
-	7400 3600 7000 3600
-Connection ~ 7000 3600
+	8700 3650 8300 3650
+Connection ~ 8300 3650
 Wire Wire Line
-	7000 3600 7000 3900
+	8300 3650 8300 3950
 Wire Wire Line
-	7400 3700 6350 3700
-Connection ~ 6350 3700
+	8700 3750 7650 3750
+Connection ~ 7650 3750
 Wire Wire Line
-	6350 3700 6350 3900
-Text GLabel 8950 7250 3    50   Input ~ 0
+	7650 3750 7650 3950
+Text GLabel 10250 7300 3    50   Input ~ 0
 ST1
-Text GLabel 9300 7250 3    50   Input ~ 0
+Text GLabel 10600 7300 3    50   Input ~ 0
 ST1
-Text GLabel 9650 7250 3    50   Input ~ 0
+Text GLabel 10950 7300 3    50   Input ~ 0
 ST1
-Text GLabel 10000 7250 3    50   Input ~ 0
+Text GLabel 11300 7300 3    50   Input ~ 0
 ST1
-Text GLabel 10350 7250 3    50   Input ~ 0
+Text GLabel 11650 7300 3    50   Input ~ 0
 ST1
-Text GLabel 10700 7250 3    50   Input ~ 0
+Text GLabel 12000 7300 3    50   Input ~ 0
 ST1
 $Comp
 L Connector_Generic:Conn_01x02 J17
 U 1 1 69648F76
-P 9750 6450
-F 0 "J17" H 10000 6450 50  0000 C CNN
-F 1 "ST_CONNECTED" H 10100 6350 50  0000 C CNN
-F 2 "0_my_footprints2:pinHeader1x2" H 9750 6450 50  0001 C CNN
-F 3 "~" H 9750 6450 50  0001 C CNN
-	1    9750 6450
+P 11050 6500
+F 0 "J17" H 11300 6500 50  0000 C CNN
+F 1 "ST_CONNECTED" H 11400 6400 50  0000 C CNN
+F 2 "0_my_footprints2:pinHeader1x2" H 11050 6500 50  0001 C CNN
+F 3 "~" H 11050 6500 50  0001 C CNN
+	1    11050 6500
 	1    0    0    -1  
 $EndComp
-Text GLabel 9550 6550 0    50   Input ~ 0
+Text GLabel 10850 6600 0    50   Input ~ 0
 ST1
-Text GLabel 9550 6450 0    50   Input ~ 0
+Text GLabel 10850 6500 0    50   Input ~ 0
 ST2
 $Comp
 L Device:R R1
 U 1 1 6822159F
-P 9350 2500
-F 0 "R1" H 9420 2546 50  0001 L CNN
-F 1 "10K" V 9350 2500 50  0000 C CNN
-F 2 "0_my_footprints:myResistor" V 9280 2500 50  0001 C CNN
-F 3 "~" H 9350 2500 50  0001 C CNN
-	1    9350 2500
+P 10650 2550
+F 0 "R1" H 10720 2596 50  0001 L CNN
+F 1 "10K" V 10650 2550 50  0000 C CNN
+F 2 "0_my_footprints:myResistor" V 10580 2550 50  0001 C CNN
+F 3 "~" H 10650 2550 50  0001 C CNN
+	1    10650 2550
 	1    0    0    -1  
 $EndComp
 $Comp
 L Device:R R7
 U 1 1 69145A90
-P 9350 4650
-F 0 "R7" H 9420 4696 50  0001 L CNN
-F 1 "10k" V 9350 4650 50  0000 C CNN
-F 2 "0_my_footprints:myResistor" V 9280 4650 50  0001 C CNN
-F 3 "~" H 9350 4650 50  0001 C CNN
-	1    9350 4650
+P 10650 4700
+F 0 "R7" H 10720 4746 50  0001 L CNN
+F 1 "10k" V 10650 4700 50  0000 C CNN
+F 2 "0_my_footprints:myResistor" V 10580 4700 50  0001 C CNN
+F 3 "~" H 10650 4700 50  0001 C CNN
+	1    10650 4700
 	1    0    0    -1  
 $EndComp
-$Comp
-L power:GND #PWR030
-U 1 1 69AAA64C
-P 2150 9800
-F 0 "#PWR030" H 2150 9550 50  0001 C CNN
-F 1 "GND" V 2150 9600 50  0000 C CNN
-F 2 "" H 2150 9800 50  0001 C CNN
-F 3 "" H 2150 9800 50  0001 C CNN
-	1    2150 9800
-	0    -1   -1   0   
-$EndComp
-Text GLabel 2150 10000 2    63   Input ~ 0
-TX5
-Text GLabel 2150 9900 2    63   Input ~ 0
-RX5
-Text Notes 950  9600 0    50   ~ 0
-The board has holes and pads to wire an additional Serial Port (RX5)\n for future expansion, i.e. an ESP32 for LAN access
 $Comp
 L 0_my_teensy:myTeensy4.0 U3
 U 1 1 681E4C83
-P 4550 6950
-F 0 "U3" H 5378 6953 60  0001 L CNN
-F 1 "myTeensy4.0" H 4400 6850 60  0000 L CNN
-F 2 "0_my_teensy:teensy40" V 5450 7000 60  0001 C CNN
-F 3 "" V 5450 7000 60  0000 C CNN
-	1    4550 6950
+P 5850 7000
+F 0 "U3" H 6678 7003 60  0001 L CNN
+F 1 "myTeensy4.0" H 5700 6900 60  0000 L CNN
+F 2 "0_my_teensy:teensy40" V 6750 7050 60  0001 C CNN
+F 3 "" V 6750 7050 60  0000 C CNN
+	1    5850 7000
 	1    0    0    -1  
 $EndComp
-Text GLabel 4500 8050 3    50   Input ~ 0
+Text GLabel 5800 8100 3    50   Input ~ 0
 UDP_ENABLE
-Text GLabel 4400 5950 1    50   Input ~ 0
+Text GLabel 5700 6000 1    50   Input ~ 0
 CRX
-Text GLabel 4300 5950 1    50   Input ~ 0
+Text GLabel 5600 6000 1    50   Input ~ 0
 CTX
-Text GLabel 5100 4150 3    50   Input ~ 0
+Text GLabel 6400 4200 3    50   Input ~ 0
 CANL
-Text GLabel 5000 4150 3    50   Input ~ 0
+Text GLabel 6300 4200 3    50   Input ~ 0
 CANH
-Text GLabel 4300 8050 3    50   Input ~ 0
+Text GLabel 5600 8100 3    50   Input ~ 0
 SPEED_PULSE-LCD_CS
-Text GLabel 5000 8050 3    50   Input ~ 0
+Text GLabel 6300 8100 3    50   Input ~ 0
 ALIVE_LED
-Text GLabel 5300 5950 1    50   Input ~ 0
+Text GLabel 6600 6000 1    50   Input ~ 0
 SCLK-GP
-Text GLabel 4500 5950 1    63   Input ~ 0
-RX5
-Text GLabel 4600 5950 1    63   Input ~ 0
-TX5
+Text GLabel 5800 6000 1    63   Input ~ 0
+RX5-T_CS
+Text GLabel 5900 6000 1    63   Input ~ 0
+TX5-LCD_DC
 $Comp
 L power:GND #PWR037
 U 1 1 69A1A92C
-P 4000 8050
-F 0 "#PWR037" H 4000 7800 50  0001 C CNN
-F 1 "GND" V 4000 7850 50  0000 C CNN
-F 2 "" H 4000 8050 50  0001 C CNN
-F 3 "" H 4000 8050 50  0001 C CNN
-	1    4000 8050
+P 5300 8100
+F 0 "#PWR037" H 5300 7850 50  0001 C CNN
+F 1 "GND" V 5300 7900 50  0000 C CNN
+F 2 "" H 5300 8100 50  0001 C CNN
+F 3 "" H 5300 8100 50  0001 C CNN
+	1    5300 8100
 	1    0    0    -1  
 $EndComp
 $Comp
 L power:+5V #PWR027
 U 1 1 68C5F036
-P 4000 5950
-F 0 "#PWR027" H 4000 5800 50  0001 C CNN
-F 1 "+5V" V 4000 6050 50  0000 L CNN
-F 2 "" H 4000 5950 50  0001 C CNN
-F 3 "" H 4000 5950 50  0001 C CNN
-	1    4000 5950
+P 5300 6000
+F 0 "#PWR027" H 5300 5850 50  0001 C CNN
+F 1 "+5V" V 5300 6100 50  0000 L CNN
+F 2 "" H 5300 6000 50  0001 C CNN
+F 3 "" H 5300 6000 50  0001 C CNN
+	1    5300 6000
 	1    0    0    -1  
 $EndComp
-Text GLabel 5200 8050 3    50   Input ~ 0
+Text GLabel 6500 8100 3    50   Input ~ 0
 MOSI-GP
-Text GLabel 5000 5950 1    63   Input ~ 0
+Text GLabel 6300 6000 1    63   Input ~ 0
 RX4
-Text GLabel 4900 5950 1    63   Input ~ 0
+Text GLabel 6200 6000 1    63   Input ~ 0
 TX4
-Text GLabel 4800 8050 3    63   Input ~ 0
+Text GLabel 6100 8100 3    63   Input ~ 0
 RX2
-Text GLabel 4900 8050 3    63   Input ~ 0
+Text GLabel 6200 8100 3    63   Input ~ 0
 TX2
-Text GLabel 5200 5950 1    63   Input ~ 0
+Text GLabel 6500 6000 1    63   Input ~ 0
 TX3
-Text GLabel 5100 5950 1    63   Input ~ 0
+Text GLabel 6400 6000 1    63   Input ~ 0
 RX3
 $Comp
 L power:+3V3 #PWR029
 U 1 1 681F6BDE
-P 4200 5950
-F 0 "#PWR029" H 4200 5800 50  0001 C CNN
-F 1 "+3V3" V 4200 6150 50  0000 C CNN
-F 2 "" H 4200 5950 50  0001 C CNN
-F 3 "" H 4200 5950 50  0001 C CNN
-	1    4200 5950
+P 5500 6000
+F 0 "#PWR029" H 5500 5850 50  0001 C CNN
+F 1 "+3V3" V 5500 6200 50  0000 C CNN
+F 2 "" H 5500 6000 50  0001 C CNN
+F 3 "" H 5500 6000 50  0001 C CNN
+	1    5500 6000
 	1    0    0    -1  
 $EndComp
 $Comp
 L power:GND #PWR028
 U 1 1 681F5B40
-P 4100 5950
-F 0 "#PWR028" H 4100 5700 50  0001 C CNN
-F 1 "GND" V 4100 5750 50  0000 C CNN
-F 2 "" H 4100 5950 50  0001 C CNN
-F 3 "" H 4100 5950 50  0001 C CNN
-	1    4100 5950
+P 5400 6000
+F 0 "#PWR028" H 5400 5750 50  0001 C CNN
+F 1 "GND" V 5400 5800 50  0000 C CNN
+F 2 "" H 5400 6000 50  0001 C CNN
+F 3 "" H 5400 6000 50  0001 C CNN
+	1    5400 6000
 	-1   0    0    1   
 $EndComp
-Text GLabel 4100 8050 3    63   Input ~ 0
+Text GLabel 5400 8100 3    63   Input ~ 0
 RX1
-Text GLabel 4200 8050 3    63   Input ~ 0
+Text GLabel 5500 8100 3    63   Input ~ 0
 TX1
-Text GLabel 5300 8050 3    50   Input ~ 0
-MISO-GP
-Text GLabel 4800 5950 1    50   Input ~ 0
-SDA-WIND_PULSE-LCD_DC
-Text GLabel 4700 5950 1    50   Input ~ 0
-SCL-GP-T_CS
-Text Notes 950  11450 0    50   ~ 0
-The JST8 TEST_RIG connector is a general purpose connector.\nAlthough initially designed for testing ST50 instruments, since\nit brings out full SPI signals, it should be general enough to run\nan SPI TFT display if desired.\n\nIt also brings out the I2C signals, should the need arise. \n\nAs initially designed It provides pulses  to spoof the ST50 Speed/Log \nand Wind instruments, and allows for the addition of digital potentiometers\n(inc/dec, SPI, or I2C) for resistance based spoofing (Log Temperature, Wind \nDirection, etc).  The instrument itself is powered and connected  to one of the \ntwo ST ports on this PCB.\n 
-Text GLabel 4750 10800 1    50   Input ~ 0
-SDA-WIND_PULSE-LCD_DC
-Text GLabel 4650 10800 1    50   Input ~ 0
-SCL-GP-T_CS
-Text GLabel 4950 10800 1    50   Input ~ 0
-MISO-GP
-Text GLabel 4850 10800 1    50   Input ~ 0
+Text GLabel 6600 8100 3    50   Input ~ 0
+MISO-UDP_ENABLE
+Text Notes 1350 7300 0    50   ~ 0
+The JST8 TEST_RIG connector is a general purpose connector.\n\nIt was initially designed It provides pulses to spoof the ST50 Speed/Log \nand Wind instruments, and to allow for the addition of inc/dec or SPI\ndigital potentiometers for resistance based spoofing  of Log Temperature \nand Wind  Direction.  In this case the instrument itself is powered and connected  \nto one of the two ST ports on this PCB.  Henceforth ST50 testing is relegated\nto the original breadboard or an as-yet undesigned dedicated device.\n\nThe connector was then expanded to support an SPI TFT display which was never\nimplemented or tested, hence the LCD_DC,LCD_CS, and T_CS alternate labels.\n \nFinally it has morphed into being a connector to an external ESP32 myIOT device\nto monitor the teensyBoat over WiFi.  In this configuration it provides power to\nthe ESP32 via 5V and GND and communicates via RX5, TX5, and UDP_ENABLE. 
+Text GLabel 2050 9200 1    50   Input ~ 0
+TX5-LCD_DC
+Text GLabel 2150 9200 1    50   Input ~ 0
+RX5-T_CS
+Text GLabel 2350 9200 1    50   Input ~ 0
+MISO-UDP_ENABLE
+Text GLabel 2250 9200 1    50   Input ~ 0
 SCLK-GP
-Text GLabel 5150 10800 1    50   Input ~ 0
+Text GLabel 2550 9200 1    50   Input ~ 0
 SPEED_PULSE-LCD_CS
-Text GLabel 5050 10800 1    50   Input ~ 0
+Text GLabel 2450 9200 1    50   Input ~ 0
 MOSI-GP
 $Comp
 L power:+5V #PWR040
 U 1 1 69B0D841
-P 5250 10800
-F 0 "#PWR040" H 5250 10650 50  0001 C CNN
-F 1 "+5V" V 5250 10900 50  0000 L CNN
-F 2 "" H 5250 10800 50  0001 C CNN
-F 3 "" H 5250 10800 50  0001 C CNN
-	1    5250 10800
+P 2650 9200
+F 0 "#PWR040" H 2650 9050 50  0001 C CNN
+F 1 "+5V" V 2650 9300 50  0000 L CNN
+F 2 "" H 2650 9200 50  0001 C CNN
+F 3 "" H 2650 9200 50  0001 C CNN
+	1    2650 9200
 	-1   0    0    -1  
 $EndComp
 $Comp
 L power:GND #PWR039
 U 1 1 69B016D2
-P 5350 10800
-F 0 "#PWR039" H 5350 10550 50  0001 C CNN
-F 1 "GND" V 5350 10600 50  0000 C CNN
-F 2 "" H 5350 10800 50  0001 C CNN
-F 3 "" H 5350 10800 50  0001 C CNN
-	1    5350 10800
+P 2750 9200
+F 0 "#PWR039" H 2750 8950 50  0001 C CNN
+F 1 "GND" V 2750 9000 50  0000 C CNN
+F 2 "" H 2750 9200 50  0001 C CNN
+F 3 "" H 2750 9200 50  0001 C CNN
+	1    2750 9200
 	1    0    0    1   
 $EndComp
 $Comp
 L Connector_Generic:Conn_01x08 J6
 U 1 1 69AE5894
-P 4950 11000
-F 0 "J6" V 5100 11200 50  0000 L CNN
-F 1 "TEST_RIG" V 5100 10600 50  0000 L CNN
-F 2 "0_my_footprints:myJSTx08" H 4950 11000 50  0001 C CNN
-F 3 "~" H 4950 11000 50  0001 C CNN
-	1    4950 11000
+P 2350 9400
+F 0 "J6" V 2500 9600 50  0000 L CNN
+F 1 "TEST_RIG" V 2500 9000 50  0000 L CNN
+F 2 "0_my_footprints:myJSTx08" H 2350 9400 50  0001 C CNN
+F 3 "~" H 2350 9400 50  0001 C CNN
+	1    2350 9400
 	0    -1   1    0   
 $EndComp
+Text Notes 1350 7950 0    50   ~ 0
+The PCB design has been updated to reflect this description, bringing Serial5 out to \nthe connector using pads that had been prepared "just in case" in the old design.\nThe original built PCB brought SCL and SDA out instead and those pads are now\nunused and covered by the patch wires.  \n\nThe breadboard previously used gpio4 for "UDP_ENABLE" whereby the ESP32 tells \nthe teensy that it is present.  That function has been moved to gpio12, MISO, in this\ndesign and in the code.
 $EndSCHEMATC
