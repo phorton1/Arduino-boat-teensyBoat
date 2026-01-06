@@ -157,8 +157,8 @@ static void showHelp(bool detailed)
 	display(0,"    STATE = return the state of the instrments via binary",0);
 
 	display(d,"",0);
-	display(d,"The instruments are turned off and on to the various protocols/ports",0);
-	display(d,"by a bitwise value",0);
+	display(d,"The simulated instruments are turned off and on to the various",0);
+	display(d,"protocols/ports by a bitwise value",0);
 	display(0,"    0 = off",0);
 	display(0,"    0x01 = Seatalk1",0);
 	display(0,"    0x02 = Seatalk2",0);
@@ -176,7 +176,7 @@ static void showHelp(bool detailed)
 	display(0,"I_ENG      = bitwise",0);
 	display(0,"I_GEN      = bitwise",0);
 	display(d,"",0);
-	display(d,"All instruments can be turned on or off for a given port/protocol",0);
+	display(d,"All simulated instruments can be turned on or off for a given port/protocol",0);
 	display(d,"",0);
 	display(0,"I_ST1      = 1/0",0);
 	display(0,"I_ST2      = 1/0",0);
@@ -261,14 +261,14 @@ void setup()
 	
 	// initialize instrumetns
 
-	instruments.init();
+	inst_sim.init();
 
 	// hardwire the boat simulator to start running for initial testing
 	
 	#if 1
 		#if 0
-			boat.setStartWPNum(1);
-			boat.setTargetWPNum(2);
+			boat_sim.setStartWPNum(1);
+			boat_sim.setTargetWPNum(2);
 		#endif
 
 		// I could lessen the binary traffic by turning these
@@ -277,9 +277,9 @@ void setup()
 		
 		g_BINARY = BINARY_TYPE_BOAT | BINARY_TYPE_ST1 | BINARY_TYPE_ST2;
 
-		// boat.setRouting(true);
-		// boat.setSOG(1);
-		boat.start();
+		// boat_sim.setRouting(true);
+		// boat_sim.setSOG(1);
+		boat_sim.start();
 	#endif
 	
 	proc_leave();
@@ -320,58 +320,58 @@ static void handleCommand(String lval, String rval, bool got_equals)
 		int hour = rval.substring(11,14).toInt();
 		int minute = rval.substring(14,16).toInt();
 		int second = rval.substring(17,19).toInt();
-		boat.setDateTime(year,month,day,hour,minute,second);
+		boat_sim.setDateTime(year,month,day,hour,minute,second);
 	}
 
 	else if (lval.equals("i"))
-		boat.init();
+		boat_sim.init();
 	else if (lval.equals("run"))
-		boat.start();
+		boat_sim.start();
 	else if (lval.equals("stop"))
-		boat.stop();
+		boat_sim.stop();
 	else if (lval.equals("route"))
-		boat.setRoute(rval.c_str());
+		boat_sim.setRoute(rval.c_str());
 	else if (lval.equals("j"))
-		boat.setStartWPNum(rval.toInt());
+		boat_sim.setStartWPNum(rval.toInt());
 	else if (lval.equals("wp"))
-		boat.setTargetWPNum(rval.toInt());
+		boat_sim.setTargetWPNum(rval.toInt());
 
 	else if (lval.equals("ap"))
-		boat.setAutopilot(rval.toInt());
+		boat_sim.setAutopilot(rval.toInt());
 	else if (lval.equals("r"))
-		boat.setRouting(rval.toInt());
+		boat_sim.setRouting(rval.toInt());
 
 	else if (lval.equals("trip"))
-		boat.setTripDistance(rval.toFloat());
+		boat_sim.setTripDistance(rval.toFloat());
 	else if (lval.equals("trip_on"))
-		boat.setTripOn(rval.toInt());
+		boat_sim.setTripOn(rval.toInt());
 
 	else if (lval.equals("d"))
-		boat.setDepth(rval.toFloat());
+		boat_sim.setDepth(rval.toFloat());
 	else if (lval.equals("h"))
-		boat.setHeading(rval.toFloat());
+		boat_sim.setHeading(rval.toFloat());
 	else if (lval.equals("s"))
-		boat.setWaterSpeed(rval.toFloat());
+		boat_sim.setWaterSpeed(rval.toFloat());
 	else if (lval.equals("cs"))
-		boat.setCurrentSet(rval.toFloat());
+		boat_sim.setCurrentSet(rval.toFloat());
 	else if (lval.equals("cd"))
-		boat.setCurrentDrift(rval.toFloat());
+		boat_sim.setCurrentDrift(rval.toFloat());
 
 	else if (lval.equals("wa"))
-		boat.setWindAngle(rval.toFloat());
+		boat_sim.setWindAngle(rval.toFloat());
 	else if (lval.equals("ws"))
-		boat.setWindSpeed(rval.toFloat());
+		boat_sim.setWindSpeed(rval.toFloat());
 
 	else if (lval.equals("dh"))
-		boat.setDesiredHeading(rval.toFloat());
+		boat_sim.setDesiredHeading(rval.toFloat());
 
 
 	else if (lval.equals("rpm"))
-		boat.setRPM(rval.toInt());
+		boat_sim.setRPM(rval.toInt());
 	else if (lval.equals("gen"))
-		boat.setGenset(rval.toInt());
+		boat_sim.setGenset(rval.toInt());
 
-	// instruments
+	// simulated instruments
 
 	else if (lval.startsWith("i_"))
 	{
@@ -398,9 +398,9 @@ static void handleCommand(String lval, String rval, bool got_equals)
 		if (inum == -1)
 			my_error("invalid instrument(%s)",inst.c_str());
 		else if (inum<100)
-			instruments.setPorts(inum,value);
+			inst_sim.setPorts(inum,value);
 		else
-			instruments.setAll(inum-100,value);
+			inst_sim.setAll(inum-100,value);
 	}
 
 	// ST50 specific
@@ -431,18 +431,18 @@ static void handleCommand(String lval, String rval, bool got_equals)
 		int value = hexOrUint(rval);
 		display(0,"monitor %s=0x%02x",what.c_str(),value);
 
-		if (what.equals("sim"))			boat.g_MON_SIM = value;
+		if (what.equals("sim"))			boat_sim.g_MON_SIM = value;
 			// 0..4 = details about boat simulator calculations
 
-		else if (what.equals("st1"))	instruments.g_MON[PORT_ST1] = value;
-		else if (what.equals("st2"))	instruments.g_MON[PORT_ST2] = value;
-		else if (what.equals("83a"))	instruments.g_MON[PORT_83A] = value;
-		else if (what.equals("83b"))	instruments.g_MON[PORT_83B] = value;
-		else if (what.equals("2000"))	instruments.g_MON[PORT_2000] = value;
+		else if (what.equals("st1"))	inst_sim.g_MON[PORT_ST1] = value;
+		else if (what.equals("st2"))	inst_sim.g_MON[PORT_ST2] = value;
+		else if (what.equals("83a"))	inst_sim.g_MON[PORT_83A] = value;
+		else if (what.equals("83b"))	inst_sim.g_MON[PORT_83B] = value;
+		else if (what.equals("2000"))	inst_sim.g_MON[PORT_2000] = value;
 		else
 			my_error("invalid monitor command(%s)=%d",what.c_str(),value);
 
-		instruments.sendBinaryState();
+		inst_sim.sendBinaryState();
 	}
 
 	// forwarding
@@ -451,7 +451,7 @@ static void handleCommand(String lval, String rval, bool got_equals)
 	{
 		int value = hexOrUint(rval);
 		display(1,"fwd=%d",value);
-		instruments.setFWD(value);
+		inst_sim.setFWD(value);
 	}
 	else if (lval.equals("e80_filter"))
 	{
@@ -460,11 +460,11 @@ static void handleCommand(String lval, String rval, bool got_equals)
 
 	// monadic commands
 	else if (lval.equals("load"))
-		instruments.loadFromEEPROM();
+		inst_sim.loadFromEEPROM();
 	else if (lval.equals("save"))
-		instruments.saveToEEPROM();
+		inst_sim.saveToEEPROM();
 	else if (lval.equals("state"))
-		instruments.sendBinaryState();
+		inst_sim.sendBinaryState();
 
 	else if (lval.equals("l"))
 		nmea2000.listDevices();
@@ -573,7 +573,7 @@ static void handleSerial()
 		
 		uint32_t pulse_now = millis();
 
-		float speed = boat.getWaterSpeed();
+		float speed = boat_sim.getWaterSpeed();
 		if (last_pulse_speed != speed)
 		{
 			last_pulse_speed = speed;
@@ -639,7 +639,7 @@ void loop()
 	#endif
 
 	
-	instruments.run();
+	inst_sim.run();
 	
 	#if ALIVE_LED
 		static bool alive_on = 0;

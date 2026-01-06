@@ -1,16 +1,33 @@
 # teensyBoat.ino
 
-
 A does-it-all teensy4.0 based NMEA2000, NMEA0183, and Seatalk box
-with a corresponding optional MSWindows wxPerl/console User Interface.
+with a corresponding optional MSWindows wxPerl/console User Interface
+and/or a myIOT EPS32 device specifically designed to work with it.
 
-- Protocol Monitor for all three protocols
-- Physical Boat Simulator
-- Simulated Instruments (Protocol Simulator) for all three protocols
-- ST50 Instrument Testing
-- Can be used with a serial monitor, like Putty (or Buddy) or,
-  more completely, with the custom built, (installable), MSWindows
-  UI program.
+This project is complex and constantly evolving.  As I am now ready to
+install it on my boat, it has moved beyond just being a desktop test-harness,
+and is evolving into a real functional part of my boat's instrumentation.
+
+- Keeps track of the boat's State as given by its instruments, i.e.
+  it's heading, speed, the depth of the water, direction and
+  speed of the wind, motor RPMs, current set and drift, and so on.
+- Provides detailed Protocol Monitoring of incoming signals for all
+  three protocols for debugging, understanding, and evolving the system.
+- Has a fairly sophisticated physical Boat Simulator that can simulate
+  winds, currents, waypoints, routes, and so forth, creating a "virtual
+  boat" that can be driven around under a variety of conditions.
+- Has a set of Simulated Instruments, based on the Boat Simulator,
+  that can provide test output in any or all of the three Protocols
+  to drive, test, and probe Chartplotters and other systems and instruments.
+- Can be used with a serial monitor, like the Arduino IDE Serial Monitor
+  or Putty (or my Buddy project) or, more completely, with the custom built,
+  (some day to installable), MSWindows wxPerl/console program.
+- Can be used with the myIOT tbESP32 device for remote monitoring
+  of the state of the boat's instruments and/or remote simulation to
+  teensyBoat.pm via UDP.
+- Has a limited ability to test certain instruments that receive
+  pulses (i.e. Raymarine ST50 Log and Wind instrumetns) and which,
+  in turn, generate instrument (Seatalk) output.
 
 **teensyBoat.ino** electrically attaches to the various protocols
 using modules or onboard circutry:
@@ -19,11 +36,19 @@ using modules or onboard circutry:
   to act as the bus itself, with a jumper for the terminating
   resistor(s), or as a "drop", without the terminating resistor(s).
 - NMEA0183 uses a dual MAX3232 Serial Module to provide
-  two NMEA0183 ports with optional forwarding between them
-- Seatalk uses onboard opto-isolator circut to connect to Seatalk Junction Box
-- Pulse Output is used in addition to Seatalk connector to ST50 device
+  two NMEA0183 ports with optional forwarding between them,
+  with jumper providing for hardwired forwarding when the
+  teensy is not running.
+- There are two separate Seatalk ports that use onboard opto-isolator
+  circuts that can likewise be jumpered together when the teensy
+  is not running.
+- Pulse Output is used in addition to the Seatalk connector to
+  test ST50 Log and Wind devices.
 - Works on the boat passively (without the Teensy running),
-  in-vitro, based on a single NMEA0183 forwarding jumper
+  in-vitro, based on the NMEA0183 and Seatalk forwarding jumpers
+- talks to the tbESP32 via a Serial port so that the ESP32
+  can forward and receive information via UDP to teensyBoat.pm
+  via Wifi, or directly via tbESP32's webUI or console interface.
 
 teensyBoat.ino makes use of the **Arduino-libraries-Boat** library
 
@@ -45,26 +70,30 @@ teensyBoat.ino makes use of the **Arduino-libraries-Boat** library
   colored USB Serial Text, or binary encoded packets over the USB Serial
   port to be displayed by console.pm, or understood by the teensyBoat.pm
   program.
+- The **boatState** class works with the instrument monitoring to allow
+  one to select certain protocols and messages to keep track of the
+  state of the instruments.  Hence the **boatState** can be driven
+  either by the instSimulator in a closed loop, or via the actual
+  instruments on the boat.
+
+teensyBoat was instrumental (pardon the pun) in allowing me to reverse
+engineer the RAYNET ethernet protocols.  Now that that is well along
+the way, it is time to install it in the boat and see what comes next.
 
 
-The initial version of teensyBoat.ino is implemented with a teensy4.0
-and does no logging.  A later version may use a teen teensy 4.1 and its
-SD card for logging
-
-Is connected with console.pm or the teensyBoat.pm Perl application
-via the USB Serial (COMX) port.
 
 
 ## Serial Command Protocol Basics
 
 Although initially implemented with a rudimentary serial UI that
-allowed testing using with just the console.pm program, with the
+allowed testing using with just my console.pm program, with the
 implementation of the **teensyBoat.pm** WX Perl windows application,
 a more sophisticated serial text command protocol has been implemented
 which *might* not lend itself to use with a simple console application.
 
 However, despite the complexity, it should be feasable to test and
-even utilize teensyBoat.ino with only the console.pm application.
+even utilize teensyBoat.ino with only a console serial monitor
+like the Arduino IDE or Putty.
 
 The **Serial Command Protocol** will consist of left/right value
 pairs, with crlf (\r\n) line terminators:
@@ -79,7 +108,7 @@ pairs, with crlf (\r\n) line terminators:
 Binary just uses 1 for everything that is implemented
 
 
-### Boat Control
+### Boat Simlulator Control
 
 These commands allow for positioning of the virtual boat, setting
 the depth of water and true wind speed and direction, and so on
@@ -106,7 +135,7 @@ The wind is set to a fixed (90 true 10 knots) set of values.
   adjusts the heading to point to the waypoint, does not affect
   state of SOG, autopilot or routing
 
-The following set more of the boat state variables
+The following set more of the boat simulator state variables
 
 - **S=n** (important) sets the boat's SOG to n knots, and
   is required for the simulator to start the boat moving.
@@ -145,19 +174,19 @@ one or more of the three protocols.  The protocols are specified bitwise,
 using decimal numbers, where:
 
 - 0 = off
-- 1 = Seatalk
-- 2 = NMEA0183 output
-- 4 = NMEA2000
-
-Later there will be a second NMEA0183 port.
+- 1 = Seatalk1 output
+- 2 = Seatalk2 output
+- 4 = NMEA0183A output
+- 8 = NMEA0183B output
+- 16 = NMEA2000 output
 
 
 So, for instance
 
-	INST_DEPTH = 6
+	INST_DEPTH = 20
 
-means to setup the virtual Depth instrument to output on NMEA2000 and
-the NMEA0183 output channel.  The instruments are as follows:
+means to setup the virtual Depth instrument to output on NMEA0183A and
+the NMEA2000 output channels.  The instruments are as follows:
 
 - I_DEPTH
 - I_LOG
@@ -171,9 +200,12 @@ the NMEA0183 output channel.  The instruments are as follows:
 
 There is also a verb to turn all instruments on or off for a given port
 
-- I_ST
-- I_0183
+- I_ST1
+- I_ST2
+- I_83A
+- I_83B
 - I_2000
+
 
 
 ### Monadic commands
@@ -218,7 +250,7 @@ of separate colors per protocol and class of messages.
 
 
 
-
+##-------------------------- WORK IN PROGRESS FROM HERE DOWN ---------------------------------
 
 
 
