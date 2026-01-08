@@ -4,7 +4,7 @@ EELAYER END
 $Descr A2 23386 16535
 encoding utf-8
 Sheet 1 1
-Title ""
+Title "BOARD2 - on Rhapsody"
 Date ""
 Rev ""
 Comp ""
@@ -676,7 +676,7 @@ Text Notes 7000 1450 0    50   ~ 0
 In active mode, the jumpers are removed and the teensy\ngets in between the NMEA ports, allowing software control\nof forwarding between the two ports.
 Text GLabel 7650 3950 3    63   Input ~ 0
 83A_OUT
-Text Notes 2300 2150 0    50   ~ 0
+Text Notes 700  2350 0    50   ~ 0
 Features:\n- NMEA2000 port with optional terminating resistor\n- two NMEA0183 ports\n- two Seatalk ST ports\n- passive binding of 0183 and ST ports when turned off\n- active monitoring/manipulation/forward of 0183 and ST ports when turned on\n- 5V and 12V test points for calibrating the Buck Converter\n\nExisting teensyBoat.ino firmware\n- provides sophisticated monitoring of all protocols\n- provides a physical boat simulator that drives\n- simulated instruments that can be assigned to any protocol\n- can be run as command line app with serial monitor (i.e. Putty or Arduino IDE)\n\nWorks with teensyBoat.pm wxPerl user interface that provides\n- a serial monitor / console\n- a windowed user interface to easily control aspects of the teensyBoat.ino program
 $Comp
 L Connector_Generic:Conn_01x03 J4
@@ -1183,8 +1183,6 @@ F 3 "" V 6750 7050 60  0000 C CNN
 	1    5850 7000
 	1    0    0    -1  
 $EndComp
-Text GLabel 5800 8100 3    50   Input ~ 0
-UDP_ENABLE
 Text GLabel 5700 6000 1    50   Input ~ 0
 CRX
 Text GLabel 5600 6000 1    50   Input ~ 0
@@ -1316,6 +1314,10 @@ F 3 "~" H 2350 9400 50  0001 C CNN
 $EndComp
 Text Notes 1350 7950 0    50   ~ 0
 The PCB design has been updated to reflect this description, bringing Serial5 out to \nthe connector using pads that had been prepared "just in case" in the old design.\nThe original built PCB brought SCL and SDA out instead and those pads are now\nunused and covered by the patch wires.  \n\nThe breadboard previously used gpio4 for "UDP_ENABLE" whereby the ESP32 tells \nthe teensy that it is present.  That function has been moved to gpio12, MISO, in this\ndesign and in the code.
-Text Notes 4900 4650 0    50   ~ 0
+Text Notes 650  650  0    50   ~ 10
+This is BOARD2 - the one installed on Rhapsody
+Text Notes 800  900  0    50   ~ 0
+It has no electrical or semantic changes from board1.\nboard1 is being kept to do development in the apartment and\nallowing me to get rid of the breadboard version
+Text Notes 4950 4650 0    50   ~ 0
 note that CRX/CTX labels\non the module have the\nopposite sense of the pins\non the teensy, hence crossed
 $EndSCHEMATC
