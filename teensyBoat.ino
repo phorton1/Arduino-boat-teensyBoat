@@ -116,13 +116,14 @@ static void showHelp(bool detailed)
 	display(d,"                   Sets the heading to point to the waypoint, does not affect",0);
 	display(d,"                   SOG, autopilot or routing",0);
 
-	display(0,"AP=1/0         Starts and stops the Autopilot",0);
-	display(d,"                   1 sets a heading to the target waypoint",0);
-	display(d,"                   0 also turns off Routing",0);
+	display(0,"AP=0,1,2       Starts and stops the Autopilot",0);
+	display(d,"                   2 = VANE mode not implemented yet",0);
+	display(d,"                   1 = AUTO mode = sets a heading to the target waypoint",0);
+	display(d,"                   0 = OFF  also turns off Routing",0);
 	display(0,"R=1/0          Starts and stops Routing",0);
-	display(d,"                   1 turns on the autopilot, monitors for waypoint arrivals",0);
+	display(d,"                   1 sets autopilot to AUTO modeand monitors for waypoint arrivals",0);
 	display(d,"                      and advances to the next waypoint upon completed arrival",0);
-	display(d,"                   0 turns off Routineg, but does not turn off autopilot",0);
+	display(d,"                   0 turns off Routing, but does not turn off autopilot",0);
 
 	display(0,"TRIP=N         Set the Trip Distance",0);
 	display(0,"TRIP_ON=1/0    Turn the Trip Odometer on/off",0);
@@ -135,6 +136,7 @@ static void showHelp(bool detailed)
 	display(d,"                   for the virtual boat to start moving",0);
 	display(0,"CS=n           Sets the Current Set (angle) to N degrees True",0);
 	display(0,"CD=n           Sets the Current Drift (speed) to N knots Absolute",0);
+	display(0,"RUD=n		  Set rudder from -30.0 to 30.0 degrees",0);
 
 	display(0,"WA=n           Sets the true wind angle to N degrees",0);
 	display(0,"WS=n           Sets the true wind speed to N knots",0);
@@ -356,6 +358,8 @@ static void handleCommand(String lval, String rval, bool got_equals)
 		boat_sim.setCurrentSet(rval.toFloat());
 	else if (lval.equals("cd"))
 		boat_sim.setCurrentDrift(rval.toFloat());
+	else if (lval.equals("rud"))
+		boat_sim.setRudder(rval.toFloat());
 
 	else if (lval.equals("wa"))
 		boat_sim.setWindAngle(rval.toFloat());
