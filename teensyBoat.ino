@@ -217,7 +217,7 @@ static void showHelp(bool detailed)
 	display(0,"              0x20 = Port 83A to 83B",0);
 	display(0,"              0x20 = Port 83B to 83A",0);
 	display(0,"E80_FILTER=N  turning this on stops GSA,GLL,and RMC from being forwarded",0);
-	display(0,"               from 83A to 83B because they KILL the GX2410's GPS!",0);
+	display(0,"              from 83A to 83B because they KILL the GX2410's GPS!",0);
 
 	display(0,"",0);
 	display(d,"NMEA2000 specific",0);
@@ -226,7 +226,6 @@ static void showHelp(bool detailed)
 	display(0,"L 	monadic command to Show NMEA2000 Device List",0);
 	display(0,"Q    monadic command to  Query NMEA2000 Devices",0);
 
-
 	display(0,"",0);
 	display(d,"ST50 Specific & Testing",0);
 	display(d,"",0);
@@ -234,6 +233,34 @@ static void showHelp(bool detailed)
 #if PIN_SPEED_PULSE
 	display(0,"SPEED_PULSE = 0/1  	Turns the SPEED pulse generator on and off",0);
 #endif
+
+
+	// Binary data controls for communication with teensyBoat.pm.  I used explicitly turn on
+	//
+	//		BINARY_TYPE_SIM } BINARY_TYPE_ST1 | BINARY_TYPE_ST2
+	//
+	// in setup(), but would also just invariantly would send BINARY_TYPE_PROG,
+	// either in in reponse to the STATE command, or whenever the console UI
+	// changed the program state.
+	//
+	// Now, assuming a single instance of the teensyBoat.pm app at a time,
+	// I turn them on based on, and send the STATE command, solely based
+	// on the opening and closing of the relevant windows in the pm program
+	// in order to minimize spurious serial traffic.  As such, the command API
+	// takes 0/1 and adds or removes bits and  B_ST and B_9183 sets both ports
+	// bits
+	
+
+	display(0,"",0);
+	display(d,"Binary interface to teensyBoat.pm",0);
+	display(d,"",0);
+	display(0,"B_PROG=0/1           Turns on binary data for the Prog window",0);
+	display(0,"B_SIM=0/1            Turns on binary data for the boatSim window",0);
+	display(0,"B_BOAT=0/1           Turns on binary data for unimplmented boatActual window",0);
+	display(0,"B_ST=0/1             Turns on binary data for the Seatalk window",0);
+	display(0,"B_0183=0/1           Turns on binary data for unimplemented nmea0183 window",0);
+	display(0,"B_2000=0/1           Turns on binary data for unimplemented nmea2000 window",0);
+	
 	proc_leave();
 }
 
@@ -277,7 +304,7 @@ void setup()
 		// on in the window ctors, and turning them off in
 		// onClose() methods.
 		
-		g_BINARY = BINARY_TYPE_BOAT | BINARY_TYPE_ST1 | BINARY_TYPE_ST2;
+		// g_BINARY = BINARY_TYPE_BOAT | BINARY_TYPE_ST1 | BINARY_TYPE_ST2;
 
 		// boat_sim.setRouting(true);
 		// boat_sim.setSOG(1);
@@ -478,6 +505,37 @@ static void handleCommand(String lval, String rval, bool got_equals)
 		showHelp(0);
 	else if (lval.equals("help"))
 		showHelp(1);
+
+
+	// g_BINARY commands
+
+	else if (lval.startsWith("b_"))
+	{
+		String what = lval.substring(2);
+		bool value = rval.toInt();
+		uint16_t mask = 0;
+
+		if (what.equals("prog"))		mask = BINARY_TYPE_PROG;
+		else if (what.equals("sim"))	mask = BINARY_TYPE_SIM;
+		else if (what.equals("boat"))	mask = BINARY_TYPE_BOAT;
+		else if (what.equals("st"))		mask = BINARY_TYPE_ST1 | BINARY_TYPE_ST2;
+		else if (what.equals("0183"))	mask = BINARY_TYPE_0183A | BINARY_TYPE_0183B;
+		else if (what.equals("2000"))	mask = BINARY_TYPE_2000;
+		else
+			my_error("invalid binary command(%s)=%s",lval.c_str(),rval.c_str());
+
+		if (mask)
+		{
+			display(0,"g_BINARY %s=%s value(%d) mask(0x%04x)",lval.c_str(),rval.c_str(),value,mask);
+			if (value)
+				g_BINARY |= mask;
+			else
+				g_BINARY &= ~mask;
+		}
+	}
+
+	// unknown commands
+
 	else
 	{
 		my_error("unknown command: %s%s%s",
