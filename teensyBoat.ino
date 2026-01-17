@@ -64,22 +64,35 @@
 #define ALIVE_ON_TIME	20
 
 
-#define PIN_SPEED_PULSE	 0		// 2
+#define PIN_SPEED_PULSE	 2
 	// The SPEED_PULSE pin has been used to generate square
 	// wave pulses that can drive the LOG and WIND instruments.
-	// See the documentation for more details.
+	// Frequencies of less than 18 Hz are driven by explicit PIN toggles.
+	// Frequencies greater than 18 Hz are driven by PWM
+	// See the documentation for more details about ST50 instruments.
 #if PIN_SPEED_PULSE
-	static bool speed_pulses_on = 1;
-	static float last_pulse_speed = -1;
-	static bool pulse_state = false;
-	static unsigned long last_pulse_toggle = 0;
-	static uint32_t pulse_interval_ms = 0;
+
+	#define PULSE_MODE_OFF 	 	0
+	#define PULSE_MODE_ON  	 	1			// Use user supplied pulse_hz for pulse speeds
+	#define PULSE_MODE_WATER 	2			// Use water speed to generate pulses for ST50 log instrument
+
+	static int pulse_mode = 1;				// defaults to ON
+	static int user_pulse_hz = 1000; 		// defaults to 1000 Hz PWM
+
+	static int pulse_hz	= -1;				// current hz being output
+
+	static bool pulse_state = false;		// whether pulse is on or off in last explicit toggle
+	static uint32_t last_pulse_toggle = 0;	// millis() at last explicit pulse toggle
+	static uint32_t pulse_interval_ms = 0;	// hz represented as millis for toggle mode
 
 	void initSpeedPulse()
+		// called initially and whenever user changes mode or user_pulse_hz
+		// causes the pulse output to re-initialize
 	{
 		pinMode(PIN_SPEED_PULSE,OUTPUT);
 		digitalWrite(PIN_SPEED_PULSE,0);
-		last_pulse_speed = -1;
+
+		pulse_hz = -1;
 		pulse_state = false;
 		last_pulse_toggle = 0;
 		pulse_interval_ms = 0;
@@ -231,7 +244,8 @@ static void showHelp(bool detailed)
 	display(d,"",0);
 	display(0,"LAMP =0..3           Sends lamp messages to all ST ports",0);
 #if PIN_SPEED_PULSE
-	display(0,"SPEED_PULSE = 0/1  	Turns the SPEED pulse generator on and off",0);
+	display(0,"PULSE      = 0/1/2  	0=off; 1=use PULSE_MS value; 2=use WATER_SPEED to generate pulse_ms value cur=%d",pulse_mode);
+	display(0,"PULSE_HZ   = N       set ms for PULSE_MODE(1) cur=%d",user_pulse_hz);
 #endif
 
 
@@ -441,13 +455,31 @@ static void handleCommand(String lval, String rval, bool got_equals)
 		setLampIntensity(rval.toInt());
 	}
 #if PIN_SPEED_PULSE
-	else if (lval.equals("speed_pulse"))
+	else if (lval.equals("pulse"))
 	{
-		int value = rval.toInt() ? 1 : 0;
-		display(0,"SPEED_PULSES=%d",value);
-		if (speed_pulses_on != value)
+		int value = rval.toInt();
+		if (value<PULSE_MODE_OFF || value>PULSE_MODE_WATER)
 		{
-			speed_pulses_on = value;
+			my_error("Illegal PULSE(%d)",value);
+		}
+		else
+		{
+			display(0,"PULSE_MODE(%d)",value);
+			pulse_mode = value;
+			initSpeedPulse();
+		}
+	}
+	else if (lval.equals("pulse_hz"))
+	{
+		int value = rval.toInt();
+		if (value<0)
+		{
+			my_error("Illegal PULSE_HZ(%d)",value);
+		}
+		else
+		{
+			display(0,"PULSE_HZ(%d)",value);
+			user_pulse_hz = value;
 			initSpeedPulse();
 		}
 	}
@@ -630,62 +662,71 @@ static void handleSerial()
 #if PIN_SPEED_PULSE
 	void doPulses()
 	{
-		if (!speed_pulses_on)
+		if (!pulse_mode)
 			return;
 		
-		uint32_t pulse_now = millis();
-
-		float speed = boat_sim.getWaterSpeed();
-		if (last_pulse_speed != speed)
+		int hz = 0;
+		if (pulse_mode == PULSE_MODE_ON)
 		{
-			last_pulse_speed = speed;
+			hz = user_pulse_hz;
+		}
+		else	// PULSE_MODE_WATER
+		{
+			#define HZ_PER_KNOT  		5.6
+			#define FUDGE_FACTOR 		1.0
 
-			if (speed <= 0.0)
+			// when using explicit toggling, at less than 18 hz,
+			// apparently the formula falls off for the ST_LOG instrument
+			// and we need to increase the hz by a fudge factor.
+
+			float speed = boat_sim.getWaterSpeed();
+			hz = round(speed * HZ_PER_KNOT);
+			if (hz < 18)
+				hz = round(speed * HZ_PER_KNOT * FUDGE_FACTOR);
+		}
+
+		// if the pulse frequency has changed, setup PWM or restart explicit toggle
+
+		if (pulse_hz != hz)
+		{
+			pulse_hz = hz;
+			pulse_state = false;
+			last_pulse_toggle = 0;
+			pulse_interval_ms = 0;
+			pinMode(PIN_SPEED_PULSE, OUTPUT);
+			digitalWrite(PIN_SPEED_PULSE,0);
+			if (!pulse_hz)
 			{
-				display(0,"turning SPEED pulses off",0);
-				pulse_state = false;
-				pulse_interval_ms = 0;
+				display(0,"pulse_hz==0; pin forced low",0);
+				return;;
+			}
+
+			if (pulse_hz >= 18)
+			{
+				// Use PWM for higher frequencies
+				display(0,"using PWM Hz(%d)", pulse_hz);
 				pinMode(PIN_SPEED_PULSE, OUTPUT);
-				digitalWrite(PIN_SPEED_PULSE,0);
+				analogWriteFrequency(PIN_SPEED_PULSE, pulse_hz);
+				analogWrite(PIN_SPEED_PULSE, 128); // 50% duty
 			}
 			else
 			{
-
-				#define STD_HZ_PER_KNOT  		5.6
-				#define CALIBRATION_FACTOR 		1.0
-				#define HZ_PER_KNOT				(STD_HZ_PER_KNOT / CALIBRATION_FACTOR)
-
-				int pulseHz = round(speed * HZ_PER_KNOT);
-
-				if (pulseHz >= 18)
-				{
-					// Use PWM for higher frequencies
-					display(0,"using PWM speed(%0.2f) Hz(%d)", speed, pulseHz);
-					pulse_interval_ms = 0;
-					pinMode(PIN_SPEED_PULSE, OUTPUT);
-					analogWriteFrequency(PIN_SPEED_PULSE, pulseHz);
-					analogWrite(PIN_SPEED_PULSE, 128); // 50% duty
-				}
-				else
-				{
-					// Switch to manual toggling
-					pinMode(PIN_SPEED_PULSE, OUTPUT);
-					float pulseFreq = speed * HZ_PER_KNOT * 1.1;	// fudge factor
-					pulse_interval_ms = (pulseFreq > 0.0) ? round(500.0 / pulseFreq) : 0;
-					last_pulse_toggle = pulse_now; // reset timer
-					display(0,"using MS timer speed(%0.2f) MS(%d)",speed,pulse_interval_ms);
-				}
-				
-			} 	// speed > 0
-		}	// speed changed
-
-		// Manual toggling loop (only active if pulseHz < 18)
-		if (pulse_interval_ms > 0 && pulse_now - last_pulse_toggle >= pulse_interval_ms)
+				// Use manual toggling for lower frequencies
+				pulse_interval_ms = 500.0 / pulse_hz;
+				last_pulse_toggle = millis();  // reset timer
+				display(0,"using MS timer Hz(%d) MS(%d)",pulse_hz,pulse_interval_ms);
+			}
+		}
+		else if (pulse_hz < 18)	// implement manual toggling
 		{
-			last_pulse_toggle = pulse_now;
-			pulse_state = !pulse_state;
-			display(1,"MS pulse(%d)",pulse_state);
-			digitalWrite(PIN_SPEED_PULSE, pulse_state ? HIGH : LOW);
+			uint32_t pulse_now = millis();
+			if (pulse_now - last_pulse_toggle >= pulse_interval_ms)
+			{
+				last_pulse_toggle = pulse_now;
+				pulse_state = !pulse_state;
+				display(1,"MS pulse(%d)",pulse_state);
+				digitalWrite(PIN_SPEED_PULSE, pulse_state ? HIGH : LOW);
+			}
 		}
 	}
 #endif
@@ -717,9 +758,6 @@ void loop()
 	#endif
 	
 	handleSerial();
-
-
-
 
 }	// loop()
 
