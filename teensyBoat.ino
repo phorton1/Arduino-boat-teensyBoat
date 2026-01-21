@@ -64,7 +64,7 @@
 #define ALIVE_ON_TIME	20
 
 
-#define PIN_SPEED_PULSE	 2
+#define PIN_SPEED_PULSE	 0
 	// The SPEED_PULSE pin has been used to generate square
 	// wave pulses that can drive the LOG and WIND instruments.
 	// Frequencies of less than 18 Hz are driven by explicit PIN toggles.
