@@ -25,10 +25,11 @@
 // 14 - TX3 NMEA0183A
 // 16 - RX4 NMEA0183B
 // 17 - TX4 NMEA0183B
-// 20 - TX5 tbESP32
-// 21 - RX5 tbESP32
+// 20 - TX5 tbESP32 / Neo6M
+// 21 - RX5 tbESP32	/ Neo6M
 //
 // 2  - SPEED_PULSE out for testing ST50 LOG/WIND instrument
+// 12 - UDP_ENABLE for tbESP32 scheme
 
 //---------------------------------------------------------------
 // EIGHT PIN CONNECTOR - tbESP32 Serial5 and UDP_ENABLE
@@ -43,16 +44,16 @@
 // for testing ST50 devices.
 //
 //		teensy
-// conn	gpio	tbESP32		ST50 testing 	display
-// -----------------------------------------------------------------
-// 1	20 		TX5							LCD_DC
-// 2	21		RX5  						T_CS
-// 3	13									SCLK
-// 4	12 		UDP_ENABLE 					MISO
-// 5	11 	 								MOSI
-// 6	2  					SPEED_PULSE		LCD_CS
-// 7	5V		5V			5V				5V
-// 8	GND		GND			GND				GND
+// conn	gpio	neo6m	tbESP32		ST50 testing 	display
+// -------------------------------------------------------------------------
+// 1	20 				TX5							LCD_DC
+// 2	21		RX5		RX5  						T_CS
+// 3	13											SCLK
+// 4	12 				UDP_ENABLE 					MISO
+// 5	11 	 										MOSI
+// 6	2  							SPEED_PULSE		LCD_CS
+// 7	5V		5V		5V			5V				5V
+// 8	GND		GND		GND			GND				GND
 //
 // UDP_ENABLE is defined in the Boat library, where the pin is set
 // to INPUT_PULLDOWN, and if an tbESP32 is hooked up, it pulls it high,
@@ -63,41 +64,6 @@
 #define ALIVE_OFF_TIME	980
 #define ALIVE_ON_TIME	20
 
-
-#define PIN_SPEED_PULSE	 0
-	// The SPEED_PULSE pin has been used to generate square
-	// wave pulses that can drive the LOG and WIND instruments.
-	// Frequencies of less than 18 Hz are driven by explicit PIN toggles.
-	// Frequencies greater than 18 Hz are driven by PWM
-	// See the documentation for more details about ST50 instruments.
-#if PIN_SPEED_PULSE
-
-	#define PULSE_MODE_OFF 	 	0
-	#define PULSE_MODE_ON  	 	1			// Use user supplied pulse_hz for pulse speeds
-	#define PULSE_MODE_WATER 	2			// Use water speed to generate pulses for ST50 log instrument
-
-	static int pulse_mode = 1;				// defaults to ON
-	static int user_pulse_hz = 1000; 		// defaults to 1000 Hz PWM
-
-	static int pulse_hz	= -1;				// current hz being output
-
-	static bool pulse_state = false;		// whether pulse is on or off in last explicit toggle
-	static uint32_t last_pulse_toggle = 0;	// millis() at last explicit pulse toggle
-	static uint32_t pulse_interval_ms = 0;	// hz represented as millis for toggle mode
-
-	void initSpeedPulse()
-		// called initially and whenever user changes mode or user_pulse_hz
-		// causes the pulse output to re-initialize
-	{
-		pinMode(PIN_SPEED_PULSE,OUTPUT);
-		digitalWrite(PIN_SPEED_PULSE,0);
-
-		pulse_hz = -1;
-		pulse_state = false;
-		last_pulse_toggle = 0;
-		pulse_interval_ms = 0;
-	}
-#endif
 
 
 
@@ -240,12 +206,17 @@ static void showHelp(bool detailed)
 	display(0,"Q    monadic command to  Query NMEA2000 Devices",0);
 
 	display(0,"",0);
+	display(d,"GP8 General Purpose Connector Mode",0);
+	display(0,"GP8_MODE = X  0..3, or OFF, PULSE, ESP32, NEO6M",0);
+
+
+	display(0,"",0);
 	display(d,"ST50 Specific & Testing",0);
 	display(d,"",0);
 	display(0,"LAMP =0..3           Sends lamp messages to all ST ports",0);
 #if PIN_SPEED_PULSE
-	display(0,"PULSE      = 0/1/2  	0=off; 1=use PULSE_MS value; 2=use WATER_SPEED to generate pulse_ms value cur=%d",pulse_mode);
-	display(0,"PULSE_HZ   = N       set ms for PULSE_MODE(1) cur=%d",user_pulse_hz);
+	display(0,"PULSE      = 0/1/2  	0=off; 1=use PULSE_MS value; 2=use WATER_SPEED to generate pulse_ms value",0);
+	display(0,"PULSE_HZ   = N       set ms for PULSE_MODE(1)",0);
 #endif
 
 
@@ -294,13 +265,6 @@ void setup()
 	delay(2000);
 	display(0,"teensyBoat.ino setup() started",0);
 	proc_entry();
-
-	// ST50 instrument test initialization
-
-	#if PIN_SPEED_PULSE
-		initSpeedPulse();
-	#endif
-
 	
 	// initialize instrumetns
 
@@ -448,6 +412,30 @@ static void handleCommand(String lval, String rval, bool got_equals)
 			inst_sim.setAll(inum-100,value);
 	}
 
+	// General Purpose 8 Pin Connector Mode
+
+	else if (lval.equals("gp8_mode"))
+	{
+		int value = 0;
+		if (rval.length() == 1 && rval[0] >= '0' && rval[0] <= '3')
+			value = rval.toInt();
+		else if (rval.equals("off"))
+			value = 0;
+		else if (rval.equals("pulse"))
+			value = 1;
+		else if (rval.equals("esp32"))
+			value = 2;
+		else if (rval.equals("neo6m"))
+			value = 3g;
+		else
+		{
+			my_error("invalid GP8_MODE(%s)",rval.c_str());
+			return;
+		}
+		inst_sim.setGP8Function(value);
+	}
+
+
 	// ST50 specific
 
 	else if (lval.equals("lamp"))
@@ -457,31 +445,11 @@ static void handleCommand(String lval, String rval, bool got_equals)
 #if PIN_SPEED_PULSE
 	else if (lval.equals("pulse"))
 	{
-		int value = rval.toInt();
-		if (value<PULSE_MODE_OFF || value>PULSE_MODE_WATER)
-		{
-			my_error("Illegal PULSE(%d)",value);
-		}
-		else
-		{
-			display(0,"PULSE_MODE(%d)",value);
-			pulse_mode = value;
-			initSpeedPulse();
-		}
+		inst_sim.setSpeedPulseMode(rval.toInt());
 	}
 	else if (lval.equals("pulse_hz"))
 	{
-		int value = rval.toInt();
-		if (value<0)
-		{
-			my_error("Illegal PULSE_HZ(%d)",value);
-		}
-		else
-		{
-			display(0,"PULSE_HZ(%d)",value);
-			user_pulse_hz = value;
-			initSpeedPulse();
-		}
+		inst_sim.setSpeedPulseHz(rval.toInt());
 	}
 #endif
 
@@ -620,14 +588,14 @@ static void handleSerial()
 		// we read (clear) the SERIAL_ESP32 serial port
 		// even if udp_enabled is not true.
 
-		if (SERIAL_ESP32.available())
+		if ((inst_sim.getGP8Function() == GP8_FUNCTION_ESP32) && SERIAL_ESP32.available())
 		{
 			static String lval;
 			static String rval;
 			static bool got_equals;
 			char c = SERIAL_ESP32.read();
 
-			if (udp_enabled)
+			if (inst_sim.doTbEsp32())
 			{
 				if (c == 0x0a)
 				{
@@ -655,81 +623,6 @@ static void handleSerial()
 
 
 
-//--------------------------------------------
-// pulses
-//--------------------------------------------
-
-#if PIN_SPEED_PULSE
-	void doPulses()
-	{
-		if (!pulse_mode)
-			return;
-		
-		int hz = 0;
-		if (pulse_mode == PULSE_MODE_ON)
-		{
-			hz = user_pulse_hz;
-		}
-		else	// PULSE_MODE_WATER
-		{
-			#define HZ_PER_KNOT  		5.6
-			#define FUDGE_FACTOR 		1.0
-
-			// when using explicit toggling, at less than 18 hz,
-			// apparently the formula falls off for the ST_LOG instrument
-			// and we need to increase the hz by a fudge factor.
-
-			float speed = boat_sim.getWaterSpeed();
-			hz = round(speed * HZ_PER_KNOT);
-			if (hz < 18)
-				hz = round(speed * HZ_PER_KNOT * FUDGE_FACTOR);
-		}
-
-		// if the pulse frequency has changed, setup PWM or restart explicit toggle
-
-		if (pulse_hz != hz)
-		{
-			pulse_hz = hz;
-			pulse_state = false;
-			last_pulse_toggle = 0;
-			pulse_interval_ms = 0;
-			pinMode(PIN_SPEED_PULSE, OUTPUT);
-			digitalWrite(PIN_SPEED_PULSE,0);
-			if (!pulse_hz)
-			{
-				display(0,"pulse_hz==0; pin forced low",0);
-				return;;
-			}
-
-			if (pulse_hz >= 18)
-			{
-				// Use PWM for higher frequencies
-				display(0,"using PWM Hz(%d)", pulse_hz);
-				pinMode(PIN_SPEED_PULSE, OUTPUT);
-				analogWriteFrequency(PIN_SPEED_PULSE, pulse_hz);
-				analogWrite(PIN_SPEED_PULSE, 128); // 50% duty
-			}
-			else
-			{
-				// Use manual toggling for lower frequencies
-				pulse_interval_ms = 500.0 / pulse_hz;
-				last_pulse_toggle = millis();  // reset timer
-				display(0,"using MS timer Hz(%d) MS(%d)",pulse_hz,pulse_interval_ms);
-			}
-		}
-		else if (pulse_hz < 18)	// implement manual toggling
-		{
-			uint32_t pulse_now = millis();
-			if (pulse_now - last_pulse_toggle >= pulse_interval_ms)
-			{
-				last_pulse_toggle = pulse_now;
-				pulse_state = !pulse_state;
-				display(1,"MS pulse(%d)",pulse_state);
-				digitalWrite(PIN_SPEED_PULSE, pulse_state ? HIGH : LOW);
-			}
-		}
-	}
-#endif
 
 //--------------------------------------------
 // loop()
@@ -737,11 +630,6 @@ static void handleSerial()
 
 void loop()
 {
-	#if PIN_SPEED_PULSE
-		doPulses();
-	#endif
-
-	
 	inst_sim.run();
 	
 	#if ALIVE_LED
