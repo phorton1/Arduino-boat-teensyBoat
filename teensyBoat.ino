@@ -426,7 +426,7 @@ static void handleCommand(String lval, String rval, bool got_equals)
 		else if (rval.equals("esp32"))
 			value = 2;
 		else if (rval.equals("neo6m"))
-			value = 3g;
+			value = 3;
 		else
 		{
 			my_error("invalid GP8_MODE(%s)",rval.c_str());
