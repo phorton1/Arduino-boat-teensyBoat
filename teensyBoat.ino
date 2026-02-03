@@ -207,7 +207,7 @@ static void showHelp(bool detailed)
 
 	display(0,"",0);
 	display(d,"GP8 General Purpose Connector Mode",0);
-	display(0,"GP8_MODE = X  0..3, or OFF, PULSE, ESP32, NEO6M",0);
+	display(0,"GP8_MODE = X  0..4, or OFF, PULSE, ESP32, NEOST, NEO2000",0);
 
 
 	display(0,"",0);
@@ -417,7 +417,7 @@ static void handleCommand(String lval, String rval, bool got_equals)
 	else if (lval.equals("gp8_mode"))
 	{
 		int value = 0;
-		if (rval.length() == 1 && rval[0] >= '0' && rval[0] <= '3')
+		if (rval.length() == 1 && rval[0] >= '0' && rval[0] <= '4')
 			value = rval.toInt();
 		else if (rval.equals("off"))
 			value = 0;
@@ -425,8 +425,10 @@ static void handleCommand(String lval, String rval, bool got_equals)
 			value = 1;
 		else if (rval.equals("esp32"))
 			value = 2;
-		else if (rval.equals("neo6m"))
+		else if (rval.equals("neost"))
 			value = 3;
+		else if (rval.equals("neo2000"))
+			value = 4;
 		else
 		{
 			my_error("invalid GP8_MODE(%s)",rval.c_str());
