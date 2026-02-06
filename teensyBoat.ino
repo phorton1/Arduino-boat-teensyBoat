@@ -206,9 +206,14 @@ static void showHelp(bool detailed)
 	display(0,"Q    monadic command to  Query NMEA2000 Devices",0);
 
 	display(0,"",0);
-	display(d,"GP8 General Purpose Connector Mode",0);
-	display(0,"GP8_MODE = X  0..4, or OFF, PULSE, ESP32, NEOST, NEO2000",0);
-
+	display(0,"GP8_MODE = X",0);
+	display(0,"   0,off    - turns General Purpose Port Off",0);
+	#if PIN_SPEED_PULSE
+		display(0,"   1,pulse  - sets General Purpose Port to output pulses",0);
+	#endif
+	#if WITH_TB_ESP32
+		display(0,"   1,esp32  - sets General Purpose Port to work with tbESP32",0);
+	#endif
 
 	display(0,"",0);
 	display(d,"ST50 Specific & Testing",0);
@@ -417,18 +422,19 @@ static void handleCommand(String lval, String rval, bool got_equals)
 	else if (lval.equals("gp8_mode"))
 	{
 		int value = 0;
-		if (rval.length() == 1 && rval[0] >= '0' && rval[0] <= '4')
-			value = rval.toInt();
-		else if (rval.equals("off"))
+		if (rval.equals("0") || rval.equals("off"))
 			value = 0;
-		else if (rval.equals("pulse"))
-			value = 1;
-		else if (rval.equals("esp32"))
-			value = 2;
-		else if (rval.equals("neost"))
-			value = 3;
-		else if (rval.equals("neo2000"))
-			value = 4;
+
+		#if PIN_SPEED_PULSE
+			else if (rval.equals("0") || rval.equals("pulse"))
+				value = 1;
+		#endif
+
+		#if WITH_TB_ESP32
+			else if (rval.equals("1") || rval.equals("esp32"))
+				value = 2;
+		#endif
+		
 		else
 		{
 			my_error("invalid GP8_MODE(%s)",rval.c_str());
@@ -585,7 +591,7 @@ static void handleSerial()
 		}
 	}
 
-	#ifdef SERIAL_ESP32
+	#ifdef WITH_TB_ESP32
 		// If udp_enabled, we process the bytes, but
 		// we read (clear) the SERIAL_ESP32 serial port
 		// even if udp_enabled is not true.
