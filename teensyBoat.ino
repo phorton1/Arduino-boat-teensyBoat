@@ -135,6 +135,7 @@ static void showHelp(bool detailed)
 	display(0,"Virtual Instruments",0);
 	display(0,"    LOAD = load the current instrument configuration to EEPROM",0);
 	display(0,"    SAVE = save the current instrument configuration to EEPROM",0);
+	display(0,"    CLEAR = turn all instruments, monitoring, and forwarding off",0);
 	display(0,"    STATE = return the state of the instrments via binary",0);
 
 	display(d,"",0);
@@ -304,10 +305,11 @@ void setup()
 // handleCommand()
 //--------------------------------------------------
 
-uint16_t hexOrUint(const String &str)
+static uint32_t hexOrUint(const String &str)
 	// // base 0 auto-detects "0x" prefix
 {
-	return strtol(str.c_str(), nullptr, 0);
+	// return strtol(str.c_str(), nullptr, 0);
+	return static_cast<uint32_t>(strtoul(str.c_str(), nullptr, 0));
 }
 
 
@@ -390,7 +392,7 @@ static void handleCommand(String lval, String rval, bool got_equals)
 	else if (lval.startsWith("i_"))
 	{
 		String inst = lval.substring(2);
-		uint16_t value = hexOrUint(rval);
+		uint16_t value = hexOrUint(rval);	// downcast from uin32_t
 
 		display(0,"inst=%s value=0x%02x",inst.c_str(),value);
 
@@ -412,9 +414,9 @@ static void handleCommand(String lval, String rval, bool got_equals)
 		if (inum == -1)
 			my_error("invalid instrument(%s)",inst.c_str());
 		else if (inum<100)
-			inst_sim.setPorts(inum,value);
+			inst_sim.setPorts(inum,value);		// downcast to uint8_t
 		else
-			inst_sim.setAll(inum-100,value);
+			inst_sim.setAll(inum-100,value);	// downcast to bool
 	}
 
 	// General Purpose 8 Pin Connector Mode
@@ -467,28 +469,32 @@ static void handleCommand(String lval, String rval, bool got_equals)
 	else if (lval.startsWith("m_"))
 	{
 		String what = lval.substring(2);
-		int value = hexOrUint(rval);
-		display(0,"monitor %s=0x%02x",what.c_str(),value);
+		uint32_t value = hexOrUint(rval);
+		display(0,"monitor %s=0x%08x",what.c_str(),value);
 
 		if (what.equals("sim"))			boat_sim.g_MON_SIM = value;
 			// 0..4 = details about boat simulator calculations
-
-		else if (what.equals("st1"))	inst_sim.g_MON[PORT_ST1] = value;
-		else if (what.equals("st2"))	inst_sim.g_MON[PORT_ST2] = value;
-		else if (what.equals("83a"))	inst_sim.g_MON[PORT_83A] = value;
-		else if (what.equals("83b"))	inst_sim.g_MON[PORT_83B] = value;
-		else if (what.equals("2000"))	inst_sim.g_MON[PORT_2000] = value;
 		else
-			my_error("invalid monitor command(%s)=%d",what.c_str(),value);
+		{
+			int port = -1;
+			if (what.equals("st1"))	port = PORT_ST1;
+			else if (what.equals("st2"))	port = PORT_ST2;
+			else if (what.equals("83a"))	port = PORT_83A;
+			else if (what.equals("83b"))	port = PORT_83B;
+			else if (what.equals("2000"))	port = PORT_2000;
+			else
+				my_error("invalid monitor command(%s)=%d",what.c_str(),value);
 
-		inst_sim.sendBinaryState();
+			if (port != -1)
+				inst_sim.setMonitor(port,value);
+		}
 	}
 
 	// forwarding
 
 	else if (lval.equals("fwd"))
 	{
-		int value = hexOrUint(rval);
+		uint8_t value = hexOrUint(rval);	// downcast from uint32_t
 		display(1,"fwd=%d",value);
 		inst_sim.setFWD(value);
 	}
@@ -502,6 +508,8 @@ static void handleCommand(String lval, String rval, bool got_equals)
 		inst_sim.loadFromEEPROM();
 	else if (lval.equals("save"))
 		inst_sim.saveToEEPROM();
+	else if (lval.equals("clear"))
+		inst_sim.clearState();
 	else if (lval.equals("state"))
 		inst_sim.sendBinaryState();
 
