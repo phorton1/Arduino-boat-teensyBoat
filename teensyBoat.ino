@@ -459,7 +459,7 @@ static void handleCommand(String lval, String rval, bool got_equals)
 	}
 	else if (lval.equals("pulse_hz"))
 	{
-		inst_sim.setSpeedPulseHz(rval.toInt());
+		inst_sim.setSpeedPulseHz(rval.toFloat());
 	}
 #endif
 
