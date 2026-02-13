@@ -38,29 +38,16 @@ $EndComp
 $Comp
 L power:+12V #PWR0103
 U 1 1 6992CD48
-P 1550 1600
-F 0 "#PWR0103" H 1550 1450 50  0001 C CNN
-F 1 "+12V" V 1550 1850 50  0000 C CNN
-F 2 "" H 1550 1600 50  0001 C CNN
-F 3 "" H 1550 1600 50  0001 C CNN
-	1    1550 1600
+P 1550 1800
+F 0 "#PWR0103" H 1550 1650 50  0001 C CNN
+F 1 "+12V" V 1550 2050 50  0000 C CNN
+F 2 "" H 1550 1800 50  0001 C CNN
+F 3 "" H 1550 1800 50  0001 C CNN
+	1    1550 1800
 	0    1    1    0   
 $EndComp
-Text GLabel 1500 3350 2    50   Input ~ 0
-PWMA
-Text GLabel 1500 3450 2    50   Input ~ 0
+Text GLabel 1500 3550 2    50   Input ~ 0
 PWMB
-$Comp
-L power:GND #PWR0104
-U 1 1 6993223D
-P 1500 3250
-F 0 "#PWR0104" H 1500 3000 50  0001 C CNN
-F 1 "GND" V 1500 2950 50  0000 L CNN
-F 2 "" H 1500 3250 50  0001 C CNN
-F 3 "" H 1500 3250 50  0001 C CNN
-	1    1500 3250
-	0    -1   -1   0   
-$EndComp
 Text GLabel 8800 2000 0    50   Input ~ 0
 SIGNALA
 Text GLabel 8800 2100 0    50   Input ~ 0
@@ -79,25 +66,25 @@ $EndComp
 $Comp
 L power:GND #PWR0106
 U 1 1 69A5051A
-P 1550 1700
-F 0 "#PWR0106" H 1550 1450 50  0001 C CNN
-F 1 "GND" V 1550 1400 50  0000 L CNN
-F 2 "" H 1550 1700 50  0001 C CNN
-F 3 "" H 1550 1700 50  0001 C CNN
-	1    1550 1700
+P 1550 1600
+F 0 "#PWR0106" H 1550 1350 50  0001 C CNN
+F 1 "GND" V 1550 1300 50  0000 L CNN
+F 2 "" H 1550 1600 50  0001 C CNN
+F 3 "" H 1550 1600 50  0001 C CNN
+	1    1550 1600
 	0    -1   -1   0   
 $EndComp
-Text GLabel 1500 3650 2    50   Input ~ 0
+Text GLabel 1500 3350 2    50   Input ~ 0
 SPEED_SQUARE
 $Comp
 L power:+5V #PWR0107
 U 1 1 69A6B71E
-P 1500 3550
-F 0 "#PWR0107" H 1500 3400 50  0001 C CNN
-F 1 "+5V" V 1500 3700 50  0000 L CNN
-F 2 "" H 1500 3550 50  0001 C CNN
-F 3 "" H 1500 3550 50  0001 C CNN
-	1    1500 3550
+P 1500 3450
+F 0 "#PWR0107" H 1500 3300 50  0001 C CNN
+F 1 "+5V" V 1500 3600 50  0000 L CNN
+F 2 "" H 1500 3450 50  0001 C CNN
+F 3 "" H 1500 3450 50  0001 C CNN
+	1    1500 3450
 	0    1    1    0   
 $EndComp
 Text GLabel 8800 1900 0    50   Input ~ 0
@@ -602,113 +589,49 @@ Wire Wire Line
 	5650 3600 5550 3600
 Connection ~ 5550 3600
 $Comp
-L Connector_Generic:Conn_01x01 J3
-U 1 1 698CF9AE
-P 9000 1900
-F 0 "J3" H 9080 1896 50  0000 L CNN
-F 1 "Conn_01x01" H 9080 1851 50  0001 L CNN
-F 2 "0_my_footprints:myPinHeader_1x01" H 9000 1900 50  0001 C CNN
-F 3 "~" H 9000 1900 50  0001 C CNN
-	1    9000 1900
-	1    0    0    -1  
+L Connector_Generic:Conn_01x05 J3
+U 1 1 698FBA96
+P 1300 3450
+F 0 "J3" H 1218 3867 50  0000 C CNN
+F 1 "TEENSY_PCB" H 1218 3776 50  0000 C CNN
+F 2 "0_my_footprints:myJSTx05" H 1300 3450 50  0001 C CNN
+F 3 "~" H 1300 3450 50  0001 C CNN
+	1    1300 3450
+	-1   0    0    -1  
 $EndComp
 $Comp
-L Connector_Generic:Conn_01x01 J4
-U 1 1 698D02C3
+L Connector_Generic:Conn_01x03 J1
+U 1 1 698FE473
+P 1350 1700
+F 0 "J1" H 1268 2017 50  0000 C CNN
+F 1 "SEATALK" H 1268 1926 50  0000 C CNN
+F 2 "0_my_footprints:myJSTx03" H 1350 1700 50  0001 C CNN
+F 3 "~" H 1350 1700 50  0001 C CNN
+	1    1350 1700
+	-1   0    0    -1  
+$EndComp
+$Comp
+L Connector_Generic:Conn_01x03 J2
+U 1 1 69908BDE
 P 9000 2000
-F 0 "J4" H 9080 1996 50  0000 L CNN
-F 1 "Conn_01x01" H 9080 1951 50  0001 L CNN
-F 2 "0_my_footprints:myPinHeader_1x01" H 9000 2000 50  0001 C CNN
+F 0 "J2" H 9080 2042 50  0000 L CNN
+F 1 "INSTRUMENT" H 9080 1951 50  0000 L CNN
+F 2 "0_my_footprints:myJSTx03" H 9000 2000 50  0001 C CNN
 F 3 "~" H 9000 2000 50  0001 C CNN
 	1    9000 2000
 	1    0    0    -1  
 $EndComp
+Text GLabel 1500 3650 2    50   Input ~ 0
+PWMA
 $Comp
-L Connector_Generic:Conn_01x01 J5
-U 1 1 698D1753
-P 9000 2100
-F 0 "J5" H 9080 2096 50  0000 L CNN
-F 1 "Conn_01x01" H 9080 2051 50  0001 L CNN
-F 2 "0_my_footprints:myPinHeader_1x01" H 9000 2100 50  0001 C CNN
-F 3 "~" H 9000 2100 50  0001 C CNN
-	1    9000 2100
-	1    0    0    -1  
-$EndComp
-$Comp
-L Connector_Generic:Conn_01x01 J6
-U 1 1 698E845F
-P 1300 3250
-F 0 "J6" H 1380 3246 50  0000 L CNN
-F 1 "Conn_01x01" H 1380 3201 50  0001 L CNN
-F 2 "0_my_footprints:myPinHeader_1x01" H 1300 3250 50  0001 C CNN
-F 3 "~" H 1300 3250 50  0001 C CNN
-	1    1300 3250
-	-1   0    0    1   
-$EndComp
-$Comp
-L Connector_Generic:Conn_01x01 J2
-U 1 1 698E8465
-P 1350 1700
-F 0 "J2" H 1430 1696 50  0000 L CNN
-F 1 "Conn_01x01" H 1430 1651 50  0001 L CNN
-F 2 "0_my_footprints:myPinHeader_1x01" H 1350 1700 50  0001 C CNN
-F 3 "~" H 1350 1700 50  0001 C CNN
-	1    1350 1700
-	-1   0    0    1   
-$EndComp
-$Comp
-L Connector_Generic:Conn_01x01 J1
-U 1 1 698E846B
-P 1350 1600
-F 0 "J1" H 1430 1596 50  0000 L CNN
-F 1 "Conn_01x01" H 1430 1551 50  0001 L CNN
-F 2 "0_my_footprints:myPinHeader_1x01" H 1350 1600 50  0001 C CNN
-F 3 "~" H 1350 1600 50  0001 C CNN
-	1    1350 1600
-	-1   0    0    1   
-$EndComp
-$Comp
-L Connector_Generic:Conn_01x01 J9
-U 1 1 698EE329
-P 1300 3550
-F 0 "J9" H 1380 3546 50  0000 L CNN
-F 1 "Conn_01x01" H 1380 3501 50  0001 L CNN
-F 2 "0_my_footprints:myPinHeader_1x01" H 1300 3550 50  0001 C CNN
-F 3 "~" H 1300 3550 50  0001 C CNN
-	1    1300 3550
-	-1   0    0    1   
-$EndComp
-$Comp
-L Connector_Generic:Conn_01x01 J8
-U 1 1 698EE32F
-P 1300 3450
-F 0 "J8" H 1380 3446 50  0000 L CNN
-F 1 "Conn_01x01" H 1380 3401 50  0001 L CNN
-F 2 "0_my_footprints:myPinHeader_1x01" H 1300 3450 50  0001 C CNN
-F 3 "~" H 1300 3450 50  0001 C CNN
-	1    1300 3450
-	-1   0    0    1   
-$EndComp
-$Comp
-L Connector_Generic:Conn_01x01 J7
-U 1 1 698EE335
-P 1300 3350
-F 0 "J7" H 1380 3346 50  0000 L CNN
-F 1 "Conn_01x01" H 1380 3301 50  0001 L CNN
-F 2 "0_my_footprints:myPinHeader_1x01" H 1300 3350 50  0001 C CNN
-F 3 "~" H 1300 3350 50  0001 C CNN
-	1    1300 3350
-	-1   0    0    1   
-$EndComp
-$Comp
-L Connector_Generic:Conn_01x01 J10
-U 1 1 698EFD6B
-P 1300 3650
-F 0 "J10" H 1380 3646 50  0000 L CNN
-F 1 "Conn_01x01" H 1380 3601 50  0001 L CNN
-F 2 "0_my_footprints:myPinHeader_1x01" H 1300 3650 50  0001 C CNN
-F 3 "~" H 1300 3650 50  0001 C CNN
-	1    1300 3650
-	-1   0    0    1   
+L power:GND #PWR0104
+U 1 1 6993223D
+P 1500 3250
+F 0 "#PWR0104" H 1500 3000 50  0001 C CNN
+F 1 "GND" V 1500 2950 50  0000 L CNN
+F 2 "" H 1500 3250 50  0001 C CNN
+F 3 "" H 1500 3250 50  0001 C CNN
+	1    1500 3250
+	0    -1   -1   0   
 $EndComp
 $EndSCHEMATC
