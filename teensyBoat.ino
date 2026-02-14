@@ -29,7 +29,9 @@
 // 21 - RX5 tbESP32	/ Neo6M
 //
 // 2  - SPEED_PULSE out for testing ST50 LOG/WIND instrument
-// 12 - UDP_ENABLE for tbESP32 scheme
+// 11 - PWMA out for testing ST50 Wind instrument
+// 12 - PWMb out for testing ST50 Wind instrument
+// 13 - UDP_ENABLE for tbESP32 scheme
 
 //---------------------------------------------------------------
 // EIGHT PIN CONNECTOR - tbESP32 Serial5 and UDP_ENABLE
@@ -44,16 +46,16 @@
 // for testing ST50 devices.
 //
 //		teensy
-// conn	gpio	neo6m	tbESP32		ST50 testing 	display
-// -------------------------------------------------------------------------
-// 1	20 				TX5							LCD_DC
-// 2	21		RX5		RX5  						T_CS
-// 3	13											SCLK
-// 4	12 				UDP_ENABLE 					MISO
-// 5	11 	 										MOSI
-// 6	2  							SPEED_PULSE		LCD_CS
-// 7	5V		5V		5V			5V				5V
-// 8	GND		GND		GND			GND				GND
+// conn	gpio	neo6m	tbESP32		ST50 SPEED	ST50 WIND			display
+// -----------------------------------------------------------------------------------------
+// 1	20 				TX5											LCD_DC
+// 2	21		RX5		RX5  										T_CS
+// 3	13				UDP_ENABLE									SCLK
+// 4	12 				 						PWMB = blue			MISO
+// 5	11 	 									PWMA = green		MOSI
+// 6	2  				   yellow = SPEED_PULSE	SPEED_PULSE			LCD_CS
+// 7	5V		5V		5V			5V			5V					5V
+// 8	GND		GND		GND			GND			GND					GND
 //
 // UDP_ENABLE is defined in the Boat library, where the pin is set
 // to INPUT_PULLDOWN, and if an tbESP32 is hooked up, it pulls it high,
@@ -208,40 +210,20 @@ static void showHelp(bool detailed)
 
 	display(0,"",0);
 	display(0,"GP8_MODE = X",0);
-	display(0,"   0,off    - turns General Purpose Port Off",0);
-	#if PIN_SPEED_PULSE
-		display(0,"   1,pulse  - sets General Purpose Port to output pulses",0);
-	#endif
-	#if WITH_TB_ESP32
-		display(0,"   1,esp32  - sets General Purpose Port to work with tbESP32",0);
-	#endif
+	display(0,"   0,off   - turns General Purpose Port Off",0);
+	display(0,"   1,pulse - sets General Purpose Port to output pulses to test ST50 Speed/Wind",0);
+	display(0,"   2,wind  - sets General Purpose Port to test ST50 Wind",0);
+	display(0,"   3,esp32 - sets General Purpose Port to work with tbESP32",0);
 
 	display(0,"",0);
 	display(d,"ST50 Specific & Testing",0);
 	display(d,"",0);
 	display(0,"LAMP =0..3           Sends lamp messages to all ST ports",0);
-#if PIN_SPEED_PULSE
-	display(0,"PULSE      = 0/1/2  	0=off; 1=use PULSE_MS value; 2=use WATER_SPEED to generate pulse_ms value",0);
-	display(0,"PULSE_HZ   = N       set ms for PULSE_MODE(1)",0);
-#endif
-
-
-	// Binary data controls for communication with teensyBoat.pm.  I used explicitly turn on
-	//
-	//		BINARY_TYPE_SIM } BINARY_TYPE_ST1 | BINARY_TYPE_ST2
-	//
-	// in setup(), but would also just invariantly would send BINARY_TYPE_PROG,
-	// either in in reponse to the STATE command, or whenever the console UI
-	// changed the program state.
-	//
-	// Now, assuming a single instance of the teensyBoat.pm app at a time,
-	// I turn them on based on, and send the STATE command, solely based
-	// on the opening and closing of the relevant windows in the pm program
-	// in order to minimize spurious serial traffic.  As such, the command API
-	// takes 0/1 and adds or removes bits and  B_ST and B_9183 sets both ports
-	// bits
+	display(0,"TEST_MODE  = 0/1     0=use USER hz and pwm; 1=use sim Water/Wind hz and WindAngle pwm; cur=%d",inst_sim.getTestMode());
+	display(0,"  PULSE_HZ = N       set ms for TEST_MODE(1) cur=%0.2f",inst_sim.getUserPulseHz());
+	display(0,"  PWMA     = 0..255  set duty cycle of PWMA output; cur=%d",inst_sim.getWindPWM(false));
+	display(0,"  PWMB     = 0..255  set duty cycle of PWMA output; cur=%d",inst_sim.getWindPWM(true));
 	
-
 	display(0,"",0);
 	display(d,"Binary interface to teensyBoat.pm",0);
 	display(d,"",0);
@@ -426,17 +408,12 @@ static void handleCommand(String lval, String rval, bool got_equals)
 		int value = 0;
 		if (rval.equals("0") || rval.equals("off"))
 			value = 0;
-
-		#if PIN_SPEED_PULSE
-			else if (rval.equals("0") || rval.equals("pulse"))
-				value = 1;
-		#endif
-
-		#if WITH_TB_ESP32
-			else if (rval.equals("1") || rval.equals("esp32"))
-				value = 2;
-		#endif
-		
+		else if (rval.equals("1") || rval.equals("pulse"))
+			value = 1;
+		else if (rval.equals("2") || rval.equals("wind"))
+			value = 2;
+		else if (rval.equals("3") || rval.equals("esp32"))
+			value = 3;
 		else
 		{
 			my_error("invalid GP8_MODE(%s)",rval.c_str());
@@ -452,16 +429,23 @@ static void handleCommand(String lval, String rval, bool got_equals)
 	{
 		setLampIntensity(rval.toInt());
 	}
-#if PIN_SPEED_PULSE
-	else if (lval.equals("pulse"))
+	else if (lval.equals("test_mode"))
 	{
-		inst_sim.setSpeedPulseMode(rval.toInt());
+		inst_sim.setTestMode(rval.toInt());
 	}
 	else if (lval.equals("pulse_hz"))
 	{
-		inst_sim.setSpeedPulseHz(rval.toFloat());
+		inst_sim.setUserPulseHz(rval.toFloat());
 	}
-#endif
+	else if (lval.equals("pwma") || lval.equals("pwmb"))
+	{
+		bool pwm_b = lval.equals("pwmb") ? 1 : 0;
+		int value = rval.toInt();
+		if (value < 0) value = 0;
+		if (value > 255) value = 255;
+		display(0,"SET PWM%s=%d",pwm_b?"B":"A",value);
+		inst_sim.setWindPWM(pwm_b,value);
+	}
 
 
 	// monitor
