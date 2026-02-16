@@ -211,7 +211,7 @@ static void showHelp(bool detailed)
 	display(0,"",0);
 	display(0,"GP8_MODE = X",0);
 	display(0,"   0,off   - turns General Purpose Port Off",0);
-	display(0,"   1,pulse - sets General Purpose Port to output pulses to test ST50 Speed/Wind",0);
+	display(0,"   1,speed - sets General Purpose Port to output pulses to test ST50 Speed/Wind",0);
 	display(0,"   2,wind  - sets General Purpose Port to test ST50 Wind",0);
 	display(0,"   3,esp32 - sets General Purpose Port to work with tbESP32",0);
 
@@ -220,7 +220,7 @@ static void showHelp(bool detailed)
 	display(d,"",0);
 	display(0,"LAMP =0..3           Sends lamp messages to all ST ports",0);
 	display(0,"TEST_MODE  = 0/1     0=use USER hz and pwm; 1=use sim Water/Wind hz and WindAngle pwm; cur=%d",inst_sim.getTestMode());
-	display(0,"  PULSE_HZ = N       set ms for TEST_MODE(1) cur=%0.2f",inst_sim.getUserPulseHz());
+	display(0,"  HZ       = N       set hz for TEST_MODE(1) cur=%0.2f",inst_sim.getUserPulseHz());
 	display(0,"  PWMA     = 0..255  set duty cycle of PWMA output; cur=%d",inst_sim.getWindPWM(false));
 	display(0,"  PWMB     = 0..255  set duty cycle of PWMA output; cur=%d",inst_sim.getWindPWM(true));
 	
@@ -408,7 +408,7 @@ static void handleCommand(String lval, String rval, bool got_equals)
 		int value = 0;
 		if (rval.equals("0") || rval.equals("off"))
 			value = 0;
-		else if (rval.equals("1") || rval.equals("pulse"))
+		else if (rval.equals("1") || rval.equals("speed"))
 			value = 1;
 		else if (rval.equals("2") || rval.equals("wind"))
 			value = 2;
@@ -433,7 +433,7 @@ static void handleCommand(String lval, String rval, bool got_equals)
 	{
 		inst_sim.setTestMode(rval.toInt());
 	}
-	else if (lval.equals("pulse_hz"))
+	else if (lval.equals("hz"))
 	{
 		inst_sim.setUserPulseHz(rval.toFloat());
 	}
