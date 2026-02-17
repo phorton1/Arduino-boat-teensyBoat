@@ -219,10 +219,14 @@ static void showHelp(bool detailed)
 	display(d,"ST50 Specific & Testing",0);
 	display(d,"",0);
 	display(0,"LAMP =0..3           Sends lamp messages to all ST ports",0);
-	display(0,"TEST_MODE  = 0/1     0=use USER hz and pwm; 1=use sim Water/Wind hz and WindAngle pwm; cur=%d",inst_sim.getTestMode());
-	display(0,"  HZ       = N       set hz for TEST_MODE(1) cur=%0.2f",inst_sim.getUserPulseHz());
-	display(0,"  PWMA     = 0..255  set duty cycle of PWMA output; cur=%d",inst_sim.getWindPWM(false));
-	display(0,"  PWMB     = 0..255  set duty cycle of PWMA output; cur=%d",inst_sim.getWindPWM(true));
+	display(0,"RAW_MODE    = 0/1      0=use RAW hz and pwm vs calculated values; Default=0 cur=%d",inst_sim.getRawST50TestMode());
+	display(0,"  HZ        = N       set hz for RAW_MODE cur=%0.2f",inst_sim.getRawPulseHz());
+	display(0,"  PWMA      = 0..255  set duty cycle of PWMA output; cur=%d",inst_sim.getRawPWMDuty(false));
+	display(0,"  PWMB      = 0..255  set duty cycle of PWMA output; cur=%d",inst_sim.getRawPWMDuty(true));
+	display(0,"WIND_CIRCLE = 0.1.2	Only works in RAW_MODE=0 (test_mode)",0);
+	display(0,"  0         = off",0);
+	display(0,"  1         = do a 2 degree per 250ms calibration circle",0);
+	display(0,"  2         = do a 15 degree per 15 second measurement circle",0);
 	
 	display(0,"",0);
 	display(d,"Binary interface to teensyBoat.pm",0);
@@ -429,13 +433,13 @@ static void handleCommand(String lval, String rval, bool got_equals)
 	{
 		setLampIntensity(rval.toInt());
 	}
-	else if (lval.equals("test_mode"))
+	else if (lval.equals("raw_mode"))
 	{
-		inst_sim.setTestMode(rval.toInt());
+		inst_sim.setRawST50TestMode(rval.toInt());
 	}
 	else if (lval.equals("hz"))
 	{
-		inst_sim.setUserPulseHz(rval.toFloat());
+		inst_sim.setRawPulseHz(rval.toFloat());
 	}
 	else if (lval.equals("pwma") || lval.equals("pwmb"))
 	{
@@ -443,9 +447,18 @@ static void handleCommand(String lval, String rval, bool got_equals)
 		int value = rval.toInt();
 		if (value < 0) value = 0;
 		if (value > 255) value = 255;
-		display(0,"SET PWM%s=%d",pwm_b?"B":"A",value);
-		inst_sim.setWindPWM(pwm_b,value);
+		display(0,"SET RAW PWM%s=%d",pwm_b?"B":"A",value);
+		inst_sim.setRawPWMDuty(pwm_b,value);
 	}
+	else if (lval.equals("wind_circle"))
+	{
+		int value = rval.toInt();
+		if (value<0 || value>2)
+			my_error("ILLEGAL WIND_CIRCLE value=%d",value);
+		else
+			inst_sim.doST50WindCircle(value);
+	}
+
 
 
 	// monitor
