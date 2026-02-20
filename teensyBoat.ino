@@ -81,7 +81,7 @@ static void showHelp(bool detailed)
 	display(0,"LOAD           get instrument setup from EEPROM",0);
 	display(0,"SAVE           save instrument setup to EEPROM",0);
 	display(0,"STATE          send binary 'state' message",0);
-
+	display(0,"REBOOT         reboot teensyBoat",0);
 	display(0,"",0);
 	display(d,"Virtual Boat",0);
 	display(d,"",0);
@@ -183,12 +183,14 @@ static void showHelp(bool detailed)
 	display(0,"              0x01 = all in/out",0);
 	display(0,"              0x02 = ais in only",0);
 	display(0,"M_2000 = N    monitor known NMEA2000 sensor messages",0);
-	display(0,"              0x01	= sensors out, known messages in",0);
-	display(0,"              0x02 = GPS/AIS specifically",0);
-	display(0,"              0x04 = known proprietary in",0);
-	display(0,"              0x08 = unknown (not busi.e. proprietary) in",0);
-	display(0,"              0x10 = BUS in",0);
-	display(0,"              0x20 = BUS out",0);
+	display(0,"              0x0001	= sensors out, known messages in",0);
+	display(0,"              0x0002 = GPS/AIS specifically",0);
+	display(0,"              0x0004 = known proprietary in",0);
+	display(0,"              0x0008 = unknown (not busi.e. proprietary) in",0);
+	display(0,"              0x0010 = BUS in",0);
+	display(0,"              0x0020 = BUS out",0);
+	display(0,"              0x1000	= self (sent) as well as received",0);
+	display(0,"              0x8000	= show raw 'instrument' messages",0);
 
 	display(0,"",0);
 	display(d,"Forwarding",0);
@@ -509,6 +511,13 @@ static void handleCommand(String lval, String rval, bool got_equals)
 		inst_sim.clearState();
 	else if (lval.equals("state"))
 		inst_sim.sendBinaryState();
+	else if (lval == "reboot")
+	{
+		warning(0,"REBOOTING teensyBoat!!",0);
+		delay(300);
+		SCB_AIRCR = 0x05FA0004;
+		while (1) { delay(1000); }
+	}
 
 	else if (lval.equals("l"))
 		nmea2000.listDevices();
