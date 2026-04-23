@@ -131,6 +131,10 @@ static void showHelp(bool detailed)
 	display(d,"                   RPMS to 1800 if SOG>0, or 0 if the boat is not moving.",0);
 	display(0,"GEN=0/1        Starts and stops the Genset",0);
 
+	display(0,"ROUTES         list all available routes with waypoint counts",0);
+	display(0,"ROUTE_WPS=name list all waypoints in a route with lat/lon",0);
+	display(0,"SIM            show current simulator state",0);
+
 	display(d,"DT=YYYY-MM-DD HH:MM:SS	sets the RTC to the given date time (UTC)",0);
 
 	display(0,"",0);
@@ -374,6 +378,83 @@ static void handleCommand(String lval, String rval, bool got_equals)
 		boat_sim.setRPM(rval.toInt());
 	else if (lval.equals("gen"))
 		boat_sim.setGenset(rval.toInt());
+
+	else if (lval.equals("routes"))
+	{
+		display(0,"Routes(%d):",simulator_num_routes);
+		for (int i = 0; i < simulator_num_routes; i++)
+		{
+			const route_t *r = &simulator_routes[i];
+			display(0,"  %d:%s (%d wps)",i,r->name,r->num_wpts);
+		}
+	}
+	else if (lval.equals("route_wps"))
+	{
+		const route_t *found = nullptr;
+		for (int i = 0; i < simulator_num_routes; i++)
+		{
+			if (rval.equalsIgnoreCase(simulator_routes[i].name))
+			{
+				found = &simulator_routes[i];
+				break;
+			}
+		}
+		if (!found)
+			my_error("unknown route: %s",rval.c_str());
+		else
+		{
+			display(0,"%s(%d wps):",found->name,found->num_wpts);
+			for (int i = 0; i < found->num_wpts; i++)
+			{
+				const waypoint_t *wp = &found->wpts[i];
+				display(0,"  %d:%s %.6f,%.6f",i,wp->name,wp->lat,wp->lon);
+			}
+		}
+	}
+	else if (lval.equals("sim"))
+	{
+		const char *ap_str =
+			boat_sim.getAutopilot() == AP_MODE_AUTO ? "AUTO" :
+			boat_sim.getAutopilot() == AP_MODE_VANE ? "VANE" : "OFF";
+		display(0,"SIM running=%d routing=%d ap=%s arrived=%d",
+			boat_sim.running(),
+			boat_sim.getRouting(),
+			ap_str,
+			boat_sim.getArrived());
+		const char *rname = boat_sim.getRouteName();
+		if (rname && *rname)
+		{
+			uint8_t twp = boat_sim.getTargetWPNum();
+			const waypoint_t *wp = boat_sim.getWaypoint(twp);
+			display(0,"SIM route=%s wps=%d target=%d:%s(%.6f,%.6f)",
+				rname,
+				boat_sim.getNumWaypoints(),
+				twp,
+				wp ? wp->name : "?",
+				wp ? wp->lat  : 0.0,
+				wp ? wp->lon  : 0.0);
+			display(0,"SIM pos=%.6f,%.6f hdg=%.1f spd=%.1f sog=%.1f cog=%.1f",
+				boat_sim.getLat(),
+				boat_sim.getLon(),
+				boat_sim.getHeading(),
+				boat_sim.getWaterSpeed(),
+				boat_sim.getSOG(),
+				boat_sim.getCOG());
+			display(0,"SIM dist=%.3f hdg_to_wp=%.1f xte=%.3f",
+				boat_sim.distanceToWaypoint(),
+				boat_sim.headingToWaypoint(),
+				boat_sim.getCrossTrackError());
+		}
+		else
+		{
+			display(0,"SIM pos=%.6f,%.6f hdg=%.1f spd=%.1f",
+				boat_sim.getLat(),
+				boat_sim.getLon(),
+				boat_sim.getHeading(),
+				boat_sim.getWaterSpeed());
+			display(0,"SIM no route loaded",0);
+		}
+	}
 
 	// simulated instruments
 
