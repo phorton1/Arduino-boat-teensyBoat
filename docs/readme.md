@@ -478,6 +478,20 @@ with wires to pheonix 3.81 connectors like before, making the desktop
 situation complicated.
 
 
+## Please Also See
+
+- [**phorton1/base-apps-teensyBoat**](https://github.com/phorton1/base-apps-teensyBoat) —
+  The companion wxPerl desktop application for Windows. Monitors and controls
+  teensyBoat.ino over USB serial or UDP; provides real-time display of simulator
+  state, SeaTalk protocol monitoring, virtual instrument configuration, and an
+  HTTP API for remote control and automation.
+
+- [**phorton1/Arduino-libraries-Boat**](https://github.com/phorton1/Arduino-libraries-Boat) —
+  The shared Arduino C++ library used by this firmware. Implements boatSimulator,
+  instSimulator, autoPilot, boatState, and the binary packet protocol shared
+  with the Perl application.
+
+
 
 
 
