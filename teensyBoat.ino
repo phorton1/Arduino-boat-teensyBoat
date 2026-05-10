@@ -110,6 +110,7 @@ static void showHelp(bool detailed)
 	display(0,"TRIP_ON=1/0    Turn the Trip Odometer on/off",0);
 
 	display(0,"D=n            Sets the depth of water to N feet",0);
+	display(0,"WT=n           Sets water temperature: N or N.NC (Celsius), or N.NF (Fahrenheit)",0);
 	display(0,"H=n            Sets the boats Heading to N true degrees",0);
 	display(d,"                   if the autopilot is running, this will be overriden",0);
 	display(d,"                   in the next timeslice",0);
@@ -354,6 +355,15 @@ static void handleCommand(String lval, String rval, bool got_equals)
 
 	else if (lval.equals("d"))
 		boat_sim.setDepth(rval.toFloat());
+	else if (lval.equals("wt"))
+	{
+		float temp_c;
+		if (rval.endsWith("F") || rval.endsWith("f"))
+			temp_c = (rval.toFloat() - 32.0) * 5.0 / 9.0;
+		else
+			temp_c = rval.toFloat();
+		boat_sim.setWaterTemp(temp_c);
+	}
 	else if (lval.equals("h"))
 		boat_sim.setHeading(rval.toFloat());
 	else if (lval.equals("s"))
