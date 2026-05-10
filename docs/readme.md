@@ -1,501 +1,134 @@
 # teensyBoat.ino
 
-A does-it-all teensy4.0 based NMEA2000, NMEA0183, and Seatalk box
-with a corresponding optional MSWindows wxPerl/console User Interface
-and/or a myIOT EPS32 device specifically designed to work with it.
-
-This project is complex and constantly evolving.  As I am now ready to
-install it on my boat, it has moved beyond just being a desktop test-harness,
-and is evolving into a real functional part of my boat's instrumentation.
-
-- Keeps track of the boat's State as given by its instruments, i.e.
-  it's heading, speed, the depth of the water, direction and
-  speed of the wind, motor RPMs, current set and drift, and so on.
-- Provides detailed Protocol Monitoring of incoming signals for all
-  three protocols for debugging, understanding, and evolving the system.
-- Has a fairly sophisticated physical Boat Simulator that can simulate
-  winds, currents, waypoints, routes, and so forth, creating a "virtual
-  boat" that can be driven around under a variety of conditions.
-- Has a set of Simulated Instruments, based on the Boat Simulator,
-  that can provide test output in any or all of the three Protocols
-  to drive, test, and probe Chartplotters and other systems and instruments.
-- Can be used with a serial monitor, like the Arduino IDE Serial Monitor
-  or Putty (or my Buddy project) or, more completely, with the custom built,
-  (some day to installable), MSWindows wxPerl/console program.
-- Can be used with the myIOT tbESP32 device for remote monitoring
-  of the state of the boat's instruments and/or remote simulation to
-  teensyBoat.pm via UDP.
-- Has a limited ability to test certain instruments that receive
-  pulses (i.e. Raymarine ST50 Log and Wind instrumetns) and which,
-  in turn, generate instrument (Seatalk) output.
-
-**teensyBoat.ino** electrically attaches to the various protocols
-using modules or onboard circutry:
-
-- NMEA2000 uses SN65HVD230 CANBUS Transceiver Module
-  to act as the bus itself, with a jumper for the terminating
-  resistor(s), or as a "drop", without the terminating resistor(s).
-- NMEA0183 uses a dual MAX3232 Serial Module to provide
-  two NMEA0183 ports with optional forwarding between them,
-  with jumper providing for hardwired forwarding when the
-  teensy is not running.
-- There are two separate Seatalk ports that use onboard opto-isolator
-  circuts that can likewise be jumpered together when the teensy
-  is not running.
-- Pulse Output is used in addition to the Seatalk connector to
-  test ST50 Log and Wind devices.
-- Works on the boat passively (without the Teensy running),
-  in-vitro, based on the NMEA0183 and Seatalk forwarding jumpers
-- talks to the tbESP32 via a Serial port so that the ESP32
-  can forward and receive information via UDP to teensyBoat.pm
-  via Wifi, or directly via tbESP32's webUI or console interface.
-
-teensyBoat.ino makes use of the **Arduino-libraries-Boat** library
-
-- The **boatSimulator** implements a virtual boat, with things like
-  COG, SOG, latitude and longitude, wind speed and direction, and so on,
-  independent of the instruments it might or might not have.
-- The boatSimulator also has a rudimentary set of Routes and
-  Waypoints and a generic virtual **autoPilot** that can set, and
-  adjust, the course to a given waypoint, notices when waypoints have
-  been arrived at, and can implement routing by advancing to the next
-  Waypoint in a Route when a waypouint arrival has been detected.
-- The **instSimulator** adds a layer on top of the boatSimulatur that
-  allows for the configuration of various virtual instruments on the virtual
-  boat, where each instrument may make use of one or more of the three
-  protocols to transmit messages over the NMEA2000, NMEA0183, or Seatalk
-  channels.
-- Protocol **monitoring** is generally implemented in the instSimulator,
-  which *knows* whether to output monitored packets as specifically
-  colored USB Serial Text, or binary encoded packets over the USB Serial
-  port to be displayed by console.pm, or understood by the teensyBoat.pm
-  program.
-- The **boatState** class works with the instrument monitoring to allow
-  one to select certain protocols and messages to keep track of the
-  state of the instruments.  Hence the **boatState** can be driven
-  either by the instSimulator in a closed loop, or via the actual
-  instruments on the boat.
-
-teensyBoat was instrumental (pardon the pun) in allowing me to reverse
-engineer the RAYNET ethernet protocols.  Now that that is well along
-the way, it is time to install it in the boat and see what comes next.
-
-
-
-
-## Serial Command Protocol Basics
-
-Although initially implemented with a rudimentary serial UI that
-allowed testing using with just my console.pm program, with the
-implementation of the **teensyBoat.pm** WX Perl windows application,
-a more sophisticated serial text command protocol has been implemented
-which *might* not lend itself to use with a simple console application.
-
-However, despite the complexity, it should be feasable to test and
-even utilize teensyBoat.ino with only a console serial monitor
-like the Arduino IDE or Putty.
-
-The **Serial Command Protocol** will consist of left/right value
-pairs, with crlf (\r\n) line terminators:
-
-	LEFT_IDENTIFIER = RIGHT_VALUE\r\n
-
-### Program Control
+**Home** -- **[Electronics](electronics.md)** -- **[3DP](3dp.md)**
 
-- **B=N** Sets (bitwise) binary interface
-- **DT=YYYY-MM-DD HH:MM:SS**	sets the RTC to the given date time (UTC)
+repos: **[phorton1](https://github.com/phorton1)** --
+**teensyBoat Firmware** --
+**[teensyBoat App](https://github.com/phorton1/base-apps-teensyBoat/blob/master/docs/readme.md)** --
+**[Boat Library](https://github.com/phorton1/Arduino-libraries-Boat/blob/master/docs/readme.md)** --
+**[tbESP32 WiFi](https://github.com/phorton1/Arduino-boat-tbESP32/blob/master/docs/readme.md)** --
+**[teensyWind Tester](https://github.com/phorton1/Arduino-boat-teensyWind/blob/master/docs/readme.md)** --
+**[teensyGPS](https://github.com/phorton1/Arduino-boat-teensyGPS/blob/master/docs/readme.md)**
 
-Binary just uses 1 for everything that is implemented
+**teensyBoat.ino** is a Teensy 4.0 firmware and custom PCB that bridges three marine
+instrument protocols -- **Seatalk1**, **NMEA 0183**, and **NMEA 2000** -- on a single
+compact board.  It is the primary hardware in a three-repo marine electronics system
+and the natural entry point for anyone exploring, building, or extending it.  The
+firmware includes a complete **virtual boat simulator** and nine **virtual instrument
+simulators** that can drive any combination of the three protocols, making it a
+self-contained desktop test harness for Raymarine chartplotters and other marine
+electronics.  A companion **GP8 connector** on the board drives the analog and pulse
+inputs of Raymarine ST50 instruments directly, enabling bench testing of ST50 Speed,
+Wind, and Depth instruments without a real boat or real transducers.
 
+[![teensyBoat bench setup](images/tb_desk_setup_resized.jpg)](images/tb_desk_setup.jpg)
 
-### Boat Simlulator Control
 
-These commands allow for positioning of the virtual boat, setting
-the depth of water and true wind speed and direction, and so on
+## The Three-Repo System
 
-- **I** - monadic command to re-initialize the simulator
-- **RUN** - monadic command to start the boat simulator
-- **STOP** - monadic command to stop the boat simulator
+teensyBoat.ino is the hardware hub at the center of a tightly coupled three-repo system:
 
-The instrument simulator runs when the boat simulator is running.
+- **[Arduino-boat-teensyBoat](https://github.com/phorton1/Arduino-boat-teensyBoat)**
+  (this repo) -- the Teensy 4.0 firmware and PCB.  Runs standalone as a protocol
+  bridge and simulator; exposes a USB serial command interface for monitoring and control.
 
-Note that the boat is initially set on the 0th waypoint in the 0th route,
-and the target waypoint is set to the 1st waypoint in the 0th route.
-Upon re-initislization, the boat is set on the 0th waypoint in the current
-route and the target waypoint is set to the 1st waypoint in that route.
-Upon initialization the COG is set to point to the 1st waypoint, and the
-SOG, RPM, autopilot, and routing are all set to zero (turned off).
-The wind is set to a fixed (90 true 10 knots) set of values.
+- **[base-apps-teensyBoat](https://github.com/phorton1/base-apps-teensyBoat)** --
+  the companion wxPerl Windows desktop application.  Connects to the firmware over USB
+  serial or UDP (via tbESP32) and provides real-time display of boat simulator state,
+  live protocol monitoring, and virtual instrument configuration.
 
-- **ROUTE=name** sets the current route to the (known) name
-  and re-initializes the simulator.
-- **J=N** moves the boat to the nth waypoint in the current
-  route, stops the boat and turns off the autopilot and routing
-- **WP=n** sets the target waypoint to the given waypoint,
-  adjusts the heading to point to the waypoint, does not affect
-  state of SOG, autopilot or routing
+- **[Arduino-libraries-Boat](https://github.com/phorton1/Arduino-libraries-Boat)** --
+  the shared C++ Arduino library included by the firmware.  Implements the virtual boat
+  and instrument simulators, all three protocol stacks, the binary packet framing layer,
+  and defines the packet type constants shared with the wxPerl application.
 
-The following set more of the boat simulator state variables
+The three repos have independent git histories but are tightly coupled at the
+protocol level.  The binary packet type constants defined in the Boat library must
+match those in the wxPerl application's `tbBinary.pm`; they are kept in sync manually.
 
-- **S=n** (important) sets the boat's SOG to n knots, and
-  is required for the simulator to start the boat moving.
-- **H=n** sets the boats heading to N true degrees.  Note that
-  if the autopilot is running, this will be reset to point at
-  the target waypoint on the next timeslice.
-- **D=n** sets the depth of water to N feet
-- **WA=n** sets the true wind direction to N degrees
-- **WS=n** sets the true wind speed to N knots
-- **RPM=n** sets the engine RPMs to N; note this is overriden
-  by any calls to setSOG, which sets the RPMS to 1800 if SOG>0,
-  or 0 if the boat is not moving.
-- **GEN=0/1** starts and stops the genset.
 
-The following turn things on or off
+## Binary Serial Protocol
 
-- **AP=n**, 1 starts the autopilot to the target waypoint;
-  0 turns it off.  Note that turning the autopilot off also
-  turns off Routing.
-- **R=1**, 1 turns on Routing, which starts monitoring for
-  waypoint arrivals and advancing to the next waypoint upon
-  such an arrival. 1 also turns the autopilot on.
-  0 turns off Routing but does not turn off the autopilot.
+The firmware and wxPerl application communicate over a **binary packet protocol**
+carried on the same USB serial port as text output -- or forwarded over UDP by the
+**[tbESP32](https://github.com/phorton1/Arduino-boat-tbESP32)** WiFi bridge.
+Both the text command interface and the binary telemetry stream are active simultaneously
+on a single connection.
 
-Note that with Routing turned on, if the final waypoint in
-the route is arrived at, the autopilot and routing will be
-turned off and the boat will be stopped (the SOG will be
-set to zero).
+Every binary packet begins with a **0x02** start byte (BINARY_FLAG), followed by a
+16-bit little-endian payload length and a 16-bit little-endian type code.  Multiple
+streams can be active at once; the wxPerl application enables each stream it needs on
+connect and disables them on close.
 
+| Packet type         | Value  | Content                                              |
+| ------------------- | ------ | ---------------------------------------------------- |
+| BINARY_TYPE_PROG    | 0x0001 | Virtual instrument port-mask config and monitor flags |
+| BINARY_TYPE_SIM     | 0x0002 | Full boat simulator state (50+ fields, at 1 Hz while running) |
+| BINARY_TYPE_ST1     | 0x0010 | Decoded Seatalk1 datagrams from port ST1             |
+| BINARY_TYPE_ST2     | 0x0020 | Decoded Seatalk1 datagrams from port ST2             |
+| BINARY_TYPE_0183A   | 0x0100 | Raw NMEA 0183 sentences from port A                  |
+| BINARY_TYPE_0183B   | 0x0200 | Raw NMEA 0183 sentences from port B                  |
+| BINARY_TYPE_2000    | 0x1000 | Decoded NMEA 2000 PGN data                           |
 
+The framing layer is implemented in `boatBinary.cpp` (`startBinary()` / `endBinary()`
+in the Boat library) and consumed by the wxPerl application's binary receive loop.
 
-### Virtual Instrument Setup
 
-Each of the virtual instruments can be turned off, or set to output
-one or more of the three protocols.  The protocols are specified bitwise,
-using decimal numbers, where:
+## Hardware
 
-- 0 = off
-- 1 = Seatalk1 output
-- 2 = Seatalk2 output
-- 4 = NMEA0183A output
-- 8 = NMEA0183B output
-- 16 = NMEA2000 output
+The custom PCB and 3D-printed enclosure design files are included in this repository.
 
+- **[Electronics](electronics.md)** -- KiCad schematics and PCB layouts for the current
+  and previous board revisions, Gerber files, and CNC milling gcode for the home-milled
+  board1 revision.
 
-So, for instance
+- **[3DP](3dp.md)** -- STL and 3MF files for the 3D-printed enclosure, and pre-sliced
+  PETG printer gcode.
 
-	INST_DEPTH = 20
 
-means to setup the virtual Depth instrument to output on NMEA0183A and
-the NMEA2000 output channels.  The instruments are as follows:
+## Credits
 
-- I_DEPTH
-- I_LOG
-- I_WIND
-- I_COMPASS
-- I_GPS
-- I_AIS 
-- I_AP
-- I_ENG
-- I_GEN
+- [**Paul Stoffregen**](https://www.pjrc.com/teensy/) --
+  Creator of the Teensy microcontroller platform.  teensyBoat.ino is built
+  for the Teensy 4.0.
 
-There is also a verb to turn all instruments on or off for a given port
+- [**Thomas Knauf**](http://www.thomasknauf.de/seatalk.htm) --
+  *SeaTalk Technical Reference Revision 3.23*.  The primary public reference for
+  the Seatalk1 datagram protocol.  The
+  **[Arduino Boat Library](https://github.com/phorton1/Arduino-libraries-Boat/blob/master/docs/readme.md)**
+  used by this firmware builds on, extends, and in places corrects that work.
 
-- I_ST1
-- I_ST2
-- I_83A
-- I_83B
-- I_2000
 
+## License
 
-
-### Monadic commands
-
-- L = nmea2000 devices
-- Q = query nmea2000 devices
-- ? = show commands
-- help = show detailed help
-
-- LOAD = load the current instrument configuration to EEPROM
-- SAVE = save the current instrument configuration to EEPROM
-- STATE = return the state of the instrments via binary
-
-The state of the istruments is sent to the perl application
-when it requests it at startup with the STATE command which
-returns $BINARY_TYPE_PROG packet of the instrument states.
-
-Normal I_ commands on the serial console send the
-$BINARY_TYPE_PROG packet whenever the instrument states change.
-
-The perl application sends I_ instrument commands
-with 10000 added so the INO wont echo the PERL changes it.
-Otherwise,
-
-
-
-### Initial Monitor Command and Implementation
-
-Utilize the existing text monitoring capabilities, with the addition
-of separate colors per protocol and class of messages.
-
-- M_SIM          = n   monitor the boatSimulator (default=1)
-- M_OUT          = n   monitor outbound instrument messages
-- M_ST           = n   monitor all incoming Seatalk messags
-- M_0183         = n   monitor all incoming NMEA0183 messages
-- M_AIS          = n   monitor incoming NMEA0183 AIS messages
-- M_2000 		 = n   monitor known NMEA2000 sensor messages
-- M_GPS     	 = n   separatly monitor known NMEA2000 GPS messages
-- M_PROP     	 = n   monitor known NMEA2000 proprietary messages
-- M_BUS     	 = n   monitor any other unhandled bus messages
-
-
-
-
-##-------------------------- WORK IN PROGRESS FROM HERE DOWN ---------------------------------
-
-
-
-
-## Monitoring Ideas
-
-Generally speaking, the command protocol allows for the laptop application
-to tell this program (and the Boat library) to suppress, or to send, various
-state and monitor output in either a text or binary format.
-
-- 0 means "don't send the information"
-- 1 means "send the information as colored text"
-- 2 means "send the information in compact binary format"
-
-Since the text format could be quite verbose, the output can be granularized
-to only see certain things.  In the binary format these *could* be combined
-into fewer messages to lessen the traffic over the com port.
-
-Protocol monitoring is probably the trickiest part of the whole system.
-
-### State Monitoring
-
-The following commands monitor the state of the virtual boat
-
-- BOAT_STATE = the main virtual boat parameters
-  - true COG and SOG
-  - depth of the water
-  - true wind direction and speed
-  - apparent wind direction and speed
-  - current latitude and longitude,
-- ENGINE_STATE = virtual boat parameters that are currently
-  dependent on whther there is an SOG, and are essentially
-  fixed or randomized at this time
-  - RPM
-  - Oil Pressure
-  - Oil Temperature
-  - Coolant Temperature
-  - Alternator Voltage
-  - Fuel Rate
-  - Fuel Level
-- GENSET_STATE = although I have yet to get the genset to display on the E80,
-  there is a similar fixed/randomized set of genset values available
-  - RPM
-  - Oil Pressure
-  - Coolant Temperature
-  - Voltage
-  - Frequency
-- NAV_STATE
-  - Route Name
-  - Number of Waypoints
-  - Previous Waypoint
-  - Target Waypoint
-  - Autopilot (on/off)
-  - Routing (on/off)
-  - Heading to Waypoint
-  - Distance to Waypoint
-  - Arrival
-
-
-### Output Monitoring
-
-One wants to monitor the actual bytes that are being OUTPUT for each
-virtual instrument and protocol to verify that this program is doing
-what one expects.
-
-This seems fairly easy to implement, though the usefulness of it will
-depend on the level of detail of the implementation.
-
-
-## PROTOCOL MONITORING
-
-Once again, protocol monitoring is probably the trickiest part of the whole system.
-
-For protocol messages that are received into this program, whether on
-the dekstop or in the real boat, the notion of monitoring is significantly
-complicated.
-
-- **known instrument messages** - it seams reasonable to assume that
-  any messages sent (in any protocol) by a virtual instrument in this
-  program should be *monitorable* and *filterable* by the instrument
-  types and protocols.
-- **similar instrument messages** - then there are a set of protocol
-  messages that may not be currently sent by this program, but which
-  logically would belong to one of the virtual instruments. For example
-  we don't currently send the Satellites in View GNSS messages, but
-  they would logically be associated with the GPS instrument.
-- **other known messages** - I have not yet implemented an AIS instrument
-  but I have learned to parse some or all of the NMEA0183 and NMEA2000
-  AIS messages. Most other "boat state" NMEA2000 and NMEA0183 messages
-  could be parsed as well.
-- **known proprietary messages** - For instance, there are opaque
-  NMEA2000 messages that have known proprietary PGNs.
-- **known bus messages** - particularly with NMEA2000 there
-  is an entire nuther level of handshaking for identifying nodes
-  on the network, keep-alive messages, and so on.  This also
-  brings up the notion of the NMEA2000 "device list".
-- **known undecoded messags** - there will be messages that are known
-  to be decodable that I have not yet implemented decoders for.
-- **completely uknown messages** - particularly with Seatalk there
-  are messages that I don't have a clue about.
-
-### Protocol State
-
-In addition to merely monitoring all of these message types, there
-is the notion of maintaining an "instrumentation state" that is
-separate from the virtual boat, by each protocol. In other words,
-each protocol develops, essentially, a virtual boat of its own,
-with its own lat/lon, heading, cog, depth, and so on.
-
-With NMEA2000 we already have a clear notion of a device list
-that would be maintained by this program.
-
-It seems onerous to maintain even more state in this program,
-but each protocol essentially presents an entire "state of the
-boat" and it would only be feasable to implement that in the
-teensyBoat.pm application if all the protocols were constantly
-monitored by that program, whereas the state could be kept on
-the teensy without necessarily presenting the monitor output
-to the application.
-
-Unlike our virtual boat (at this time), however, the state of
-the virtual boat presented by the protocols is significantly
-more complex, and is not limited to scalar values.  For instance
-
-- GNSS presents a list of satellites in view
-- AIS presents a list of targets
-
-
-### One potential solution
-
-Dump the idea that we are going to specify binary output
-on an instrument by instrument or message by message basis.
-Allow the specification of text output to utilize the
-applicaton console window to show protocols (still complicated),
-but move to the notion that if the teensyBoat.pm application
-is running, that, more or less, ALL information available is
-sent to it in binary format, and let the teensyBoat.pm program
-be responsible for maintaining the "protocol state".
-
-
-## Pulse outputs
-
-At this time the pulse outputs are not implemented.
-However, they will probably be simple commands that
-specify the milliseconds between pulses:
-
-- PULSE_SPEED = nn
-- PULSE_WIND = nn
-
-And will likely be used with virtual Seatalk
-LOG and WIND instruments.
-
-
-## Summary at this time (Sep 10, 2025)
-
-All I know is that I need to make some progress on this.
-
-- I have a basic framework for the teensyBoat.pm application.
-- I have implementations of Seatalk, NMEA0183 and NMEA2000 in
-  various states of completeness.
-- I was more or less satisfied with the monitoring capabilities
-  of those ESP32 based applications when all I had were simple
-  "monitor input" and "monitor output" commands, and, for NMEA2000
-  "monitor instruments", "monitor bus", and "list devices"
-  commands.
-
-
-and
-
-- BINARY=0/1 = lets this program know that teensyBoat.pm is running
-
-In which case all known IN messages are decoded and sent to the app
-with a limited set of decoded fields (PGNS can be very complicated
-and have a lot of useless, to me, information).
-
-This would include the NMEA2000 code sending the device list to
-the app whenever it changes.
-
-
-## Other Thoughs
-
-It is not clear to what degree the separation of the Boat library
-from this INO program is useful.  It *does* theoretically allow
-for switching NMEA2000 implementations to the ESP32 or the old
-CANBUS modules, but I am not seeing a good reason to ever use
-an ESP32 in a direct bus configuration.
-
-The only nice thing about the ESP32 is that it has wifi, but
-practically speaking, the wifi is too slow for anything except
-a state machine supporting queries (i.e. JSON), and I just hate
-writing web apps with javascript and all of its complexities,
-though it would be nominally interesting to be able to see
-some of this stuff on the iPad or my phone, I don't see that
-much practical use in it.
-
-The more likely architecture is to still use a teensy for
-the heavy lifting and just talk to an ESP32 over serial
-so it can be dedicated to Wifi tasks.
-
-Also, more pertinent to the teensyBoat.pm application
-that this teensyBoat.ino program, but while I'm thinking
-about it, the app *could* also do the UDP monitoring
-currently implemented in /base/bat/raymarineE80/raynet.pm
-
-
-## Moving Forward
-
-Even though I hate to, I think I will solder up the initial_board
-from this project to ease the testing of this program as I develop it.
-
-I really would prefer to wait unitl I had
-
-- the real NMEA2000 PCB connector
-- the 3.81mm pheonix PCB connectors
-- a working dual channel MAX3232 plug-in interface
-
-I also don't like the current initial_board's connections
-(or lack of them) to 12V to supply the seatalk when testing
-ST50 instruments.
-
-
-I would have to wait to make a "real" "boat" version of this PCB.
-The alternative is to redesign/add to the current teensy breadboard
-with wires to pheonix 3.81 connectors like before, making the desktop
-situation complicated.
+This software is released under the
+[**GNU General Public License v3**](../LICENSE.TXT).
 
 
 ## Please Also See
 
-- [**phorton1/base-apps-teensyBoat**](https://github.com/phorton1/base-apps-teensyBoat) —
-  The companion wxPerl desktop application for Windows. Monitors and controls
-  teensyBoat.ino over USB serial or UDP; provides real-time display of simulator
-  state, SeaTalk protocol monitoring, virtual instrument configuration, and an
-  HTTP API for remote control and automation.
+- [**phorton1/base-apps-teensyBoat**](https://github.com/phorton1/base-apps-teensyBoat) --
+  The companion wxPerl Windows application.  Monitors and controls the teensyBoat
+  firmware over USB serial or WiFi; provides real-time display of simulator state,
+  protocol monitoring, and virtual instrument configuration.
 
-- [**phorton1/Arduino-libraries-Boat**](https://github.com/phorton1/Arduino-libraries-Boat) —
-  The shared Arduino C++ library used by this firmware. Implements boatSimulator,
-  instSimulator, autoPilot, boatState, and the binary packet protocol shared
-  with the Perl application.
+- [**phorton1/Arduino-libraries-Boat**](https://github.com/phorton1/Arduino-libraries-Boat) --
+  The shared C++ library used by this firmware.  Implements the virtual boat and
+  instrument simulators, all three protocol encoders and decoders, and the binary
+  packet protocol shared with the wxPerl application.
 
+- [**phorton1/Arduino-boat-teensyGPS**](https://github.com/phorton1/Arduino-boat-teensyGPS) --
+  A related device built on the same Boat library: a Teensy/Neo6M GPS that outputs
+  Seatalk1 and/or NMEA 2000 for integration into an existing marine instrument network.
 
+- [**phorton1/Arduino-boat-tbESP32**](https://github.com/phorton1/Arduino-boat-tbESP32) --
+  The ESP32 WiFi bridge that plugs into teensyBoat's GP8 connector, forwarding the
+  USB serial binary protocol over UDP to the wxPerl application over a local network.
 
+- [**phorton1/Arduino-boat-teensyWind**](https://github.com/phorton1/Arduino-boat-teensyWind) --
+  A companion device that interfaces directly with a Raymarine ST50/ST60 wind vane
+  transducer and outputs Seatalk1 or NMEA 2000.
 
-
-
-
-
-
+- [**phorton1/base-apps-raymarine**](https://github.com/phorton1/base-apps-raymarine) --
+  Documentation of the reverse-engineered Raymarine SeatalkHS ethernet protocol
+  suite.  The teensyBoat hardware was the active instrument platform during that work.
