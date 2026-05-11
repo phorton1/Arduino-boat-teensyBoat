@@ -97,6 +97,9 @@ The custom PCB and 3D-printed enclosure design files are included in this reposi
   the Seatalk1 datagram protocol.  The
   **[Arduino Boat Library](https://github.com/phorton1/Arduino-libraries-Boat/blob/master/docs/readme.md)**
   used by this firmware builds on, extends, and in places corrects that work.
+  Corrections, extensions, and new datagrams not in Knauf are catalogued on the
+  **[Seatalk Knowledge](https://github.com/phorton1/Arduino-libraries-Boat/blob/master/docs/new_st_knowledge.md)**
+  page in the Boat Library documentation.
 
 
 ## License
@@ -132,3 +135,8 @@ This software is released under the
 - [**phorton1/base-apps-raymarine**](https://github.com/phorton1/base-apps-raymarine) --
   Documentation of the reverse-engineered Raymarine SeatalkHS ethernet protocol
   suite.  The teensyBoat hardware was the active instrument platform during that work.
+
+
+---
+
+**Next:** [Electronics](electronics.md)
