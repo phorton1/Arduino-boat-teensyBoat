@@ -1,6 +1,9 @@
 # teensyBoat.ino - 3DP
 
-**[Home](readme.md)** -- **[Electronics](electronics.md)** -- **3DP**
+**[Home](readme.md)** --
+**[Electronics](electronics.md)** --
+**3DP** --
+**[Commands](commands.md)**
 
 repos: **[phorton1](https://github.com/phorton1)** --
 **teensyBoat Firmware** --
@@ -35,4 +38,4 @@ The Fusion 360 source (`.f3d`) is not currently included in the repository.
 
 ---
 
-**Next:** [Home](readme.md)
+**Next:** [Commands](commands.md)

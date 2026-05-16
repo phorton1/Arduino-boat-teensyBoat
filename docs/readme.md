@@ -1,6 +1,9 @@
 # teensyBoat.ino
 
-**Home** -- **[Electronics](electronics.md)** -- **[3DP](3dp.md)**
+**Home** --
+**[Electronics](electronics.md)** --
+**[3DP](3dp.md)** --
+**[Commands](commands.md)**
 
 repos: **[phorton1](https://github.com/phorton1)** --
 **teensyBoat Firmware** --
@@ -84,6 +87,19 @@ The custom PCB and 3D-printed enclosure design files are included in this reposi
 
 - **[3DP](3dp.md)** -- STL and 3MF files for the 3D-printed enclosure, and pre-sliced
   PETG printer gcode.
+
+
+## Command Interface
+
+The firmware accepts a comprehensive set of **text commands** -- plain
+ASCII, case-insensitive, `KEY=VALUE` or `VERB` form, newline-terminated
+-- on its USB serial port.  The same commands are forwarded by the
+companion **tbESP32** WiFi bridge and by the **teensyBoat.pm** wxPerl
+application's HTTP `/api/command` endpoint.
+
+See **[Commands](commands.md)** for the complete reference: virtual boat
+control, instrument configuration, protocol monitoring, GP8/ST50 testing,
+NMEA 2000 device queries, and binary streaming control.
 
 
 ## Credits

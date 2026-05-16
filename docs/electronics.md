@@ -1,6 +1,9 @@
 # teensyBoat.ino - Electronics
 
-**[Home](readme.md)** -- **Electronics** -- **[3DP](3dp.md)**
+**[Home](readme.md)** --
+**Electronics** --
+**[3DP](3dp.md)** --
+**[Commands](commands.md)**
 
 repos: **[phorton1](https://github.com/phorton1)** --
 **teensyBoat Firmware** --
