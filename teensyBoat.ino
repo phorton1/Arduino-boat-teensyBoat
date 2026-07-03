@@ -9,6 +9,7 @@
 #include <inst0183.h>
 #include <inst2000.h>
 #include <boatBinary.h>
+#include <aisTargets.h>
 #include <instST.h>
 #include <inst0183.h>
 
@@ -131,6 +132,16 @@ static void showHelp(bool detailed)
 	display(d,"                   this is overriden by any calls to setSOG, which sets",0);
 	display(d,"                   RPMS to 1800 if SOG>0, or 0 if the boat is not moving.",0);
 	display(0,"GEN=0/1        Starts and stops the Genset",0);
+
+	display(0,"AIS            Dumps the virtual AIS target state",0);
+	display(d,"                   vboats are enabled by turning the AIS virtual instrument on (I_AIS=mask);",0);
+	display(d,"                   ANY active port enables them (even SeaTalk, which transmits no AIS)",0);
+	display(0,"AIS_N=n        Number of virtual boats, 0..8 (default 5)",0);
+	display(0,"AIS_RATE=n     Avg seconds between AIS bursts on the wire, >=1 (default 3)",0);
+	display(d,"                   one vboat sends one message type per burst; ~num*3s to see them all",0);
+	display(0,"AIS_MIN_CPA=n  Standoff (NM) normal vboats keep from the sboat (default 0.5)",0);
+	display(0,"AIS_RANGE=n    Outer range (NM) vboats appear within / recycle beyond (default 4, >= min_cpa+1)",0);
+	display(0,"COLLIDE=0/1    Put one vboat on a steady collision course to test CPA alarms",0);
 
 	display(0,"ROUTES         list all available routes with waypoint counts",0);
 	display(0,"ROUTE_WPS=name list all waypoints in a route with lat/lon",0);
@@ -389,6 +400,21 @@ static void handleCommand(String lval, String rval, bool got_equals)
 	else if (lval.equals("gen"))
 		boat_sim.setGenset(rval.toInt());
 
+	// virtual AIS targets
+
+	else if (lval.equals("ais"))
+		ais_targets.dumpState();
+	else if (lval.equals("ais_n"))
+		ais_targets.setNumTargets(rval.toInt());
+	else if (lval.equals("ais_rate"))
+		ais_targets.setRate(rval.toFloat());
+	else if (lval.equals("ais_min_cpa"))
+		ais_targets.setMinCPA(rval.toFloat());
+	else if (lval.equals("ais_range"))
+		ais_targets.setRange(rval.toFloat());
+	else if (lval.equals("collide"))
+		ais_targets.setCollide(rval.toInt());
+
 	else if (lval.equals("routes"))
 	{
 		display(0,"Routes(%d):",simulator_num_routes);
@@ -631,6 +657,7 @@ static void handleCommand(String lval, String rval, bool got_equals)
 		if (what.equals("prog"))		mask = BINARY_TYPE_PROG;
 		else if (what.equals("sim"))	mask = BINARY_TYPE_SIM;
 		else if (what.equals("boat"))	mask = BINARY_TYPE_BOAT;
+		else if (what.equals("ais"))	mask = BINARY_TYPE_AIS;
 		else if (what.equals("st"))		mask = BINARY_TYPE_ST1 | BINARY_TYPE_ST2;
 		else if (what.equals("0183"))	mask = BINARY_TYPE_0183A | BINARY_TYPE_0183B;
 		else if (what.equals("2000"))	mask = BINARY_TYPE_2000;

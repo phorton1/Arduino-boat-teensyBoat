@@ -81,6 +81,24 @@ is used.
 | `DH=N`        | degrees true         | Autopilot desired heading (used when AP is on but routing is off) |
 
 
+## Boat Simulator -- Virtual AIS Targets
+
+A set of persistent virtual "other boats" (vboats) that circle in and out of range
+of the simulated boat and emit AIS.  There is **no on/off command**: the vboats run
+whenever the AIS virtual instrument is enabled on any port (`I_AIS=M` -- even a
+SeaTalk port, though SeaTalk carries no AIS).  NMEA 0183 emits `!AIVDM` messages 18
+and 24; NMEA 2000 emits PGNs 129039 / 129809 / 129810.
+
+| Command         | Value    | Effect                                                       |
+|-----------------|----------|--------------------------------------------------------------|
+| `AIS`           | -        | Dump the current vboat state to the serial output            |
+| `AIS_N=N`       | 0 .. 8   | Number of virtual boats (default 5)                          |
+| `AIS_RATE=N`    | seconds  | Average seconds between AIS bursts on the wire, >= 1 (default 3).  One vboat sends one message type per burst, so ~ `AIS_N * 3 * rate` seconds cycles through all of them. |
+| `AIS_MIN_CPA=N` | NM       | Standoff distance normal vboats keep from the sboat (default 0.5).  Set it above the receiver's CPA alarm ring so normal traffic never trips it. |
+| `AIS_RANGE=N`   | NM       | Outer range vboats appear within and recycle beyond (default 4; forced to at least `AIS_MIN_CPA + 1`, and `AIS_MIN_CPA` bumps it up if needed) |
+| `COLLIDE=N`     | 0 or 1   | Put one vboat on a steady collision course toward the sboat to test the receiver's CPA alarm |
+
+
 ## Query
 
 | Command           | Output                                                                |
@@ -215,6 +233,7 @@ mask `g_BINARY`.
 | `B_PROG=N`    | 0 or 1    | `BINARY_TYPE_PROG` (instrument config)                          |
 | `B_SIM=N`     | 0 or 1    | `BINARY_TYPE_SIM` (simulator state at 1 Hz)                     |
 | `B_BOAT=N`    | 0 or 1    | `BINARY_TYPE_BOAT` (reserved; unimplemented)                    |
+| `B_AIS=N`     | 0 or 1    | `BINARY_TYPE_AIS` (aggregated virtual AIS targets)              |
 | `B_ST=N`      | 0 or 1    | `BINARY_TYPE_ST1` + `BINARY_TYPE_ST2` (decoded Seatalk1)        |
 | `B_0183=N`    | 0 or 1    | `BINARY_TYPE_0183A` + `BINARY_TYPE_0183B` (raw NMEA 0183)       |
 | `B_2000=N`    | 0 or 1    | `BINARY_TYPE_2000` (decoded NMEA 2000 PGN data)                 |
